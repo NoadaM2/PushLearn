@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_now_learning"
+        android:icon="@drawable/icon_now_learning"
+        android:title="@string/title_nowLearning" />
+
+    <item
+        android:id="@+id/navigation_myPacks"
+        android:icon="@drawable/icon_my_packs"
+        android:title="@string/title_myPacks" />
+
+    <item
+        android:id="@+id/navigation_communityPacks"
+        android:icon="@drawable/icon_conversation"
+        android:title="@string/title_CommunityPacks" />
+
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/icon_settings"
+        android:title="@string/title_Settings" />
+
+</menu>

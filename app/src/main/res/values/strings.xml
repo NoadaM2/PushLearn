@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">PushLearn</string>
+
+    <string name="title_nowLearning">Now Learning</string>
+    <string name="title_myPacks">My Packs</string>
+    <string name="title_CommunityPacks">Community Packs</string>
+    <string name="title_Settings">Settings</string>
+</resources>
