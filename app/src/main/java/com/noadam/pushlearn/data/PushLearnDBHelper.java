@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.Pack;
 
@@ -21,12 +22,13 @@ public class PushLearnDBHelper extends SQLiteOpenHelper {
     public static final String CARD_COLUMN_PACK_NAME = "cardPackName";
     public static final String CARD_COLUMN_QUESTION = "cardQuestion";
     public static final String CARD_COLUMN_ANSWER = "cardAnswer";
+    public static final String CARD_COLUMN_ITERATING_NUMBER = "iteratingNumber";
 
     public static final String PACK_TABLE_NAME = "packTable";
     public static final String PACK_COLUMN_ID = "pack_id";
     public static final String PACK_COLUMN_PACK_NAME = "packPackName";
 
-    private final String createCardTableCommand = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s TEXT)", CARD_TABLE_NAME, CARD_COLUMN_ID, CARD_COLUMN_PACK_NAME, CARD_COLUMN_QUESTION, CARD_COLUMN_ANSWER);
+    private final String createCardTableCommand = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s TEXT, %s INT)", CARD_TABLE_NAME, CARD_COLUMN_ID, CARD_COLUMN_PACK_NAME, CARD_COLUMN_QUESTION, CARD_COLUMN_ANSWER, CARD_COLUMN_ITERATING_NUMBER);
     private final String createPackTableCommand = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT)", PACK_TABLE_NAME, PACK_COLUMN_ID, PACK_COLUMN_PACK_NAME);
 
 
@@ -43,8 +45,8 @@ public class PushLearnDBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         if (i < 1) {
             sqLiteDatabase.execSQL(createPackTableCommand);
-            sqLiteDatabase.execSQL(createCardTableCommand);
-        }
+            sqLiteDatabase.execSQL(createCardTableCommand); }
+
     }
 
     public void addNewPack(Pack pack) {
@@ -89,13 +91,12 @@ public class PushLearnDBHelper extends SQLiteOpenHelper {
         return packs;
     }
 
-
-
     public void addNewCard(Card card) {
         ContentValues cardValues = new ContentValues();
         cardValues.put(CARD_COLUMN_PACK_NAME, card.getPackName());
         cardValues.put(CARD_COLUMN_QUESTION, card.getQuestion());
         cardValues.put(CARD_COLUMN_ANSWER, card.getAnswer());
+        cardValues.put(CARD_COLUMN_ITERATING_NUMBER, card.get_iterating_times());
         SQLiteDatabase db = this.getWritableDatabase();
         db.insert(CARD_TABLE_NAME, null, cardValues);
     }
@@ -115,30 +116,34 @@ public class PushLearnDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-
-
-    public List<Card> getCardListByPackName(String packName) {
-        List<Card> cards = new ArrayList<>();
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(String.format("SELECT %s, %s, %s FROM %s WHERE %s = ?", CARD_COLUMN_ID, CARD_COLUMN_QUESTION, CARD_COLUMN_ANSWER, CARD_TABLE_NAME, CARD_COLUMN_PACK_NAME), new String[]{packName});
-        int _id;
-        String question;
-        String answer;
-        boolean isShown;
-        if (cursor.moveToFirst()) {
-            do {
-                _id = Integer.parseInt(cursor.getString(cursor.getColumnIndex(CARD_COLUMN_ID)));
-                question = cursor.getString(cursor.getColumnIndex(CARD_COLUMN_QUESTION));
-                answer = cursor.getString(cursor.getColumnIndex(CARD_COLUMN_ANSWER));
-                cards.add(new Card(_id, packName, question, answer));
-            } while (cursor.moveToNext());
-        }
+    public void SetCardIteratingNumberById(int _id, int i_number) {  // доделать
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues forUpdate = new ContentValues();
+        Card card = getCardByID(_id);
+        int card_iterating_number = card.get_iterating_times();
+        forUpdate.put(CARD_COLUMN_ITERATING_NUMBER, i_number);
+        db.update(CARD_TABLE_NAME, forUpdate, "card_id = ?", new String[]{Integer.toString(_id)});
         db.close();
-        cursor.close();
-        return cards;
     }
 
-    public void addPackFromList(Pack pack, String packNameToAdd, boolean ignoreRepeats){
+
+    public Card getCardByID(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(CARD_TABLE_NAME, new String[] { CARD_COLUMN_ID, CARD_COLUMN_PACK_NAME,
+                        CARD_COLUMN_QUESTION, CARD_COLUMN_ANSWER, CARD_COLUMN_ITERATING_NUMBER }, CARD_COLUMN_ID + "= ?",
+                new String[] { String.valueOf(id) }, null, null, null, null);
+
+        if (cursor != null){
+            cursor.moveToFirst();
+        }
+
+        Card contact = new Card(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3));
+
+        return contact;
+    }
+
+   /* public void addPackFromList(Pack pack, String packNameToAdd, boolean ignoreRepeats){
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cardValues;
         String packName = packNameToAdd == null ? pack.getPackName() : packNameToAdd;
@@ -154,6 +159,7 @@ public class PushLearnDBHelper extends SQLiteOpenHelper {
                 cardValues.put(CARD_COLUMN_PACK_NAME, packName);
                 cardValues.put(CARD_COLUMN_QUESTION, card.getQuestion());
                 cardValues.put(CARD_COLUMN_ANSWER, card.getAnswer());
+                cardValues.put(CARD_COLUMN_IS_SHOWN, true);
                 db.insert(CARD_TABLE_NAME, null, cardValues);
             }
         } else {
@@ -164,6 +170,7 @@ public class PushLearnDBHelper extends SQLiteOpenHelper {
                     cardValues.put(CARD_COLUMN_PACK_NAME, packName);
                     cardValues.put(CARD_COLUMN_QUESTION, card.getQuestion());
                     cardValues.put(CARD_COLUMN_ANSWER, card.getAnswer());
+                    cardValues.put(CARD_COLUMN_IS_SHOWN, true);
                     db.insert(CARD_TABLE_NAME, null, cardValues);
                 }
             }
@@ -172,5 +179,8 @@ public class PushLearnDBHelper extends SQLiteOpenHelper {
 
         c.close();
         db.close();
-    }
+    }*/
+
+
 }
+
