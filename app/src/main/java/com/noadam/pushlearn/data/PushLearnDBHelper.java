@@ -12,7 +12,7 @@ import com.noadam.pushlearn.entities.Pack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PushLearnDBHelper extends SQLiteOpenHelper {
+public class  PushLearnDBHelper extends SQLiteOpenHelper {
 
     private static final int DB_VERSION = 1;
     private static final String DB_NAME = "cardQuizDB";
@@ -89,6 +89,28 @@ public class PushLearnDBHelper extends SQLiteOpenHelper {
         db.close();
         cursor.close();
         return packs;
+    }
+
+    public List<Card> getCardListByPackName(String packName) {
+        List<Card> cards = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(String.format("SELECT %s, %s, %s, %s FROM %s WHERE %s = ?", CARD_COLUMN_ID, CARD_COLUMN_QUESTION, CARD_COLUMN_ANSWER, CARD_COLUMN_ITERATING_NUMBER, CARD_TABLE_NAME, CARD_COLUMN_PACK_NAME), new String[]{packName});
+        int _id;
+        String question;
+        String answer;
+        int iterating_number;
+        if (cursor.moveToFirst()) {
+            do {
+                _id = Integer.parseInt(cursor.getString(cursor.getColumnIndex(CARD_COLUMN_ID)));
+                question = cursor.getString(cursor.getColumnIndex(CARD_COLUMN_QUESTION));
+                answer = cursor.getString(cursor.getColumnIndex(CARD_COLUMN_ANSWER));
+                iterating_number = cursor.getInt(cursor.getColumnIndex(CARD_COLUMN_ITERATING_NUMBER));
+                cards.add(new Card(_id, packName, question, answer, iterating_number));
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        cursor.close();
+        return cards;
     }
 
     public void addNewCard(Card card) {
@@ -180,7 +202,7 @@ public class PushLearnDBHelper extends SQLiteOpenHelper {
         c.close();
         db.close();
     }*/
-
+//
 
 }
 

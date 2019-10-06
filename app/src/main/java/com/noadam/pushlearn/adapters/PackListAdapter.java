@@ -6,62 +6,72 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import com.noadam.pushlearn.R;
+import com.noadam.pushlearn.data.PushLearnDBHelper;
+import com.noadam.pushlearn.entities.Card;
+import com.noadam.pushlearn.entities.Pack;
 
-public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.PackListHolder> {
+import java.util.List;
 
-    private int iterator;
-    private int countOfElements;
+public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHolder> {
+    private int countOfPacks;
+    private PushLearnDBHelper dbHelper;
+    private List<Pack> packList;
+    private List<Card> cardList;
 
-    public PackListAdapter(int i){
-        countOfElements = i;
-        iterator = 0;
+    public PackListAdapter(int countOfPacks){
+        this.countOfPacks = countOfPacks;
     }
     @NonNull
     @Override
-    public PackListHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
 
         Context context = parent.getContext();
+        dbHelper = new PushLearnDBHelper(context);
         int layoutIDforListItem = R.layout.pack_list_item;
 
         LayoutInflater inflater = LayoutInflater.from(context);
 
        View view = inflater.inflate(layoutIDforListItem, parent, false);
 
-       PackListHolder packHolder = new PackListHolder(view);
-       packHolder.question_textView.setText("question"+String.valueOf(iterator));
-        packHolder.answer_textView.setText("answer"+String.valueOf(iterator));
-       iterator++;
+        ViewHolder packHolder = new ViewHolder(view);
 
        return packHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PackListHolder holder, int i) {
-        holder.bind(i);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
+        Pack pack = packList.get(i);
+        cardList = dbHelper.getCardListByPackName(pack.getPackName());
+        holder.pack_name_textView.setText(pack.getPackName());
+        if (!cardList.isEmpty()) {
+            holder.pack_item_start_quiz_button.setClickable(true);
+            holder.pack_item_start_quiz_button.setImageResource(R.drawable.ic_play_arrow_green_48dp);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return countOfElements;
+        return countOfPacks;
     }
 
-    class PackListHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView question_textView;
-        TextView answer_textView;
+        TextView pack_name_textView;
+        ImageButton pack_item_start_quiz_button;
 
-        public PackListHolder(View itemView) {
+        public ViewHolder(View itemView) {
             super(itemView);
-
-            question_textView = itemView.findViewById(R.id.question_text_view);
-            answer_textView = itemView.findViewById(R.id.answer_text_view);
+            pack_name_textView = itemView.findViewById(R.id.pack_name_text_view);
+            pack_item_start_quiz_button = itemView.findViewById(R.id.pack_item_start_quiz_button);
         }
 
-        void bind(int iterator){
-            question_textView.setText("question_index"+String.valueOf(iterator));
-            answer_textView.setText("answer"+String.valueOf(iterator));
-        }
+    }
+
+    public void setPackList(List<Pack> packList) {
+        this.packList = packList;
+        notifyDataSetChanged();
     }
 }
