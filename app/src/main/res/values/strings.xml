@@ -5,4 +5,9 @@
     <string name="title_myPacks">My Packs</string>
     <string name="title_CommunityPacks">Community Packs</string>
     <string name="title_Settings">Settings</string>
+    <string name="ok">OK</string>
+    <string name="cancel">cancel</string>
+    <string name="enter_packName">Enter the pack name</string>
+    <string name="name">Name</string>
+    <string name="create">Create</string>
 </resources>
