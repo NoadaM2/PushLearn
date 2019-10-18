@@ -51,7 +51,7 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
             Pack pack = packList.get(i);
             List<Card> cardList = new ArrayList<Card>();
             cardList.addAll(pack.getCards());
-            holder.pack_name_textView.setText(pack.getPackName() + String.valueOf(i));
+            holder.pack_name_textView.setText(pack.getPackName());
             if (!cardList.isEmpty()) {
                 holder.pack_item_start_quiz_button.setClickable(true);
                 holder.pack_item_start_quiz_button.setImageResource(R.drawable.ic_play_arrow_green_48dp);
@@ -73,7 +73,16 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
             super(itemView);
             pack_name_textView = itemView.findViewById(R.id.pack_name_text_view);
             pack_item_start_quiz_button = itemView.findViewById(R.id.pack_item_start_quiz_button);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Pack pack = packList.get(getAdapterPosition());
+                    String packName = pack.getPackName();
+
+                }
+            });
         }
+
 
     }
 

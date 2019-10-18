@@ -3,6 +3,7 @@ package com.noadam.pushlearn.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,11 +11,15 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.ActionProvider;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -41,7 +46,7 @@ public class MyPacksFragment extends Fragment {
         pack_list_recyclerView.setLayoutManager(layoutManager);
 
         List<Pack> packList = dbHelper.getPackList();
-        packListAdapter = new PackListAdapter(packList.size());
+        packListAdapter = new PackListAdapter();
         packListAdapter.setPackList(packList);
 
         pack_list_recyclerView.setAdapter(packListAdapter);
@@ -82,7 +87,21 @@ public class MyPacksFragment extends Fragment {
                 dialogFrag.show(getFragmentManager().beginTransaction(), "packName");
 
                 return true;
+            case R.id.menu_activity_pack_search:
+               SearchView searchView = (SearchView)item.getActionView();
+               searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                 @Override
+                 public boolean onQueryTextSubmit(String s) {
+                     return false;
+                 }
 
+                 @Override
+                 public boolean onQueryTextChange(String s) {
+                     packListAdapter.getFilter().filter(s);
+                     return false;
+                 }
+             }
+               );
             default:
                 return true;
         }
@@ -105,7 +124,7 @@ public class MyPacksFragment extends Fragment {
 
                 break;
         }
-    }
+    } // добавление пакета
 }
 
 

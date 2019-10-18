@@ -10,4 +10,5 @@
     <string name="enter_packName">Enter the pack name</string>
     <string name="name">Name</string>
     <string name="create">Create</string>
+    <string name="search">Search</string>
 </resources>
