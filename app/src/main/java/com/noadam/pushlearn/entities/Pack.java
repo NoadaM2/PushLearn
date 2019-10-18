@@ -13,7 +13,7 @@ public class Pack {
     private String packName;
 
     @SerializedName("cards")
-    private ArrayList<Card> cards;
+    private ArrayList<Card> cards = new ArrayList<>();
 
     public Pack(int _id, String packName) {
         this._id = _id;
