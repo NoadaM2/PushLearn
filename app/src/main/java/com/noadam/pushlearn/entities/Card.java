@@ -12,6 +12,7 @@ public class Card {
         this.packName = packName;
         this.question = question;
         this.answer = answer;
+        this.iterating_times = 0;
     }
 
     public Card(int _id, String packName, String question, String answer) {
@@ -19,6 +20,7 @@ public class Card {
         this.packName = packName;
         this.question = question;
         this.answer = answer;
+        this.iterating_times = 0;
     }
 
     public Card(int _id, String packName, String question, String answer, int iterating_times) {
@@ -50,11 +52,11 @@ public class Card {
         return _id;
     }
 
-    public int get_iterating_times() {
+    public int getIteratingTimes() {
         return iterating_times;
     }
 
-    public void set_iterating_times(Integer i) {
+    public void setIteratingTimes(Integer i) {
         this.iterating_times = i;
     }
 }

@@ -2,6 +2,7 @@ package com.noadam.pushlearn.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,24 +20,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHolder> implements Filterable {
-    private int countOfPacks;
-    private PushLearnDBHelper dbHelper;
+
     private List<Pack> packList;
     private List<Pack> packFullList;
-    //private List<Card> cardList;
     private int layoutIDforListItem;
+    private OnRecyclerViewItemClickListener mClickListener;
 
-    public PackListAdapter() {
+    public interface OnRecyclerViewItemClickListener {
+        void onClick(String packName);
+    }
+
+
+    public PackListAdapter(OnRecyclerViewItemClickListener clickListener) {
+        mClickListener = clickListener;
         layoutIDforListItem = R.layout.pack_list_item;
     }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         Context context = parent.getContext();
-        if (dbHelper == null) {
-            dbHelper = new PushLearnDBHelper(context);
-        }
-
         LayoutInflater inflater = LayoutInflater.from(context);
 
        View view = inflater.inflate(layoutIDforListItem, parent, false);
@@ -56,7 +58,6 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
                 holder.pack_item_start_quiz_button.setClickable(true);
                 holder.pack_item_start_quiz_button.setImageResource(R.drawable.ic_play_arrow_green_48dp);
             }
-
     }
 
     @Override
@@ -78,7 +79,12 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
                 public void onClick(View v) {
                     Pack pack = packList.get(getAdapterPosition());
                     String packName = pack.getPackName();
-
+                    ArrayList<Card> cardList = new ArrayList<Card>();
+                    cardList.addAll(pack.getCards());
+                    //continue
+                    if (mClickListener != null) {
+                        mClickListener.onClick(packName);
+                    }
                 }
             });
         }
@@ -89,7 +95,6 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     public void setPackList(List<Pack> packList) {
         this.packList = packList;
         this.packFullList = new ArrayList<>(packList);
-        this.countOfPacks = packList.size();
         notifyDataSetChanged();
     }
 
@@ -125,7 +130,6 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
         protected void publishResults(CharSequence constraint, FilterResults results) {
             packList.clear();
             packList.addAll((List) results.values);
-            countOfPacks = packList.size();
             notifyDataSetChanged();
         }
     };

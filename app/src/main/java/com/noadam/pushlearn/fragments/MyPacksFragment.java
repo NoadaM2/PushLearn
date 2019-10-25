@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,16 +24,20 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.PackListAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
+import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.Pack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
-public class MyPacksFragment extends Fragment {
+public class MyPacksFragment extends Fragment{
 
     private RecyclerView pack_list_recyclerView;
     private PackListAdapter packListAdapter;
@@ -46,18 +52,33 @@ public class MyPacksFragment extends Fragment {
         pack_list_recyclerView.setLayoutManager(layoutManager);
 
         List<Pack> packList = dbHelper.getPackList();
-        packListAdapter = new PackListAdapter();
+        packListAdapter = new PackListAdapter(new PackListAdapter.OnRecyclerViewItemClickListener() {
+            @Override
+            public void onClick(String packName) {
+               onRecyclerViewItemClick(packName);
+            }
+        });
         packListAdapter.setPackList(packList);
 
         pack_list_recyclerView.setAdapter(packListAdapter);
         pack_list_recyclerView.getAdapter().notifyDataSetChanged();
     }
 
+
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         context = container.getContext();
         dbHelper = new PushLearnDBHelper(context);
-
+        /*Card card = new Card(1,"1st","question1","answer1",1);
+        dbHelper.addNewCard(card);
+        card = new Card(2,"1st","question2","answer2",2);
+        dbHelper.addNewCard(card);
+        card = new Card(3,"1st","question3","answer3",3);
+        dbHelper.addNewCard(card);
+        card = new Card(2,"1st","question2","answer2",4);
+        dbHelper.addNewCard(card);
+        card = new Card(3,"1st","question3","answer3",0);
+        dbHelper.addNewCard(card);*/
         View view = inflater.inflate(R.layout.frag_my_packs, null);
         toolbar = view.findViewById(R.id.mypacks_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
@@ -73,11 +94,6 @@ public class MyPacksFragment extends Fragment {
         super.onCreateOptionsMenu(menu,inflater);
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        myContext=(FragmentActivity) activity;
-        super.onAttach(activity);
-    }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -105,6 +121,15 @@ public class MyPacksFragment extends Fragment {
             default:
                 return true;
         }
+    }
+
+    private void onRecyclerViewItemClick(String packName) {
+        CardsOfPackFragment nextFrag= new CardsOfPackFragment();
+        nextFrag.setPackName(packName);
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, nextFrag, "findThisFragment")
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override

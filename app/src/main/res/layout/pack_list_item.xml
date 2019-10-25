@@ -7,6 +7,7 @@
 
      <TextView
        android:id="@+id/pack_name_text_view"
+       android:fontFamily="@font/open_sans_bold"
        style="@style/TextAppearance.AppCompat.Title"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"

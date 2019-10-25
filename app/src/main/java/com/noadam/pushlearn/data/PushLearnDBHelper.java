@@ -15,7 +15,7 @@ import java.util.List;
 public class  PushLearnDBHelper extends SQLiteOpenHelper {
 
     private static final int DB_VERSION = 1;
-    private static final String DB_NAME = "cardQuizDB";
+    private static final String DB_NAME = "PushLearnDB";
 
     public static final String CARD_COLUMN_ID = "card_id";
     public static final String CARD_TABLE_NAME = "cardTable";
@@ -91,8 +91,8 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         return packs;
     }
 
-    public List<Card> getCardListByPackName(String packName) {
-        List<Card> cards = new ArrayList<>();
+    public ArrayList<Card> getCardListByPackName(String packName) {
+        ArrayList<Card> cards = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(String.format("SELECT %s, %s, %s, %s FROM %s WHERE %s = ?", CARD_COLUMN_ID, CARD_COLUMN_QUESTION, CARD_COLUMN_ANSWER, CARD_COLUMN_ITERATING_NUMBER, CARD_TABLE_NAME, CARD_COLUMN_PACK_NAME), new String[]{packName});
         int _id;
@@ -118,7 +118,7 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         cardValues.put(CARD_COLUMN_PACK_NAME, card.getPackName());
         cardValues.put(CARD_COLUMN_QUESTION, card.getQuestion());
         cardValues.put(CARD_COLUMN_ANSWER, card.getAnswer());
-        cardValues.put(CARD_COLUMN_ITERATING_NUMBER, card.get_iterating_times());
+        cardValues.put(CARD_COLUMN_ITERATING_NUMBER, card.getIteratingTimes());
         SQLiteDatabase db = this.getWritableDatabase();
         db.insert(CARD_TABLE_NAME, null, cardValues);
     }
@@ -142,7 +142,7 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues forUpdate = new ContentValues();
         Card card = getCardByID(_id);
-        int card_iterating_number = card.get_iterating_times();
+        int card_iterating_number = card.getIteratingTimes();
         forUpdate.put(CARD_COLUMN_ITERATING_NUMBER, i_number);
         db.update(CARD_TABLE_NAME, forUpdate, "card_id = ?", new String[]{Integer.toString(_id)});
         db.close();
@@ -160,7 +160,7 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
             cursor.moveToFirst();
         }
 
-        Card contact = new Card(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3));
+        Card contact = new Card(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3), Integer.parseInt(cursor.getString(4)));
 
         return contact;
     }
