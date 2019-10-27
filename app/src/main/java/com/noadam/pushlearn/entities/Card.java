@@ -15,12 +15,12 @@ public class Card {
         this.iterating_times = 0;
     }
 
-    public Card(int _id, String packName, String question, String answer) {
+    public Card(String packName, String question, String answer, int iterating_times) {
         this._id = _id;
         this.packName = packName;
         this.question = question;
         this.answer = answer;
-        this.iterating_times = 0;
+        this.iterating_times = iterating_times;
     }
 
     public Card(int _id, String packName, String question, String answer, int iterating_times) {

@@ -29,7 +29,7 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
     public static final String PACK_COLUMN_PACK_NAME = "packPackName";
 
     private final String createCardTableCommand = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s TEXT, %s INT)", CARD_TABLE_NAME, CARD_COLUMN_ID, CARD_COLUMN_PACK_NAME, CARD_COLUMN_QUESTION, CARD_COLUMN_ANSWER, CARD_COLUMN_ITERATING_NUMBER);
-    private final String createPackTableCommand = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT)", PACK_TABLE_NAME, PACK_COLUMN_ID, PACK_COLUMN_PACK_NAME);
+    private final String createPackTableCommand = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT,  %s TEXT UNIQUE)", PACK_TABLE_NAME, PACK_COLUMN_ID, PACK_COLUMN_PACK_NAME);
 
 
     public PushLearnDBHelper(Context context) {
@@ -60,6 +60,15 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
     public boolean doesPackExistByPackName(String packName) {
         SQLiteDatabase db = getWritableDatabase();
         Cursor cursor = db.rawQuery(String.format("SELECT %s FROM %s WHERE %s = ?", PACK_COLUMN_ID, PACK_TABLE_NAME, PACK_COLUMN_PACK_NAME), new String[]{packName});
+        boolean check = cursor.moveToFirst();
+        db.close();
+        cursor.close();
+        return check;
+    }
+
+    public boolean doesCardExistByQuestionAndAnswer(String question, String answer) {
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery(String.format("SELECT "+CARD_COLUMN_ID+" FROM "+CARD_TABLE_NAME+" WHERE "+CARD_COLUMN_QUESTION+" = ? AND "+CARD_COLUMN_ANSWER+" = ?"), new String[]{question, answer});
         boolean check = cursor.moveToFirst();
         db.close();
         cursor.close();

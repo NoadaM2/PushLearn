@@ -12,4 +12,13 @@
     <string name="create">Create</string>
     <string name="search">Search</string>
     <string name="sort">Sort</string>
+    <string name="no_cards">There isn\'t any card in the pack \n Please create the first one</string>
+    <string name="no_packs">There isn\'t any pack \n Please create the first one</string>
+    <string name="question">Question</string>
+    <string name="enter_question">Enter the question</string>
+    <string name="enter_answer">Enter the answer</string>
+    <string name="answer">Answer</string>
+    <string name="new_card">New Card</string>
+    <string name="pack_already_exists">Pack \'%s\' already exists</string>
+    <string name="card_already_exists">This card already exists</string>
 </resources>

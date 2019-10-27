@@ -1,6 +1,8 @@
 package com.noadam.pushlearn.fragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,12 +17,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.CardsOfPackAdapter;
 import com.noadam.pushlearn.adapters.PackListAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.Pack;
+import com.noadam.pushlearn.fragments.dialog.CreateCardDialogFragment;
+import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,27 +49,39 @@ public class CardsOfPackFragment extends Fragment {
     private String packName;
     private ArrayList<Card> cardList;
     private Toolbar toolbar;
+    private TextView textViewNoCards;
 
-    private void fillRecyclerView()
-    {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-        cardListAdapter = new CardsOfPackAdapter(new CardsOfPackAdapter.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onClick() {
-                //onRecyclerViewItemClick(packName, cardList);
-            }
-        });
+    private void sortCardList() {
         Collections.sort(cardList, new Comparator<Card>() { // sorting
             @Override
             public int compare(Card lhs, Card rhs) {
-                return String.valueOf(rhs.getIteratingTimes()).compareTo(String.valueOf(lhs.getIteratingTimes()));
+                return Integer.valueOf(rhs.getIteratingTimes()).compareTo(Integer.valueOf(lhs.getIteratingTimes()));
             }
         });
-        cardListAdapter.setCardList(cardList, context);
+    }
 
-        recyclerView.setAdapter(cardListAdapter);
-        recyclerView.getAdapter().notifyDataSetChanged();
+    private void fillRecyclerView() {
+        cardList = dbHelper.getCardListByPackName(packName);
+        if (!cardList.isEmpty()) {
+            textViewNoCards.setVisibility(View.GONE);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+            recyclerView.setLayoutManager(layoutManager);
+            cardListAdapter = new CardsOfPackAdapter(new CardsOfPackAdapter.OnRecyclerViewItemClickListener() {
+                @Override
+                public void onClick() {
+                    //onRecyclerViewItemClick(packName, cardList);
+                }
+            });
+            sortCardList();
+            cardListAdapter.setCardList(cardList, context);
+
+            recyclerView.setAdapter(cardListAdapter);
+            recyclerView.getAdapter().notifyDataSetChanged();
+        }
+        else {
+            textViewNoCards.setText(R.string.no_cards);
+            textViewNoCards.setVisibility(View.VISIBLE);
+        }
     }
 
     @Nullable
@@ -71,13 +90,13 @@ public class CardsOfPackFragment extends Fragment {
         setHasOptionsMenu(true);
         context = container.getContext();
         dbHelper = new PushLearnDBHelper(context);
-        cardList = dbHelper.getCardListByPackName(packName);
         View view = inflater.inflate(R.layout.frag_my_packs, null);
 
         toolbar = view.findViewById(R.id.mypacks_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
         recyclerView = view.findViewById(R.id.pack_list_recyclerview);
+        textViewNoCards = view.findViewById(R.id.no_items_textview);
         fillRecyclerView();
         return view;
     }
@@ -90,7 +109,9 @@ public class CardsOfPackFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_activity_pack_create_item:
-               // create Card
+                CreateCardDialogFragment dialogFrag = CreateCardDialogFragment.newInstance();
+                dialogFrag.setTargetFragment(this, 1);
+                dialogFrag.show(getFragmentManager().beginTransaction(), "packName");
 
                 return true;
             case R.id.menu_activity_pack_search:
@@ -112,4 +133,31 @@ public class CardsOfPackFragment extends Fragment {
                 return true;
         }
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) { // добавление пакета
+        switch(requestCode) {
+            case 1:
+                if (resultCode == Activity.RESULT_OK) {
+                    // After Ok code.
+                    String question =  data.getStringExtra("question");
+                    String answer =  data.getStringExtra("answer");
+                   if (!dbHelper.doesCardExistByQuestionAndAnswer(question,answer)) {
+                       Card card = new Card(packName, question, answer, data.getIntExtra("iteratingTimes", 5));
+                       dbHelper.addNewCard(card);
+                       fillRecyclerView();
+                   }
+                   else {
+                       Toast.makeText(context, R.string.card_already_exists, Toast.LENGTH_SHORT).show();
+                   }
+                } else if (resultCode == Activity.RESULT_CANCELED){
+                    // After Cancel code.
+
+                }
+
+
+                break;
+        }
+    }
+
 }

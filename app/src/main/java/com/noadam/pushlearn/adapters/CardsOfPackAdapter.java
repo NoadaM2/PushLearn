@@ -110,6 +110,7 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
                     }
                 }
             });
+            // itemView.setOnLongClickListener();
         }
 
 

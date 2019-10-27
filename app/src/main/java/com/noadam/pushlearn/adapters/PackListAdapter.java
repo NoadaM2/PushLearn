@@ -21,6 +21,7 @@ import java.util.List;
 
 public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHolder> implements Filterable {
 
+    private PushLearnDBHelper dbHelper;
     private List<Pack> packList;
     private List<Pack> packFullList;
     private int layoutIDforListItem;
@@ -40,7 +41,9 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
+        if (dbHelper == null) {
+            dbHelper = new PushLearnDBHelper(context);
+        }
        View view = inflater.inflate(layoutIDforListItem, parent, false);
 
         ViewHolder packHolder = new ViewHolder(view);
@@ -51,8 +54,7 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
             Pack pack = packList.get(i);
-            List<Card> cardList = new ArrayList<Card>();
-            cardList.addAll(pack.getCards());
+            List<Card> cardList = dbHelper.getCardListByPackName(pack.getPackName());
             holder.pack_name_textView.setText(pack.getPackName());
             if (!cardList.isEmpty()) {
                 holder.pack_item_start_quiz_button.setClickable(true);
@@ -79,8 +81,7 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
                 public void onClick(View v) {
                     Pack pack = packList.get(getAdapterPosition());
                     String packName = pack.getPackName();
-                    ArrayList<Card> cardList = new ArrayList<Card>();
-                    cardList.addAll(pack.getCards());
+                   // ArrayList<Card> cardList = dbHelper.getCardListByPackName(pack.getPackName());
                     //continue
                     if (mClickListener != null) {
                         mClickListener.onClick(packName);
