@@ -4,7 +4,10 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
@@ -26,14 +29,19 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     private List<Pack> packFullList;
     private int layoutIDforListItem;
     private OnRecyclerViewItemClickListener mClickListener;
+    private OnRecyclerViewItemLongClickListener mLongClickListener;
 
     public interface OnRecyclerViewItemClickListener {
         void onClick(String packName);
     }
 
+    public interface OnRecyclerViewItemLongClickListener {
+        void onLongClick(String packName);
+    }
 
-    public PackListAdapter(OnRecyclerViewItemClickListener clickListener) {
+    public PackListAdapter(OnRecyclerViewItemClickListener clickListener, OnRecyclerViewItemLongClickListener onLongClickListner) {
         mClickListener = clickListener;
+        mLongClickListener = onLongClickListner;
         layoutIDforListItem = R.layout.pack_list_item;
     }
     @NonNull
@@ -86,6 +94,17 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
                     if (mClickListener != null) {
                         mClickListener.onClick(packName);
                     }
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Pack pack = packList.get(getAdapterPosition());
+                    String packName = pack.getPackName();
+                    if (mLongClickListener != null) {
+                        mLongClickListener.onLongClick(packName);
+                    }
+                    return false;
                 }
             });
         }

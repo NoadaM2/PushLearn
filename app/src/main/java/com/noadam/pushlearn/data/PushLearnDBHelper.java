@@ -17,16 +17,16 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
     private static final int DB_VERSION = 1;
     private static final String DB_NAME = "PushLearnDB";
 
-    public static final String CARD_COLUMN_ID = "card_id";
-    public static final String CARD_TABLE_NAME = "cardTable";
-    public static final String CARD_COLUMN_PACK_NAME = "cardPackName";
-    public static final String CARD_COLUMN_QUESTION = "cardQuestion";
-    public static final String CARD_COLUMN_ANSWER = "cardAnswer";
-    public static final String CARD_COLUMN_ITERATING_NUMBER = "iteratingNumber";
+    private static final String CARD_COLUMN_ID = "card_id";
+    private static final String CARD_TABLE_NAME = "cardTable";
+    private static final String CARD_COLUMN_PACK_NAME = "cardPackName";
+    private static final String CARD_COLUMN_QUESTION = "cardQuestion";
+    private static final String CARD_COLUMN_ANSWER = "cardAnswer";
+    private static final String CARD_COLUMN_ITERATING_NUMBER = "iteratingNumber";
 
-    public static final String PACK_TABLE_NAME = "packTable";
-    public static final String PACK_COLUMN_ID = "pack_id";
-    public static final String PACK_COLUMN_PACK_NAME = "packPackName";
+    private static final String PACK_TABLE_NAME = "packTable";
+    private static final String PACK_COLUMN_ID = "pack_id";
+    private static final String PACK_COLUMN_PACK_NAME = "packPackName";
 
     private final String createCardTableCommand = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s TEXT, %s INT)", CARD_TABLE_NAME, CARD_COLUMN_ID, CARD_COLUMN_PACK_NAME, CARD_COLUMN_QUESTION, CARD_COLUMN_ANSWER, CARD_COLUMN_ITERATING_NUMBER);
     private final String createPackTableCommand = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT,  %s TEXT UNIQUE)", PACK_TABLE_NAME, PACK_COLUMN_ID, PACK_COLUMN_PACK_NAME);
@@ -66,13 +66,28 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         return check;
     }
 
-    public boolean doesCardExistByQuestionAndAnswer(String question, String answer) {
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor cursor = db.rawQuery(String.format("SELECT "+CARD_COLUMN_ID+" FROM "+CARD_TABLE_NAME+" WHERE "+CARD_COLUMN_QUESTION+" = ? AND "+CARD_COLUMN_ANSWER+" = ?"), new String[]{question, answer});
-        boolean check = cursor.moveToFirst();
-        db.close();
+    public int getPackIdByName(String packName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(PACK_TABLE_NAME, new String[] { PACK_COLUMN_ID }, PACK_COLUMN_PACK_NAME + "= ?",
+                new String[] { packName }, null, null, null, null);
+
+        if (cursor != null){
+            cursor.moveToFirst();
+        }
         cursor.close();
-        return check;
+        db.close();
+        return cursor.getInt(0);
+    }
+
+    public void setPackNameById(int _id, String oldPackName, String packName) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues forUpdate = new ContentValues();
+        forUpdate.put(PACK_COLUMN_PACK_NAME, packName);
+        db.update(PACK_TABLE_NAME, forUpdate, PACK_COLUMN_ID + " = ?", new String[]{Integer.toString(_id)});
+        forUpdate = new ContentValues();
+        forUpdate.put(CARD_COLUMN_PACK_NAME, packName);
+        db.update(CARD_TABLE_NAME, forUpdate,CARD_COLUMN_PACK_NAME + " = ?", new String[]{oldPackName});
+        db.close();
     }
 
     public void deletePackByPackName(String packName) {
@@ -98,6 +113,15 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         db.close();
         cursor.close();
         return packs;
+    }
+
+    public boolean doesCardExistByQuestionAndAnswer(String question, String answer) {
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT "+CARD_COLUMN_ID+" FROM "+CARD_TABLE_NAME+" WHERE "+CARD_COLUMN_QUESTION+" = ? AND "+CARD_COLUMN_ANSWER+" = ?", new String[]{question, answer});
+        boolean check = cursor.moveToFirst();
+        db.close();
+        cursor.close();
+        return check;
     }
 
     public ArrayList<Card> getCardListByPackName(String packName) {
@@ -143,17 +167,17 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         ContentValues forUpdate = new ContentValues();
         forUpdate.put(CARD_COLUMN_QUESTION, card.getQuestion());
         forUpdate.put(CARD_COLUMN_ANSWER, card.getAnswer());
-        db.update(CARD_TABLE_NAME, forUpdate, "card_id = ?", new String[]{Integer.toString(card.get_id())});
+        db.update(CARD_TABLE_NAME, forUpdate, CARD_COLUMN_ID+" = ?", new String[]{Integer.toString(card.get_id())});
         db.close();
     }
 
-    public void SetCardIteratingNumberById(int _id, int i_number) {  // доделать
+    public void SetCardIteratingNumberById(int _id, int i_number) {  // TODO доделать
         SQLiteDatabase db = getWritableDatabase();
         ContentValues forUpdate = new ContentValues();
         Card card = getCardByID(_id);
         int card_iterating_number = card.getIteratingTimes();
         forUpdate.put(CARD_COLUMN_ITERATING_NUMBER, i_number);
-        db.update(CARD_TABLE_NAME, forUpdate, "card_id = ?", new String[]{Integer.toString(_id)});
+        db.update(CARD_TABLE_NAME, forUpdate, CARD_COLUMN_ID+" = ?", new String[]{Integer.toString(_id)});
         db.close();
     }
 
@@ -169,8 +193,9 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
             cursor.moveToFirst();
         }
 
-        Card contact = new Card(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3), Integer.parseInt(cursor.getString(4)));
-
+        Card contact = new Card(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), Integer.parseInt(cursor.getString(4)));
+        cursor.close();
+        db.close();
         return contact;
     }
 

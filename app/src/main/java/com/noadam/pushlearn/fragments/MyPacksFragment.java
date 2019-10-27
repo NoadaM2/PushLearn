@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,6 +38,12 @@ public class MyPacksFragment extends Fragment{
     private Context context;
     private TextView textViewNoPacks;
     private List<Pack> packList;
+    private String PackLongClicked;
+
+    final int MENU_SELECT = 1;
+    final int MENU_SHARE = 2;
+    final int MENU_EDIT = 3;
+    final int MENU_DELETE = 4;
 
     private void fillRecyclerView()
     {
@@ -50,6 +57,12 @@ public class MyPacksFragment extends Fragment{
                 public void onClick(String packName) {
                     onRecyclerViewItemClick(packName);
                 }
+            }, new PackListAdapter.OnRecyclerViewItemLongClickListener() {
+                @Override
+                public void onLongClick(String packName) {
+
+                    PackLongClicked = packName;
+                }
             });
             packListAdapter.setPackList(packList);
 
@@ -62,6 +75,36 @@ public class MyPacksFragment extends Fragment{
         }
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        menu.add(0, MENU_SELECT, 1, R.string.select);
+        menu.add(0, MENU_SHARE, 2, R.string.share);
+        menu.add(0, MENU_EDIT, 3, R.string.edit);
+        menu.add(0, MENU_DELETE, 4, R.string.delete);
+    }
+
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_SELECT:
+
+                break;
+            case MENU_SHARE:
+
+                break;
+            case MENU_EDIT:
+                CreatePackDialogFragment dialogFrag = CreatePackDialogFragment.newInstance(PackLongClicked);
+                dialogFrag.setTargetFragment(this, 2);
+                dialogFrag.show(getFragmentManager().beginTransaction(), "");
+                break;
+            case MENU_DELETE:
+                if ((PackLongClicked != "") && (dbHelper.doesPackExistByPackName(PackLongClicked))) {
+                    dbHelper.deletePackByPackName(PackLongClicked);
+                }
+                fillRecyclerView();
+                break;
+        }
+        return super.onContextItemSelected(item);
+        }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -82,6 +125,7 @@ public class MyPacksFragment extends Fragment{
         textViewNoPacks = view.findViewById(R.id.no_items_textview);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         pack_list_recyclerView = view.findViewById(R.id.pack_list_recyclerview);
+        registerForContextMenu(pack_list_recyclerView);
         fillRecyclerView();
 
 
@@ -97,7 +141,7 @@ public class MyPacksFragment extends Fragment{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_activity_pack_create_item:
-                CreatePackDialogFragment dialogFrag = CreatePackDialogFragment.newInstance();
+                CreatePackDialogFragment dialogFrag = CreatePackDialogFragment.newInstance("");
                 dialogFrag.setTargetFragment(this, 1);
                 dialogFrag.show(getFragmentManager().beginTransaction(), "");
                 return true;
@@ -139,8 +183,13 @@ public class MyPacksFragment extends Fragment{
                     // After Ok code.
                     String packName = data.getStringExtra("packName");
                     if (!dbHelper.doesPackExistByPackName(packName)) {
-                        dbHelper.addNewPack(new Pack(packName));
-                        fillRecyclerView();
+                        if (packName.trim().length() > 0) {
+                            dbHelper.addNewPack(new Pack(packName));
+                            fillRecyclerView();
+                        }
+                        else {
+                            Toast.makeText(context, getString(R.string.enter_correct_pack_name), Toast.LENGTH_SHORT).show();
+                        }
                     }
                     else {
                         Toast.makeText(context, String.format(getString(R.string.pack_already_exists), packName), Toast.LENGTH_SHORT).show();
@@ -150,6 +199,28 @@ public class MyPacksFragment extends Fragment{
 
                 }
 
+                break;
+            case 2:
+                if (resultCode == Activity.RESULT_OK) {
+                    // After Ok code.
+                    String packName = data.getStringExtra("packName");
+                    if (!dbHelper.doesPackExistByPackName(packName)) {
+                        if (packName.trim().length() > 0) {
+                            int id = dbHelper.getPackIdByName(PackLongClicked);
+                            dbHelper.setPackNameById(id, PackLongClicked, packName);
+                            fillRecyclerView();
+                        }
+                        else {
+                            Toast.makeText(context, getString(R.string.enter_correct_pack_name), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else {
+                        Toast.makeText(context, String.format(getString(R.string.pack_already_exists), packName), Toast.LENGTH_SHORT).show();
+                    }
+                } else if (resultCode == Activity.RESULT_CANCELED){
+                    // After Cancel code.
+
+                }
                 break;
         }
     }
