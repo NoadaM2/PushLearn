@@ -1,12 +1,14 @@
-package com.noadam.pushlearn;
+package com.noadam.pushlearn.activities;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.fragments.ComPacksFragment;
 import com.noadam.pushlearn.fragments.MyPacksFragment;
 import com.noadam.pushlearn.fragments.NowLearningFragment;
