@@ -1,8 +1,10 @@
 package com.noadam.pushlearn.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -30,13 +32,14 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     private int layoutIDforListItem;
     private OnRecyclerViewItemClickListener mClickListener;
     private OnRecyclerViewItemLongClickListener mLongClickListener;
+    private final ArrayList<String> selected = new ArrayList<>();
 
     public interface OnRecyclerViewItemClickListener {
-        void onClick(String packName);
+        void onClick(String packName, View v);
     }
 
     public interface OnRecyclerViewItemLongClickListener {
-        void onLongClick(String packName);
+        void onLongClick(String packName, View v);
     }
 
     public PackListAdapter(OnRecyclerViewItemClickListener clickListener, OnRecyclerViewItemLongClickListener onLongClickListner) {
@@ -63,11 +66,14 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
             Pack pack = packList.get(i);
             List<Card> cardList = dbHelper.getCardListByPackName(pack.getPackName());
-            holder.pack_name_textView.setText(pack.getPackName());
+            String packName = pack.getPackName();
+            holder.pack_name_textView.setText(packName);
             if (!cardList.isEmpty()) {
                 holder.pack_item_start_quiz_button.setClickable(true);
                 holder.pack_item_start_quiz_button.setImageResource(R.drawable.ic_play_arrow_green_48dp);
             }
+
+
     }
 
     @Override
@@ -89,10 +95,8 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
                 public void onClick(View v) {
                     Pack pack = packList.get(getAdapterPosition());
                     String packName = pack.getPackName();
-                   // ArrayList<Card> cardList = dbHelper.getCardListByPackName(pack.getPackName());
-                    //continue
                     if (mClickListener != null) {
-                        mClickListener.onClick(packName);
+                        mClickListener.onClick(packName, v);
                     }
                 }
             });
@@ -102,7 +106,7 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
                     Pack pack = packList.get(getAdapterPosition());
                     String packName = pack.getPackName();
                     if (mLongClickListener != null) {
-                        mLongClickListener.onLongClick(packName);
+                        mLongClickListener.onLongClick(packName, v);
                     }
                     return false;
                 }

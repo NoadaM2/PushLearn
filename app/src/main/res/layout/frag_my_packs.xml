@@ -27,6 +27,7 @@
         android:id="@+id/mypacks_toolbar"
         layout="@layout/add_options_toolbar" />
 
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/pack_list_recyclerview"
         android:layout_width="match_parent"

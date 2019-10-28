@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,19 +27,29 @@ import com.noadam.pushlearn.adapters.PackListAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class MyPacksFragment extends Fragment{
 
-    private RecyclerView pack_list_recyclerView;
+    private RecyclerView packListRecyclerView;
     private PackListAdapter packListAdapter;
     private PushLearnDBHelper dbHelper;
     private Toolbar toolbar;
+    private Toolbar selectionToolbar;
     private Context context;
     private TextView textViewNoPacks;
     private List<Pack> packList;
     private String packLongClicked;
+    private ArrayList<String> selectedPacks = new ArrayList<>();
+    private String mode;
+    private View longPressedView;
+    private MenuItem shareSelectedItemsMenuItem;
+    private MenuItem deleteSelectedItemsMenuItem;
+    private MenuItem createPackMenuItem;
+    private MenuItem searchPackMenuItem;
 
     final int MENU_SELECT = 1;
     final int MENU_SHARE = 2;
@@ -56,22 +67,39 @@ public class MyPacksFragment extends Fragment{
             textViewNoPacks.setVisibility(View.VISIBLE);
         }
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-            pack_list_recyclerView.setLayoutManager(layoutManager);
+            packListRecyclerView.setLayoutManager(layoutManager);
             packListAdapter = new PackListAdapter(new PackListAdapter.OnRecyclerViewItemClickListener() {
                 @Override
-                public void onClick(String packName) {
-                    onRecyclerViewItemClick(packName);
+                public void onClick(String packName, View v) {
+                    if (mode == "selection") {
+                        if (!selectedPacks.contains(packName)) {
+                            // view selected
+                            selectedPacks.add(packName);
+                            v.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
+                        } else {
+                            // view reselected
+                            selectedPacks.remove(packName);
+                            v.setBackgroundColor(ContextCompat.getColor(context, R.color.white_gray));
+                        }
+
+                        // we do not notify that an item has been selected
+                        // because that work is done here.  we instead send
+                        // notifications for items to be deselected
+                    }
+                    else {
+                        onRecyclerViewItemClick(packName);
+                    }
                 }
             }, new PackListAdapter.OnRecyclerViewItemLongClickListener() {
                 @Override
-                public void onLongClick(String packName) {
-
+                public void onLongClick(String packName, View v) {
                     packLongClicked = packName;
+                    longPressedView = v;
                 }
             });
             packListAdapter.setPackList(packList);
-            pack_list_recyclerView.setAdapter(packListAdapter);
-            pack_list_recyclerView.getAdapter().notifyDataSetChanged();
+            packListRecyclerView.setAdapter(packListAdapter);
+            packListRecyclerView.getAdapter().notifyDataSetChanged();
         }
 
 
@@ -87,9 +115,15 @@ public class MyPacksFragment extends Fragment{
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case MENU_SELECT:
-
+                selectedPacks.add(packLongClicked);
+                mode = "selection";
+                createPackMenuItem.setVisible(false);
+                searchPackMenuItem.setVisible(false);
+                shareSelectedItemsMenuItem.setVisible(true);
+                deleteSelectedItemsMenuItem.setVisible(true);
+                longPressedView.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
                 break;
-            case MENU_SHARE:
+            case MENU_SHARE: // TODO SHARING PACKS
 
                 break;
             case MENU_EDIT:
@@ -111,32 +145,26 @@ public class MyPacksFragment extends Fragment{
         setHasOptionsMenu(true);
         context = container.getContext();
         dbHelper = new PushLearnDBHelper(context);
-        /*Card card = new Card(1,"1st","question1","answer1",1);
-        dbHelper.addNewCard(card);
-        card = new Card(2,"1st","question2","answer2",2);
-        dbHelper.addNewCard(card);
-        card = new Card(3,"1st","question3","answer3",3);
-        dbHelper.addNewCard(card);
-        card = new Card(2,"1st","question2","answer2",4);
-        dbHelper.addNewCard(card);
-        card = new Card(3,"1st","question3","answer3",0);
-        dbHelper.addNewCard(card);*/
         View view = inflater.inflate(R.layout.frag_my_packs, null);
         toolbar = view.findViewById(R.id.mypacks_toolbar);
-        textViewNoPacks = view.findViewById(R.id.no_items_textview);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-        pack_list_recyclerView = view.findViewById(R.id.pack_list_recyclerview);
-        registerForContextMenu(pack_list_recyclerView);
+        textViewNoPacks = view.findViewById(R.id.no_items_textview);
+        packListRecyclerView = view.findViewById(R.id.pack_list_recyclerview);
+        registerForContextMenu(packListRecyclerView);
         fillRecyclerView();
-
-
         return view;
     }
     @Override
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.toolbar_my_packs, menu);
-        super.onCreateOptionsMenu(menu,inflater);
+        createPackMenuItem = menu.findItem(R.id.menu_activity_pack_create_item);
+        searchPackMenuItem = menu.findItem(R.id.menu_activity_pack_search);
+        shareSelectedItemsMenuItem = menu.findItem(R.id.menu_activity_selected_pack_share);
+        deleteSelectedItemsMenuItem = menu.findItem(R.id.menu_activity_selected_pack_delete);
+        shareSelectedItemsMenuItem.setVisible(false);
+        deleteSelectedItemsMenuItem.setVisible(false);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -158,12 +186,24 @@ public class MyPacksFragment extends Fragment{
                  public boolean onQueryTextChange(String s) {
                      packListAdapter.getFilter().filter(s);
                      return false;
-                 }
-             }
-               );
+                 }});
+            case R.id.menu_activity_selected_pack_delete:
+                    for (String packName : selectedPacks) {
+                        dbHelper.deletePackByPackName(packName);
+                    }
+                    mode = "";
+                fillRecyclerView();
+            case R.id.menu_activity_selected_pack_share: // TODO SHARING LIST OF PACKS
+
             default:
                 return true;
         }
+    }
+
+    private void refactorToolBarForSelection(){
+
+        shareSelectedItemsMenuItem.setVisible(true);
+        deleteSelectedItemsMenuItem.setVisible(true);
     }
 
     private void onRecyclerViewItemClick(String packName) {
@@ -226,5 +266,3 @@ public class MyPacksFragment extends Fragment{
         }
     }
 }
-
-
