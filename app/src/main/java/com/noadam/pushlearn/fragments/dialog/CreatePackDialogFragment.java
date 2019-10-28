@@ -36,12 +36,11 @@ public class CreatePackDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_create_pack, null);
         packNameEditText = view.findViewById(R.id.dialog_add_pack_title_edit_text);
-        String packName = "";
         Bundle bundle = getArguments();
         if (bundle != null) {
-            packName = bundle.getString("packName");
+            String packName = bundle.getString("packName");
+            packNameEditText.setText(packName);
         }
-        packNameEditText.setText(packName);
         Integer action = getTargetRequestCode();
         switch (action) {
             case 1: // New pack

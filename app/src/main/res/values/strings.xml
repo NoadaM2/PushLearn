@@ -27,4 +27,7 @@
     <string name="select">Select</string>
     <string name="edit_packName">Edit pack name</string>
     <string name="enter_correct_pack_name">Enter the correct pack name</string>
+    <string name="enter_correct_question">Enter the correct question</string>
+    <string name="enter_correct_answer">Enter the correct answer</string>
+    <string name="edit_card">Edit card</string>
 </resources>

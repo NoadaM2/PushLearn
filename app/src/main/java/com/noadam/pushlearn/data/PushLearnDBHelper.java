@@ -68,15 +68,12 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
 
     public int getPackIdByName(String packName) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(PACK_TABLE_NAME, new String[] { PACK_COLUMN_ID }, PACK_COLUMN_PACK_NAME + "= ?",
-                new String[] { packName }, null, null, null, null);
-
-        if (cursor != null){
-            cursor.moveToFirst();
-        }
+        Cursor cursor = db.rawQuery("SELECT "+ PACK_COLUMN_ID +" FROM "+ PACK_TABLE_NAME +" WHERE "+PACK_COLUMN_PACK_NAME+" = ?",  new String[]{packName});
+        cursor.moveToFirst();
+        int id = cursor.getInt(0);
         cursor.close();
         db.close();
-        return cursor.getInt(0);
+        return id;
     }
 
     public void setPackNameById(int _id, String oldPackName, String packName) {
@@ -122,6 +119,16 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         db.close();
         cursor.close();
         return check;
+    }
+
+    public void editCardById(int _id, String question, String answer, int iteratingTimes) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues forUpdate = new ContentValues();
+        forUpdate.put(CARD_COLUMN_QUESTION, question);
+        forUpdate.put(CARD_COLUMN_ANSWER, answer);
+        forUpdate.put(CARD_COLUMN_ITERATING_NUMBER, iteratingTimes);
+        db.update(CARD_TABLE_NAME, forUpdate,CARD_COLUMN_ID + " = ?", new String[]{String.valueOf(_id)});
+        db.close();
     }
 
     public ArrayList<Card> getCardListByPackName(String packName) {
@@ -171,15 +178,6 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void SetCardIteratingNumberById(int _id, int i_number) {  // TODO доделать
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues forUpdate = new ContentValues();
-        Card card = getCardByID(_id);
-        int card_iterating_number = card.getIteratingTimes();
-        forUpdate.put(CARD_COLUMN_ITERATING_NUMBER, i_number);
-        db.update(CARD_TABLE_NAME, forUpdate, CARD_COLUMN_ID+" = ?", new String[]{Integer.toString(_id)});
-        db.close();
-    }
 
 
     public Card getCardByID(int id) {

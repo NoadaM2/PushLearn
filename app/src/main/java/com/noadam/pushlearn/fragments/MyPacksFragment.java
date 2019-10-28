@@ -38,7 +38,7 @@ public class MyPacksFragment extends Fragment{
     private Context context;
     private TextView textViewNoPacks;
     private List<Pack> packList;
-    private String PackLongClicked;
+    private String packLongClicked;
 
     final int MENU_SELECT = 1;
     final int MENU_SHARE = 2;
@@ -50,6 +50,11 @@ public class MyPacksFragment extends Fragment{
         packList = dbHelper.getPackList();
         if (!packList.isEmpty()) {
             textViewNoPacks.setVisibility(View.GONE);
+        }
+        else {
+            textViewNoPacks.setText(R.string.no_packs);
+            textViewNoPacks.setVisibility(View.VISIBLE);
+        }
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
             pack_list_recyclerView.setLayoutManager(layoutManager);
             packListAdapter = new PackListAdapter(new PackListAdapter.OnRecyclerViewItemClickListener() {
@@ -61,19 +66,15 @@ public class MyPacksFragment extends Fragment{
                 @Override
                 public void onLongClick(String packName) {
 
-                    PackLongClicked = packName;
+                    packLongClicked = packName;
                 }
             });
             packListAdapter.setPackList(packList);
-
             pack_list_recyclerView.setAdapter(packListAdapter);
             pack_list_recyclerView.getAdapter().notifyDataSetChanged();
         }
-        else {
-            textViewNoPacks.setText(R.string.no_packs);
-            textViewNoPacks.setVisibility(View.VISIBLE);
-        }
-    }
+
+
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -92,13 +93,13 @@ public class MyPacksFragment extends Fragment{
 
                 break;
             case MENU_EDIT:
-                CreatePackDialogFragment dialogFrag = CreatePackDialogFragment.newInstance(PackLongClicked);
+                CreatePackDialogFragment dialogFrag = CreatePackDialogFragment.newInstance(packLongClicked);
                 dialogFrag.setTargetFragment(this, 2);
                 dialogFrag.show(getFragmentManager().beginTransaction(), "");
                 break;
             case MENU_DELETE:
-                if ((PackLongClicked != "") && (dbHelper.doesPackExistByPackName(PackLongClicked))) {
-                    dbHelper.deletePackByPackName(PackLongClicked);
+                if (packLongClicked != ""){
+                    dbHelper.deletePackByPackName(packLongClicked);
                 }
                 fillRecyclerView();
                 break;
@@ -206,8 +207,8 @@ public class MyPacksFragment extends Fragment{
                     String packName = data.getStringExtra("packName");
                     if (!dbHelper.doesPackExistByPackName(packName)) {
                         if (packName.trim().length() > 0) {
-                            int id = dbHelper.getPackIdByName(PackLongClicked);
-                            dbHelper.setPackNameById(id, PackLongClicked, packName);
+                            int id = dbHelper.getPackIdByName(packLongClicked);
+                            dbHelper.setPackNameById(id, packLongClicked, packName);
                             fillRecyclerView();
                         }
                         else {

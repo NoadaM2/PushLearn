@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,6 +51,11 @@ public class CardsOfPackFragment extends Fragment {
     private ArrayList<Card> cardList;
     private Toolbar toolbar;
     private TextView textViewNoCards;
+    private Card cardLongClicked;
+    final int MENU_SELECT = 1;
+    final int MENU_SHARE = 2;
+    final int MENU_EDIT = 3;
+    final int MENU_DELETE = 4;
 
     private void sortCardList() {
         Collections.sort(cardList, new Comparator<Card>() { // sorting
@@ -64,6 +70,11 @@ public class CardsOfPackFragment extends Fragment {
         cardList = dbHelper.getCardListByPackName(packName);
         if (!cardList.isEmpty()) {
             textViewNoCards.setVisibility(View.GONE);
+        }
+        else {
+            textViewNoCards.setText(R.string.no_cards);
+            textViewNoCards.setVisibility(View.VISIBLE);
+        }
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
             recyclerView.setLayoutManager(layoutManager);
             cardListAdapter = new CardsOfPackAdapter(new CardsOfPackAdapter.OnRecyclerViewItemClickListener() {
@@ -71,17 +82,49 @@ public class CardsOfPackFragment extends Fragment {
                 public void onClick() {
                     //onRecyclerViewItemClick(packName, cardList);
                 }
+            }, new CardsOfPackAdapter.OnRecyclerViewItemLongClickListener() {
+                @Override
+                public void onLongClick(Card card) {
+                    cardLongClicked = card;
+                }
             });
             sortCardList();
             cardListAdapter.setCardList(cardList, context);
-
             recyclerView.setAdapter(cardListAdapter);
             recyclerView.getAdapter().notifyDataSetChanged();
         }
-        else {
-            textViewNoCards.setText(R.string.no_cards);
-            textViewNoCards.setVisibility(View.VISIBLE);
+
+
+
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        menu.add(0, MENU_SELECT, 1, R.string.select);
+        menu.add(0, MENU_SHARE, 2, R.string.share);
+        menu.add(0, MENU_EDIT, 3, R.string.edit);
+        menu.add(0, MENU_DELETE, 4, R.string.delete);
+    }
+
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_SELECT:
+
+                break;
+            case MENU_SHARE:
+
+                break;
+            case MENU_EDIT:
+                CreateCardDialogFragment dialogFrag = CreateCardDialogFragment.newInstance(cardLongClicked);
+                dialogFrag.setTargetFragment(this, 2);
+                dialogFrag.show(getFragmentManager().beginTransaction(), "");
+                break;
+            case MENU_DELETE:
+                if (cardLongClicked != null) {
+                    dbHelper.deleteCardById(cardLongClicked.get_id());
+                    fillRecyclerView();
+                }
+
+                break;
         }
+        return super.onContextItemSelected(item);
     }
 
     @Nullable
@@ -96,6 +139,7 @@ public class CardsOfPackFragment extends Fragment {
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
         recyclerView = view.findViewById(R.id.pack_list_recyclerview);
+        registerForContextMenu(recyclerView);
         textViewNoCards = view.findViewById(R.id.no_items_textview);
         fillRecyclerView();
         return view;
@@ -109,7 +153,7 @@ public class CardsOfPackFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_activity_pack_create_item:
-                CreateCardDialogFragment dialogFrag = CreateCardDialogFragment.newInstance();
+                CreateCardDialogFragment dialogFrag = CreateCardDialogFragment.newInstance(new Card(packName,"","",5));
                 dialogFrag.setTargetFragment(this, 1);
                 dialogFrag.show(getFragmentManager().beginTransaction(), "packName");
 
@@ -135,11 +179,10 @@ public class CardsOfPackFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) { // добавление пакета
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch(requestCode) {
-            case 1:
-                if (resultCode == Activity.RESULT_OK) {
-                    // After Ok code.
+            case 1:                                                                                                                     // добавление пакета
+                if (resultCode == Activity.RESULT_OK) {                                                                                 // After Ok code.
                     String question =  data.getStringExtra("question");
                     String answer =  data.getStringExtra("answer");
                    if (!dbHelper.doesCardExistByQuestionAndAnswer(question,answer)) {
@@ -150,12 +193,29 @@ public class CardsOfPackFragment extends Fragment {
                    else {
                        Toast.makeText(context, R.string.card_already_exists, Toast.LENGTH_SHORT).show();
                    }
-                } else if (resultCode == Activity.RESULT_CANCELED){
-                    // After Cancel code.
-
+                } else if (resultCode == Activity.RESULT_CANCELED){                                                                     // After Cancel code.
                 }
+                break;
 
-
+            case 2:
+                if (resultCode == Activity.RESULT_OK) {                                                                                 // After Ok code.
+                    int id = data.getIntExtra("id",0);
+                    String question =  data.getStringExtra("question");
+                    String answer =  data.getStringExtra("answer");
+                    int iteratingTimes = data.getIntExtra("iteratingTimes",5);
+                    if (question.trim().length() > 0) {                                                                                 // проверка на корректность
+                        if (answer.trim().length() > 0) {                                                                               //  question и answer
+                            dbHelper.editCardById(id, question, answer, iteratingTimes);
+                            fillRecyclerView();
+                        } else {
+                            Toast.makeText(context, R.string.enter_correct_answer, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else {
+                        Toast.makeText(context, R.string.enter_correct_question, Toast.LENGTH_SHORT).show();
+                        }
+                } else if (resultCode == Activity.RESULT_CANCELED){                                                                     // After Cancel code.
+                }
                 break;
         }
     }

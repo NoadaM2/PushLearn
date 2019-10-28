@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.noadam.pushlearn.R;
@@ -25,14 +26,19 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
     private List<Card> cardFullList;
     private int layoutIDforListItem;
     private CardsOfPackAdapter.OnRecyclerViewItemClickListener mClickListener;
+    private CardsOfPackAdapter.OnRecyclerViewItemLongClickListener mLongClickListener;
 
     public interface OnRecyclerViewItemClickListener {
         void onClick();
     }
 
+    public interface OnRecyclerViewItemLongClickListener {
+        void onLongClick(Card card);
+    }
 
-    public CardsOfPackAdapter(CardsOfPackAdapter.OnRecyclerViewItemClickListener clickListener) {
+    public CardsOfPackAdapter(CardsOfPackAdapter.OnRecyclerViewItemClickListener clickListener, CardsOfPackAdapter.OnRecyclerViewItemLongClickListener onLongClickListner) {
         mClickListener = clickListener;
+        mLongClickListener = onLongClickListner;
         layoutIDforListItem = R.layout.card_of_pack_item;
     }
 
@@ -58,23 +64,29 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
         holder.iterating_times_textView.setText(Integer.toString(iteratingTimes));
         if (iteratingTimes > 4) {
             holder.iterating_times_textView.setTextColor(ContextCompat.getColor(context, R.color.lime));
+            holder.notification_imageView.setColorFilter(ContextCompat.getColor(context, R.color.lime));
         }
         else {
             switch (iteratingTimes) {
                 case (4):
                     holder.iterating_times_textView.setTextColor(ContextCompat.getColor(context, R.color.yellowGreen));
+                    holder.notification_imageView.setColorFilter(ContextCompat.getColor(context, R.color.yellowGreen));
                     break;
                 case (3):
                     holder.iterating_times_textView.setTextColor(ContextCompat.getColor(context, R.color.yellow));
+                    holder.notification_imageView.setColorFilter(ContextCompat.getColor(context, R.color.yellow));
                     break;
                 case (2):
                     holder.iterating_times_textView.setTextColor(ContextCompat.getColor(context, R.color.orange));
+                    holder.notification_imageView.setColorFilter(ContextCompat.getColor(context, R.color.orange));
                     break;
                 case (1):
                     holder.iterating_times_textView.setTextColor(ContextCompat.getColor(context, R.color.tomato));
+                    holder.notification_imageView.setColorFilter(ContextCompat.getColor(context, R.color.tomato));
                     break;
                 case (0):
                     holder.iterating_times_textView.setTextColor(ContextCompat.getColor(context, R.color.red));
+                    holder.notification_imageView.setColorFilter(ContextCompat.getColor(context, R.color.red));
                     break;
             }
         }
@@ -94,13 +106,14 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
         TextView question_textView;
         TextView answer_textView;
         TextView iterating_times_textView;
-
+        ImageView notification_imageView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             question_textView = itemView.findViewById(R.id.question_text_view);
             answer_textView = itemView.findViewById(R.id.answer_text_view);
             iterating_times_textView = itemView.findViewById(R.id.iterating_times_text_view);
+            notification_imageView = itemView.findViewById(R.id.notification_imageView);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -110,7 +123,17 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
                     }
                 }
             });
-            // itemView.setOnLongClickListener();
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Card card = cardList.get(getAdapterPosition());
+                   // String packName = card.getPackName();
+                    if (mLongClickListener != null) {
+                        mLongClickListener.onLongClick(card);
+                    }
+                    return false;
+                }
+            });
         }
 
 

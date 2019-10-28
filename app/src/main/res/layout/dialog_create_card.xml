@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -63,27 +64,23 @@
         android:layout_marginBottom="8dp"
         />
 
-    <com.gildaswise.horizontalcounter.HorizontalCounter
+    <SeekBar
         android:id="@+id/dialog_card_iterating_times_horizontal_counter"
-        android:layout_width="wrap_content"
-
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:stepValue="1"
-        app:textColor="@color/colorPrimaryDark"
-        app:textSize="12sp"
-        app:minusButtonColor="@color/red"
-        app:plusButtonColor="@color/blue"
-        app:displayAsInteger="true"
-        app:initialValue="5"
-        app:maxValue="10"
-        app:minValue="0"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="12sp"
+        android:max="10"
+        android:thumb="@drawable/ic_notifications_black_12dp"
+        android:theme="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:progress="1"
         app:layout_constraintTop_toBottomOf="@id/dialog_card_answer_edit_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        />
+        android:layout_marginBottom="8dp" />
+
 
 </android.support.constraint.ConstraintLayout>
