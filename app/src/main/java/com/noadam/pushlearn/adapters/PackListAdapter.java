@@ -1,10 +1,15 @@
 package com.noadam.pushlearn.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
@@ -26,14 +31,20 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     private List<Pack> packFullList;
     private int layoutIDforListItem;
     private OnRecyclerViewItemClickListener mClickListener;
+    private OnRecyclerViewItemLongClickListener mLongClickListener;
+    private final ArrayList<String> selected = new ArrayList<>();
 
     public interface OnRecyclerViewItemClickListener {
-        void onClick(String packName);
+        void onClick(String packName, View v);
     }
 
+    public interface OnRecyclerViewItemLongClickListener {
+        void onLongClick(String packName, View v);
+    }
 
-    public PackListAdapter(OnRecyclerViewItemClickListener clickListener) {
+    public PackListAdapter(OnRecyclerViewItemClickListener clickListener, OnRecyclerViewItemLongClickListener onLongClickListner) {
         mClickListener = clickListener;
+        mLongClickListener = onLongClickListner;
         layoutIDforListItem = R.layout.pack_list_item;
     }
     @NonNull
@@ -44,22 +55,25 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
         if (dbHelper == null) {
             dbHelper = new PushLearnDBHelper(context);
         }
-       View view = inflater.inflate(layoutIDforListItem, parent, false);
+        View view = inflater.inflate(layoutIDforListItem, parent, false);
 
         ViewHolder packHolder = new ViewHolder(view);
 
-       return packHolder;
+        return packHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
-            Pack pack = packList.get(i);
-            List<Card> cardList = dbHelper.getCardListByPackName(pack.getPackName());
-            holder.pack_name_textView.setText(pack.getPackName());
-            if (!cardList.isEmpty()) {
-                holder.pack_item_start_quiz_button.setClickable(true);
-                holder.pack_item_start_quiz_button.setImageResource(R.drawable.ic_play_arrow_green_48dp);
-            }
+        Pack pack = packList.get(i);
+        List<Card> cardList = dbHelper.getCardListByPackName(pack.getPackName());
+        String packName = pack.getPackName();
+        holder.pack_name_textView.setText(packName);
+        if (!cardList.isEmpty()) {
+            holder.pack_item_start_quiz_button.setClickable(true);
+            holder.pack_item_start_quiz_button.setImageResource(R.drawable.ic_play_arrow_green_48dp);
+        }
+
+
     }
 
     @Override
@@ -81,11 +95,20 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
                 public void onClick(View v) {
                     Pack pack = packList.get(getAdapterPosition());
                     String packName = pack.getPackName();
-                   // ArrayList<Card> cardList = dbHelper.getCardListByPackName(pack.getPackName());
-                    //continue
                     if (mClickListener != null) {
-                        mClickListener.onClick(packName);
+                        mClickListener.onClick(packName, v);
                     }
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Pack pack = packList.get(getAdapterPosition());
+                    String packName = pack.getPackName();
+                    if (mLongClickListener != null) {
+                        mLongClickListener.onLongClick(packName, v);
+                    }
+                    return false;
                 }
             });
         }
@@ -107,24 +130,24 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     private  Filter myFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-          List<Pack> filteredList = new ArrayList<>();
+            List<Pack> filteredList = new ArrayList<>();
 
-          if (constraint == null || constraint.length() == 0) {
+            if (constraint == null || constraint.length() == 0) {
                 filteredList.addAll(packFullList);
-          }
-          else {
-              String filterPattern = constraint.toString().toLowerCase().trim();
+            }
+            else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
 
-              for (Pack item : packFullList) {
-                  if(item.getPackName().toLowerCase().contains(filterPattern)) {
-                      filteredList.add(item);
-                  }
-              }
-          }
-          FilterResults results = new FilterResults();
-          results.values = filteredList;
+                for (Pack item : packFullList) {
+                    if(item.getPackName().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
 
-          return results;
+            return results;
         }
 
         @Override
@@ -135,3 +158,4 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
         }
     };
 }
+

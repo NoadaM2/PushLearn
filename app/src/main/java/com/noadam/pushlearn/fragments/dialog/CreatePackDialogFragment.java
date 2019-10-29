@@ -11,18 +11,19 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
-
 import com.noadam.pushlearn.R;
+
 public class CreatePackDialogFragment extends DialogFragment {
 
     EditText packNameEditText;
 
-    public static CreatePackDialogFragment newInstance(){
+
+
+    public static CreatePackDialogFragment newInstance(String packName){
 
         CreatePackDialogFragment dialogFragment = new CreatePackDialogFragment();
         Bundle bundle = new Bundle();
-        //bundle.putInt("num", num);
+        bundle.putString("packName", packName);
         dialogFragment.setArguments(bundle);
 
         return dialogFragment;
@@ -31,29 +32,54 @@ public class CreatePackDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_create_pack, null);
         packNameEditText = view.findViewById(R.id.dialog_add_pack_title_edit_text);
-        builder.setView(view)
-                .setTitle(R.string.enter_packName)
-                .setPositiveButton(R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                Intent intent = getActivity().getIntent();
-                                intent.putExtra("packName", String.valueOf(packNameEditText.getText()));
-                                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            String packName = bundle.getString("packName");
+            packNameEditText.setText(packName);
+        }
+        Integer action = getTargetRequestCode();
+        switch (action) {
+            case 1: // New pack
+            builder.setView(view)
+                    .setTitle(R.string.enter_packName)
+                    .setPositiveButton(R.string.ok,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    Intent intent = getActivity().getIntent();
+                                    intent.putExtra("packName", String.valueOf(packNameEditText.getText()));
+                                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                                }
                             }
+                    )
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
                         }
-                )
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
-                    }
-                });
+                    });
+            break;
+            case 2:  // Edit pack name
+                builder.setView(view)
+                        .setTitle(R.string.edit_packName)
+                        .setPositiveButton(R.string.ok,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        Intent intent = getActivity().getIntent();
+                                        intent.putExtra("packName", String.valueOf(packNameEditText.getText()));
+                                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                                    }
+                                }
+                        )
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
+                            }
+                        });
+                break;
+        }
         return builder.create();
     }
 }
-
-

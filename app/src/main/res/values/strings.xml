@@ -21,4 +21,13 @@
     <string name="new_card">New Card</string>
     <string name="pack_already_exists">Pack \'%s\' already exists</string>
     <string name="card_already_exists">This card already exists</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="share">Share</string>
+    <string name="select">Select</string>
+    <string name="edit_packName">Edit pack name</string>
+    <string name="enter_correct_pack_name">Enter the correct pack name</string>
+    <string name="enter_correct_question">Enter the correct question</string>
+    <string name="enter_correct_answer">Enter the correct answer</string>
+    <string name="edit_card">Edit card</string>
 </resources>

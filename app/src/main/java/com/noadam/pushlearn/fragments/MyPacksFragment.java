@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,100 +27,190 @@ import com.noadam.pushlearn.adapters.PackListAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class MyPacksFragment extends Fragment{
 
-    private RecyclerView pack_list_recyclerView;
+    private RecyclerView packListRecyclerView;
     private PackListAdapter packListAdapter;
     private PushLearnDBHelper dbHelper;
     private Toolbar toolbar;
+    private Toolbar selectionToolbar;
     private Context context;
     private TextView textViewNoPacks;
     private List<Pack> packList;
+    private String packLongClicked;
+    private ArrayList<String> selectedPacks = new ArrayList<>();
+    private String mode;
+    private View longPressedView;
+    private MenuItem shareSelectedItemsMenuItem;
+    private MenuItem deleteSelectedItemsMenuItem;
+    private MenuItem createPackMenuItem;
+    private MenuItem searchPackMenuItem;
+
+    final int MENU_SELECT = 1;
+    final int MENU_SHARE = 2;
+    final int MENU_EDIT = 3;
+    final int MENU_DELETE = 4;
 
     private void fillRecyclerView()
     {
         packList = dbHelper.getPackList();
         if (!packList.isEmpty()) {
             textViewNoPacks.setVisibility(View.GONE);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-            pack_list_recyclerView.setLayoutManager(layoutManager);
-            packListAdapter = new PackListAdapter(new PackListAdapter.OnRecyclerViewItemClickListener() {
-                @Override
-                public void onClick(String packName) {
-                    onRecyclerViewItemClick(packName);
-                }
-            });
-            packListAdapter.setPackList(packList);
-
-            pack_list_recyclerView.setAdapter(packListAdapter);
-            pack_list_recyclerView.getAdapter().notifyDataSetChanged();
         }
         else {
             textViewNoPacks.setText(R.string.no_packs);
             textViewNoPacks.setVisibility(View.VISIBLE);
         }
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        packListRecyclerView.setLayoutManager(layoutManager);
+        packListAdapter = new PackListAdapter(new PackListAdapter.OnRecyclerViewItemClickListener() {
+            @Override
+            public void onClick(String packName, View v) {
+                if (mode == "selection") {
+                    if (!selectedPacks.contains(packName)) {
+                        // view selected
+                        selectedPacks.add(packName);
+                        v.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
+                    } else {
+                        // view reselected
+                        selectedPacks.remove(packName);
+                        v.setBackgroundColor(ContextCompat.getColor(context, R.color.white_gray));
+                    }
+                    if(selectedPacks.isEmpty()) {
+                    mode = "";
+                    refactorToolBarForSelection(false);
+                    }
+                    // we do not notify that an item has been selected
+                    // because that work is done here.  we instead send
+                    // notifications for items to be deselected
+                }
+                else {
+                    onRecyclerViewItemClick(packName);
+                }
+            }
+        }, new PackListAdapter.OnRecyclerViewItemLongClickListener() {
+            @Override
+            public void onLongClick(String packName, View v) {
+                packLongClicked = packName;
+                longPressedView = v;
+            }
+        });
+        packListAdapter.setPackList(packList);
+        packListRecyclerView.setAdapter(packListAdapter);
+        packListRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
+
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        menu.add(0, MENU_SELECT, 1, R.string.select);
+        menu.add(0, MENU_SHARE, 2, R.string.share);
+        menu.add(0, MENU_EDIT, 3, R.string.edit);
+        menu.add(0, MENU_DELETE, 4, R.string.delete);
+    }
+
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_SELECT:
+                selectedPacks.add(packLongClicked);
+                mode = "selection";
+                refactorToolBarForSelection(true);
+                longPressedView.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
+                break;
+            case MENU_SHARE: // TODO SHARING PACKS
+
+                break;
+            case MENU_EDIT:
+                CreatePackDialogFragment dialogFrag = CreatePackDialogFragment.newInstance(packLongClicked);
+                dialogFrag.setTargetFragment(this, 2);
+                dialogFrag.show(getFragmentManager().beginTransaction(), "");
+                break;
+            case MENU_DELETE:
+                if (packLongClicked != ""){
+                    dbHelper.deletePackByPackName(packLongClicked);
+                }
+                fillRecyclerView();
+                break;
+        }
+        return super.onContextItemSelected(item);
+    }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         context = container.getContext();
         dbHelper = new PushLearnDBHelper(context);
-        /*Card card = new Card(1,"1st","question1","answer1",1);
-        dbHelper.addNewCard(card);
-        card = new Card(2,"1st","question2","answer2",2);
-        dbHelper.addNewCard(card);
-        card = new Card(3,"1st","question3","answer3",3);
-        dbHelper.addNewCard(card);
-        card = new Card(2,"1st","question2","answer2",4);
-        dbHelper.addNewCard(card);
-        card = new Card(3,"1st","question3","answer3",0);
-        dbHelper.addNewCard(card);*/
         View view = inflater.inflate(R.layout.frag_my_packs, null);
         toolbar = view.findViewById(R.id.mypacks_toolbar);
-        textViewNoPacks = view.findViewById(R.id.no_items_textview);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-        pack_list_recyclerView = view.findViewById(R.id.pack_list_recyclerview);
+        textViewNoPacks = view.findViewById(R.id.no_items_textview);
+        packListRecyclerView = view.findViewById(R.id.pack_list_recyclerview);
+        registerForContextMenu(packListRecyclerView);
         fillRecyclerView();
-
-
         return view;
     }
     @Override
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.toolbar_my_packs, menu);
-        super.onCreateOptionsMenu(menu,inflater);
+        inflater.inflate(R.menu.toolbar_for_recycler_view, menu);
+        createPackMenuItem = menu.findItem(R.id.menu_activity_create_item);
+        searchPackMenuItem = menu.findItem(R.id.menu_activity_search);
+        shareSelectedItemsMenuItem = menu.findItem(R.id.menu_activity_selected_items_share);
+        deleteSelectedItemsMenuItem = menu.findItem(R.id.menu_activity_selected_items_delete);
+        refactorToolBarForSelection(false);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_activity_pack_create_item:
-                CreatePackDialogFragment dialogFrag = CreatePackDialogFragment.newInstance();
+            case R.id.menu_activity_create_item:
+                CreatePackDialogFragment dialogFrag = CreatePackDialogFragment.newInstance("");
                 dialogFrag.setTargetFragment(this, 1);
                 dialogFrag.show(getFragmentManager().beginTransaction(), "");
                 return true;
-            case R.id.menu_activity_pack_search:
-               SearchView searchView = (SearchView)item.getActionView();
-               searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                 @Override
-                 public boolean onQueryTextSubmit(String s) {
-                     return false;
-                 }
+            case R.id.menu_activity_search:
+                SearchView searchView = (SearchView)item.getActionView();
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String s) {
+                        return false;
+                    }
 
-                 @Override
-                 public boolean onQueryTextChange(String s) {
-                     packListAdapter.getFilter().filter(s);
-                     return false;
-                 }
-             }
-               );
-            default:
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        packListAdapter.getFilter().filter(s);
+                        return false;
+                    }});
                 return true;
+            case R.id.menu_activity_selected_items_delete:
+                for (String packName : selectedPacks) {
+                    dbHelper.deletePackByPackName(packName);
+                }
+                mode = "";
+                refactorToolBarForSelection(false);
+                fillRecyclerView();
+                selectedPacks.clear();
+                return true;
+            case R.id.menu_activity_selected_items_share: // TODO SHARING LIST OF PACKS
+                mode = "";
+                refactorToolBarForSelection(false);
+                selectedPacks.clear();
+                fillRecyclerView();
+            default:
+                return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void refactorToolBarForSelection(boolean mode){
+        createPackMenuItem.setVisible(!mode);
+        searchPackMenuItem.setVisible(!mode);
+        shareSelectedItemsMenuItem.setVisible(mode);
+        deleteSelectedItemsMenuItem.setVisible(mode);
     }
 
     private void onRecyclerViewItemClick(String packName) {
@@ -139,8 +231,13 @@ public class MyPacksFragment extends Fragment{
                     // After Ok code.
                     String packName = data.getStringExtra("packName");
                     if (!dbHelper.doesPackExistByPackName(packName)) {
-                        dbHelper.addNewPack(new Pack(packName));
-                        fillRecyclerView();
+                        if (packName.trim().length() > 0) {
+                            dbHelper.addNewPack(new Pack(packName));
+                            fillRecyclerView();
+                        }
+                        else {
+                            Toast.makeText(context, getString(R.string.enter_correct_pack_name), Toast.LENGTH_SHORT).show();
+                        }
                     }
                     else {
                         Toast.makeText(context, String.format(getString(R.string.pack_already_exists), packName), Toast.LENGTH_SHORT).show();
@@ -151,8 +248,28 @@ public class MyPacksFragment extends Fragment{
                 }
 
                 break;
+            case 2:
+                if (resultCode == Activity.RESULT_OK) {
+                    // After Ok code.
+                    String packName = data.getStringExtra("packName");
+                    if (!dbHelper.doesPackExistByPackName(packName)) {
+                        if (packName.trim().length() > 0) {
+                            int id = dbHelper.getPackIdByName(packLongClicked);
+                            dbHelper.setPackNameById(id, packLongClicked, packName);
+                            fillRecyclerView();
+                        }
+                        else {
+                            Toast.makeText(context, getString(R.string.enter_correct_pack_name), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else {
+                        Toast.makeText(context, String.format(getString(R.string.pack_already_exists), packName), Toast.LENGTH_SHORT).show();
+                    }
+                } else if (resultCode == Activity.RESULT_CANCELED){
+                    // After Cancel code.
+
+                }
+                break;
         }
     }
 }
-
-
