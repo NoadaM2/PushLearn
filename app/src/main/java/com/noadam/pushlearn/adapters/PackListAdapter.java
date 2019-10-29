@@ -55,23 +55,23 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
         if (dbHelper == null) {
             dbHelper = new PushLearnDBHelper(context);
         }
-       View view = inflater.inflate(layoutIDforListItem, parent, false);
+        View view = inflater.inflate(layoutIDforListItem, parent, false);
 
         ViewHolder packHolder = new ViewHolder(view);
 
-       return packHolder;
+        return packHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
-            Pack pack = packList.get(i);
-            List<Card> cardList = dbHelper.getCardListByPackName(pack.getPackName());
-            String packName = pack.getPackName();
-            holder.pack_name_textView.setText(packName);
-            if (!cardList.isEmpty()) {
-                holder.pack_item_start_quiz_button.setClickable(true);
-                holder.pack_item_start_quiz_button.setImageResource(R.drawable.ic_play_arrow_green_48dp);
-            }
+        Pack pack = packList.get(i);
+        List<Card> cardList = dbHelper.getCardListByPackName(pack.getPackName());
+        String packName = pack.getPackName();
+        holder.pack_name_textView.setText(packName);
+        if (!cardList.isEmpty()) {
+            holder.pack_item_start_quiz_button.setClickable(true);
+            holder.pack_item_start_quiz_button.setImageResource(R.drawable.ic_play_arrow_green_48dp);
+        }
 
 
     }
@@ -130,24 +130,24 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     private  Filter myFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-          List<Pack> filteredList = new ArrayList<>();
+            List<Pack> filteredList = new ArrayList<>();
 
-          if (constraint == null || constraint.length() == 0) {
+            if (constraint == null || constraint.length() == 0) {
                 filteredList.addAll(packFullList);
-          }
-          else {
-              String filterPattern = constraint.toString().toLowerCase().trim();
+            }
+            else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
 
-              for (Pack item : packFullList) {
-                  if(item.getPackName().toLowerCase().contains(filterPattern)) {
-                      filteredList.add(item);
-                  }
-              }
-          }
-          FilterResults results = new FilterResults();
-          results.values = filteredList;
+                for (Pack item : packFullList) {
+                    if(item.getPackName().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
 
-          return results;
+            return results;
         }
 
         @Override
@@ -158,3 +158,4 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
         }
     };
 }
+

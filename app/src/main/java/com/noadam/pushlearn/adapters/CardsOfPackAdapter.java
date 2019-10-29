@@ -81,12 +81,12 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
                     holder.notification_imageView.setColorFilter(ContextCompat.getColor(context, R.color.orange));
                     break;
                 case (1):
-                    holder.iterating_times_textView.setTextColor(ContextCompat.getColor(context, R.color.tomato));
-                    holder.notification_imageView.setColorFilter(ContextCompat.getColor(context, R.color.tomato));
-                    break;
-                case (0):
                     holder.iterating_times_textView.setTextColor(ContextCompat.getColor(context, R.color.red));
                     holder.notification_imageView.setColorFilter(ContextCompat.getColor(context, R.color.red));
+                    break;
+                case (0):
+                    holder.iterating_times_textView.setTextColor(ContextCompat.getColor(context, R.color.black));
+                    holder.notification_imageView.setColorFilter(ContextCompat.getColor(context, R.color.black));
                     break;
             }
         }

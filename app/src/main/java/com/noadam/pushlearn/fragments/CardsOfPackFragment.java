@@ -52,6 +52,13 @@ public class CardsOfPackFragment extends Fragment {
     private Toolbar toolbar;
     private TextView textViewNoCards;
     private Card cardLongClicked;
+    private ArrayList<String> selectedCards = new ArrayList<>();
+    private String mode;
+    private View longPressedView;
+    private MenuItem shareSelectedItemsMenuItem;
+    private MenuItem deleteSelectedItemsMenuItem;
+    private MenuItem createCardMenuItem;
+    private MenuItem searchCardMenuItem;
     final int MENU_SELECT = 1;
     final int MENU_SHARE = 2;
     final int MENU_EDIT = 3;

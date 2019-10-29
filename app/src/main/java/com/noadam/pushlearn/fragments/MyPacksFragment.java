@@ -66,41 +66,41 @@ public class MyPacksFragment extends Fragment{
             textViewNoPacks.setText(R.string.no_packs);
             textViewNoPacks.setVisibility(View.VISIBLE);
         }
-            LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-            packListRecyclerView.setLayoutManager(layoutManager);
-            packListAdapter = new PackListAdapter(new PackListAdapter.OnRecyclerViewItemClickListener() {
-                @Override
-                public void onClick(String packName, View v) {
-                    if (mode == "selection") {
-                        if (!selectedPacks.contains(packName)) {
-                            // view selected
-                            selectedPacks.add(packName);
-                            v.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
-                        } else {
-                            // view reselected
-                            selectedPacks.remove(packName);
-                            v.setBackgroundColor(ContextCompat.getColor(context, R.color.white_gray));
-                        }
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        packListRecyclerView.setLayoutManager(layoutManager);
+        packListAdapter = new PackListAdapter(new PackListAdapter.OnRecyclerViewItemClickListener() {
+            @Override
+            public void onClick(String packName, View v) {
+                if (mode == "selection") {
+                    if (!selectedPacks.contains(packName)) {
+                        // view selected
+                        selectedPacks.add(packName);
+                        v.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
+                    } else {
+                        // view reselected
+                        selectedPacks.remove(packName);
+                        v.setBackgroundColor(ContextCompat.getColor(context, R.color.white_gray));
+                    }
 
-                        // we do not notify that an item has been selected
-                        // because that work is done here.  we instead send
-                        // notifications for items to be deselected
-                    }
-                    else {
-                        onRecyclerViewItemClick(packName);
-                    }
+                    // we do not notify that an item has been selected
+                    // because that work is done here.  we instead send
+                    // notifications for items to be deselected
                 }
-            }, new PackListAdapter.OnRecyclerViewItemLongClickListener() {
-                @Override
-                public void onLongClick(String packName, View v) {
-                    packLongClicked = packName;
-                    longPressedView = v;
+                else {
+                    onRecyclerViewItemClick(packName);
                 }
-            });
-            packListAdapter.setPackList(packList);
-            packListRecyclerView.setAdapter(packListAdapter);
-            packListRecyclerView.getAdapter().notifyDataSetChanged();
-        }
+            }
+        }, new PackListAdapter.OnRecyclerViewItemLongClickListener() {
+            @Override
+            public void onLongClick(String packName, View v) {
+                packLongClicked = packName;
+                longPressedView = v;
+            }
+        });
+        packListAdapter.setPackList(packList);
+        packListRecyclerView.setAdapter(packListAdapter);
+        packListRecyclerView.getAdapter().notifyDataSetChanged();
+    }
 
 
 
@@ -117,10 +117,7 @@ public class MyPacksFragment extends Fragment{
             case MENU_SELECT:
                 selectedPacks.add(packLongClicked);
                 mode = "selection";
-                createPackMenuItem.setVisible(false);
-                searchPackMenuItem.setVisible(false);
-                shareSelectedItemsMenuItem.setVisible(true);
-                deleteSelectedItemsMenuItem.setVisible(true);
+                refactorToolBarForSelection(true);
                 longPressedView.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
                 break;
             case MENU_SHARE: // TODO SHARING PACKS
@@ -139,7 +136,7 @@ public class MyPacksFragment extends Fragment{
                 break;
         }
         return super.onContextItemSelected(item);
-        }
+    }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -175,35 +172,41 @@ public class MyPacksFragment extends Fragment{
                 dialogFrag.show(getFragmentManager().beginTransaction(), "");
                 return true;
             case R.id.menu_activity_pack_search:
-               SearchView searchView = (SearchView)item.getActionView();
-               searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                 @Override
-                 public boolean onQueryTextSubmit(String s) {
-                     return false;
-                 }
-
-                 @Override
-                 public boolean onQueryTextChange(String s) {
-                     packListAdapter.getFilter().filter(s);
-                     return false;
-                 }});
-            case R.id.menu_activity_selected_pack_delete:
-                    for (String packName : selectedPacks) {
-                        dbHelper.deletePackByPackName(packName);
+                SearchView searchView = (SearchView)item.getActionView();
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String s) {
+                        return false;
                     }
-                    mode = "";
-                fillRecyclerView();
-            case R.id.menu_activity_selected_pack_share: // TODO SHARING LIST OF PACKS
 
-            default:
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        packListAdapter.getFilter().filter(s);
+                        return false;
+                    }});
                 return true;
+            case R.id.menu_activity_selected_pack_delete:
+                for (String packName : selectedPacks) {
+                    dbHelper.deletePackByPackName(packName);
+                }
+                mode = "";
+                refactorToolBarForSelection(false);
+                fillRecyclerView();
+                return true;
+            case R.id.menu_activity_selected_pack_share: // TODO SHARING LIST OF PACKS
+                mode = "";
+                refactorToolBarForSelection(false);
+                fillRecyclerView();
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
-    private void refactorToolBarForSelection(){
-
-        shareSelectedItemsMenuItem.setVisible(true);
-        deleteSelectedItemsMenuItem.setVisible(true);
+    private void refactorToolBarForSelection(boolean mode){
+        createPackMenuItem.setVisible(!mode);
+        searchPackMenuItem.setVisible(!mode);
+        shareSelectedItemsMenuItem.setVisible(mode);
+        deleteSelectedItemsMenuItem.setVisible(mode);
     }
 
     private void onRecyclerViewItemClick(String packName) {
