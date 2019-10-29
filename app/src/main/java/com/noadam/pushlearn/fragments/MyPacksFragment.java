@@ -81,7 +81,10 @@ public class MyPacksFragment extends Fragment{
                         selectedPacks.remove(packName);
                         v.setBackgroundColor(ContextCompat.getColor(context, R.color.white_gray));
                     }
-
+                    if(selectedPacks.isEmpty()) {
+                    mode = "";
+                    refactorToolBarForSelection(false);
+                    }
                     // we do not notify that an item has been selected
                     // because that work is done here.  we instead send
                     // notifications for items to be deselected
@@ -154,24 +157,23 @@ public class MyPacksFragment extends Fragment{
     @Override
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.toolbar_my_packs, menu);
-        createPackMenuItem = menu.findItem(R.id.menu_activity_pack_create_item);
-        searchPackMenuItem = menu.findItem(R.id.menu_activity_pack_search);
-        shareSelectedItemsMenuItem = menu.findItem(R.id.menu_activity_selected_pack_share);
-        deleteSelectedItemsMenuItem = menu.findItem(R.id.menu_activity_selected_pack_delete);
-        shareSelectedItemsMenuItem.setVisible(false);
-        deleteSelectedItemsMenuItem.setVisible(false);
+        inflater.inflate(R.menu.toolbar_for_recycler_view, menu);
+        createPackMenuItem = menu.findItem(R.id.menu_activity_create_item);
+        searchPackMenuItem = menu.findItem(R.id.menu_activity_search);
+        shareSelectedItemsMenuItem = menu.findItem(R.id.menu_activity_selected_items_share);
+        deleteSelectedItemsMenuItem = menu.findItem(R.id.menu_activity_selected_items_delete);
+        refactorToolBarForSelection(false);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_activity_pack_create_item:
+            case R.id.menu_activity_create_item:
                 CreatePackDialogFragment dialogFrag = CreatePackDialogFragment.newInstance("");
                 dialogFrag.setTargetFragment(this, 1);
                 dialogFrag.show(getFragmentManager().beginTransaction(), "");
                 return true;
-            case R.id.menu_activity_pack_search:
+            case R.id.menu_activity_search:
                 SearchView searchView = (SearchView)item.getActionView();
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
@@ -185,17 +187,19 @@ public class MyPacksFragment extends Fragment{
                         return false;
                     }});
                 return true;
-            case R.id.menu_activity_selected_pack_delete:
+            case R.id.menu_activity_selected_items_delete:
                 for (String packName : selectedPacks) {
                     dbHelper.deletePackByPackName(packName);
                 }
                 mode = "";
                 refactorToolBarForSelection(false);
                 fillRecyclerView();
+                selectedPacks.clear();
                 return true;
-            case R.id.menu_activity_selected_pack_share: // TODO SHARING LIST OF PACKS
+            case R.id.menu_activity_selected_items_share: // TODO SHARING LIST OF PACKS
                 mode = "";
                 refactorToolBarForSelection(false);
+                selectedPacks.clear();
                 fillRecyclerView();
             default:
                 return super.onOptionsItemSelected(item);

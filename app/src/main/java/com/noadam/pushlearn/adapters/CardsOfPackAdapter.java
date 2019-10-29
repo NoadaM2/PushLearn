@@ -29,11 +29,11 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
     private CardsOfPackAdapter.OnRecyclerViewItemLongClickListener mLongClickListener;
 
     public interface OnRecyclerViewItemClickListener {
-        void onClick();
+        void onClick(Card card, View v);
     }
 
     public interface OnRecyclerViewItemLongClickListener {
-        void onLongClick(Card card);
+        void onLongClick(Card card, View v);
     }
 
     public CardsOfPackAdapter(CardsOfPackAdapter.OnRecyclerViewItemClickListener clickListener, CardsOfPackAdapter.OnRecyclerViewItemLongClickListener onLongClickListner) {
@@ -117,9 +117,9 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    Card card = cardList.get(getAdapterPosition());
                     if (mClickListener != null) {
-                        mClickListener.onClick();
+                        mClickListener.onClick(card, v);
                     }
                 }
             });
@@ -129,7 +129,7 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
                     Card card = cardList.get(getAdapterPosition());
                    // String packName = card.getPackName();
                     if (mLongClickListener != null) {
-                        mLongClickListener.onLongClick(card);
+                        mLongClickListener.onLongClick(card, v);
                     }
                     return false;
                 }

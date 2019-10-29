@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,17 +24,13 @@ import android.widget.Toast;
 
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.CardsOfPackAdapter;
-import com.noadam.pushlearn.adapters.PackListAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
-import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.fragments.dialog.CreateCardDialogFragment;
-import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 
 public class CardsOfPackFragment extends Fragment {
@@ -52,7 +49,7 @@ public class CardsOfPackFragment extends Fragment {
     private Toolbar toolbar;
     private TextView textViewNoCards;
     private Card cardLongClicked;
-    private ArrayList<String> selectedCards = new ArrayList<>();
+    private ArrayList<Card> selectedCards = new ArrayList<>();
     private String mode;
     private View longPressedView;
     private MenuItem shareSelectedItemsMenuItem;
@@ -86,13 +83,31 @@ public class CardsOfPackFragment extends Fragment {
             recyclerView.setLayoutManager(layoutManager);
             cardListAdapter = new CardsOfPackAdapter(new CardsOfPackAdapter.OnRecyclerViewItemClickListener() {
                 @Override
-                public void onClick() {
-                    //onRecyclerViewItemClick(packName, cardList);
+                public void onClick(Card card, View v) {
+                    if (mode == "selection") {
+                        if (!selectedCards.contains(card)) {
+                            // view selected
+                            selectedCards.add(card);
+                            v.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
+                        } else {
+                            // view reselected
+                            selectedCards.remove(card);
+                            v.setBackgroundColor(ContextCompat.getColor(context, R.color.white_gray));
+                        }
+                        if(selectedCards.isEmpty()) {
+                            mode = "";
+                            refactorToolBarForSelection(false);
+                        }
+                    }
+                    else {
+                        openCardEditDialog(card);
+                    }
                 }
             }, new CardsOfPackAdapter.OnRecyclerViewItemLongClickListener() {
                 @Override
-                public void onLongClick(Card card) {
+                public void onLongClick(Card card, View v) {
                     cardLongClicked = card;
+                    longPressedView = v;
                 }
             });
             sortCardList();
@@ -113,15 +128,16 @@ public class CardsOfPackFragment extends Fragment {
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case MENU_SELECT:
-
+                selectedCards.add(cardLongClicked);
+                mode = "selection";
+                refactorToolBarForSelection(true);
+                longPressedView.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
                 break;
             case MENU_SHARE:
 
                 break;
             case MENU_EDIT:
-                CreateCardDialogFragment dialogFrag = CreateCardDialogFragment.newInstance(cardLongClicked);
-                dialogFrag.setTargetFragment(this, 2);
-                dialogFrag.show(getFragmentManager().beginTransaction(), "");
+                openCardEditDialog(cardLongClicked);
                 break;
             case MENU_DELETE:
                 if (cardLongClicked != null) {
@@ -153,19 +169,31 @@ public class CardsOfPackFragment extends Fragment {
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.toolbar_cards_of_pack, menu);
+        inflater.inflate(R.menu.toolbar_for_recycler_view, menu);
+        createCardMenuItem = menu.findItem(R.id.menu_activity_create_item);
+        searchCardMenuItem = menu.findItem(R.id.menu_activity_search);
+        shareSelectedItemsMenuItem = menu.findItem(R.id.menu_activity_selected_items_share);
+        deleteSelectedItemsMenuItem = menu.findItem(R.id.menu_activity_selected_items_delete);
+        refactorToolBarForSelection(false);
         super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    private void refactorToolBarForSelection(boolean mode){
+        createCardMenuItem.setVisible(!mode);
+        searchCardMenuItem.setVisible(!mode);
+        shareSelectedItemsMenuItem.setVisible(mode);
+        deleteSelectedItemsMenuItem.setVisible(mode);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_activity_pack_create_item:
+            case R.id.menu_activity_create_item:
                 CreateCardDialogFragment dialogFrag = CreateCardDialogFragment.newInstance(new Card(packName,"","",5));
                 dialogFrag.setTargetFragment(this, 1);
                 dialogFrag.show(getFragmentManager().beginTransaction(), "packName");
 
                 return true;
-            case R.id.menu_activity_pack_search:
+            case R.id.menu_activity_search:
                 SearchView searchView = (SearchView)item.getActionView();
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                       @Override
@@ -180,9 +208,31 @@ public class CardsOfPackFragment extends Fragment {
                       }
                 }
                 );
-            default:
+
+            case R.id.menu_activity_selected_items_delete:
+                for (Card card : selectedCards) {
+                    dbHelper.deleteCardById(card.get_id());
+                }
+                mode = "";
+                refactorToolBarForSelection(false);
+                selectedCards.clear();
+                fillRecyclerView();
                 return true;
+
+            case R.id.menu_activity_selected_items_share: // TODO SHARING LIST OF CARDS
+                mode = "";
+                refactorToolBarForSelection(false);
+                selectedCards.clear();
+                fillRecyclerView();
+            default:
+                return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void openCardEditDialog(Card card) {
+        CreateCardDialogFragment dialogFrag = CreateCardDialogFragment.newInstance(card);
+        dialogFrag.setTargetFragment(this, 2);
+        dialogFrag.show(getFragmentManager().beginTransaction(), "");
     }
 
     @Override
@@ -193,9 +243,19 @@ public class CardsOfPackFragment extends Fragment {
                     String question =  data.getStringExtra("question");
                     String answer =  data.getStringExtra("answer");
                    if (!dbHelper.doesCardExistByQuestionAndAnswer(question,answer)) {
-                       Card card = new Card(packName, question, answer, data.getIntExtra("iteratingTimes", 5));
-                       dbHelper.addNewCard(card);
-                       fillRecyclerView();
+                       if (question.trim().length() > 0) {                                                                                 // проверка на корректность
+                           if (answer.trim().length() > 0) {
+                                Card card = new Card(packName, question, answer, data.getIntExtra("iteratingTimes", 5));
+                                dbHelper.addNewCard(card);
+                                fillRecyclerView();
+                           } else {
+                               Toast.makeText(context, R.string.enter_correct_answer, Toast.LENGTH_SHORT).show();
+                           }
+
+                       }
+                       else {
+                           Toast.makeText(context, R.string.enter_correct_question, Toast.LENGTH_SHORT).show();
+                       }
                    }
                    else {
                        Toast.makeText(context, R.string.card_already_exists, Toast.LENGTH_SHORT).show();
