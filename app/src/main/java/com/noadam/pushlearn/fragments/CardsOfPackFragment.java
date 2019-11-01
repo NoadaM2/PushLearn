@@ -27,6 +27,7 @@ import com.noadam.pushlearn.adapters.CardsOfPackAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.fragments.dialog.CreateCardDialogFragment;
+import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,7 +77,7 @@ public class CardsOfPackFragment extends Fragment {
             textViewNoCards.setVisibility(View.GONE);
         }
         else {
-            textViewNoCards.setText(R.string.no_cards);
+            textViewNoCards.setText(R.string.no_cards_in_pack);
             textViewNoCards.setVisibility(View.VISIBLE);
         }
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -140,10 +141,9 @@ public class CardsOfPackFragment extends Fragment {
                 openCardEditDialog(cardLongClicked);
                 break;
             case MENU_DELETE:
-                if (cardLongClicked != null) {
-                    dbHelper.deleteCardById(cardLongClicked.get_id());
-                    fillRecyclerView();
-                }
+                DeleteConfirmationDialogFragment dialogFragDelete = new DeleteConfirmationDialogFragment();
+                dialogFragDelete.setTargetFragment(this, 41);
+                dialogFragDelete.show(getFragmentManager().beginTransaction(), "packName");
 
                 break;
         }
@@ -210,13 +210,9 @@ public class CardsOfPackFragment extends Fragment {
                 );
 
             case R.id.menu_activity_selected_items_delete:
-                for (Card card : selectedCards) {
-                    dbHelper.deleteCardById(card.get_id());
-                }
-                mode = "";
-                refactorToolBarForSelection(false);
-                selectedCards.clear();
-                fillRecyclerView();
+                DeleteConfirmationDialogFragment dialogFragDelete = new DeleteConfirmationDialogFragment();
+                dialogFragDelete.setTargetFragment(this, 42);
+                dialogFragDelete.show(getFragmentManager().beginTransaction(), "packName");
                 return true;
 
             case R.id.menu_activity_selected_items_share: // TODO SHARING LIST OF CARDS
@@ -282,6 +278,27 @@ public class CardsOfPackFragment extends Fragment {
                         Toast.makeText(context, R.string.enter_correct_question, Toast.LENGTH_SHORT).show();
                         }
                 } else if (resultCode == Activity.RESULT_CANCELED){                                                                     // After Cancel code.
+                }
+                break;
+            case 41:
+                if (resultCode == Activity.RESULT_OK) {
+                    if (cardLongClicked != null) {
+                        dbHelper.deleteCardById(cardLongClicked.get_id());
+                        fillRecyclerView();
+                    }
+                }
+
+                break;
+            case 42:
+                if (resultCode == Activity.RESULT_OK) {
+                    // After Ok code.
+                    for (Card card : selectedCards) {
+                        dbHelper.deleteCardById(card.get_id());
+                    }
+                    mode = "";
+                    refactorToolBarForSelection(false);
+                    selectedCards.clear();
+                    fillRecyclerView();
                 }
                 break;
         }

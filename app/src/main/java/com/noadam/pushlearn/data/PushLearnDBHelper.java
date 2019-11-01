@@ -153,6 +153,28 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         return cards;
     }
 
+    public ArrayList<Card> getNowLearningCardList(int moreThen) {
+        ArrayList<Card> cards = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(String.format("SELECT %s, %s, %s, %s, %s FROM %s WHERE %s > ?", CARD_COLUMN_ID, CARD_COLUMN_PACK_NAME, CARD_COLUMN_QUESTION, CARD_COLUMN_ANSWER, CARD_COLUMN_ITERATING_NUMBER, CARD_TABLE_NAME, CARD_COLUMN_ITERATING_NUMBER), new String[]{String.valueOf(moreThen)});
+        int _id;
+        String question, answer, packName;
+        int iterating_number;
+        if (cursor.moveToFirst()) {
+            do {
+                _id = Integer.parseInt(cursor.getString(cursor.getColumnIndex(CARD_COLUMN_ID)));
+                packName = cursor.getString(cursor.getColumnIndex(CARD_COLUMN_PACK_NAME));
+                question = cursor.getString(cursor.getColumnIndex(CARD_COLUMN_QUESTION));
+                answer = cursor.getString(cursor.getColumnIndex(CARD_COLUMN_ANSWER));
+                iterating_number = cursor.getInt(cursor.getColumnIndex(CARD_COLUMN_ITERATING_NUMBER));
+                cards.add(new Card(_id, packName, question, answer, iterating_number));
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        cursor.close();
+        return cards;
+    }
+
     public void addNewCard(Card card) {
         ContentValues cardValues = new ContentValues();
         cardValues.put(CARD_COLUMN_PACK_NAME, card.getPackName());

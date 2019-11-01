@@ -25,8 +25,10 @@ import android.widget.Toast;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.PackListAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
+import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
+import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,10 +134,9 @@ public class MyPacksFragment extends Fragment{
                 dialogFrag.show(getFragmentManager().beginTransaction(), "");
                 break;
             case MENU_DELETE:
-                if (packLongClicked != ""){
-                    dbHelper.deletePackByPackName(packLongClicked);
-                }
-                fillRecyclerView();
+                DeleteConfirmationDialogFragment dialogFragDelete = new DeleteConfirmationDialogFragment();
+                dialogFragDelete.setTargetFragment(this, 51);
+                dialogFragDelete.show(getFragmentManager().beginTransaction(), "packName");
                 break;
         }
         return super.onContextItemSelected(item);
@@ -188,13 +189,9 @@ public class MyPacksFragment extends Fragment{
                     }});
                 return true;
             case R.id.menu_activity_selected_items_delete:
-                for (String packName : selectedPacks) {
-                    dbHelper.deletePackByPackName(packName);
-                }
-                mode = "";
-                refactorToolBarForSelection(false);
-                fillRecyclerView();
-                selectedPacks.clear();
+                DeleteConfirmationDialogFragment dialogFragDelete = new DeleteConfirmationDialogFragment();
+                dialogFragDelete.setTargetFragment(this, 52);
+                dialogFragDelete.show(getFragmentManager().beginTransaction(), "packName");
                 return true;
             case R.id.menu_activity_selected_items_share: // TODO SHARING LIST OF PACKS
                 mode = "";
@@ -221,6 +218,8 @@ public class MyPacksFragment extends Fragment{
                 .addToBackStack(null)
                 .commit();
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) { // добавление пакета
@@ -268,6 +267,27 @@ public class MyPacksFragment extends Fragment{
                 } else if (resultCode == Activity.RESULT_CANCELED){
                     // After Cancel code.
 
+                }
+                break;
+            case 51:
+                if (resultCode == Activity.RESULT_OK) {
+                    // After Ok code.
+                    if (packLongClicked != "") {
+                        dbHelper.deletePackByPackName(packLongClicked);
+                    }
+                    fillRecyclerView();
+                }
+                break;
+            case 52:
+                if (resultCode == Activity.RESULT_OK) {
+                    // After Ok code.
+                    for (String packName : selectedPacks) {
+                        dbHelper.deletePackByPackName(packName);
+                    }
+                    mode = "";
+                    refactorToolBarForSelection(false);
+                    fillRecyclerView();
+                    selectedPacks.clear();
                 }
                 break;
         }

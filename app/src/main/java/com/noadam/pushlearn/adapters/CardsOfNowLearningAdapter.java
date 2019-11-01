@@ -18,14 +18,14 @@ import com.noadam.pushlearn.entities.Card;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.ViewHolder> implements Filterable {
+public class CardsOfNowLearningAdapter extends RecyclerView.Adapter<CardsOfNowLearningAdapter.ViewHolder> implements Filterable {
 
     private Context context;
     private List<Card> cardList;
     private List<Card> cardFullList;
     private int layoutIDforListItem;
-    private CardsOfPackAdapter.OnRecyclerViewItemClickListener mClickListener;
-    private CardsOfPackAdapter.OnRecyclerViewItemLongClickListener mLongClickListener;
+    private CardsOfNowLearningAdapter.OnRecyclerViewItemClickListener mClickListener;
+    private CardsOfNowLearningAdapter.OnRecyclerViewItemLongClickListener mLongClickListener;
 
     public interface OnRecyclerViewItemClickListener {
         void onClick(Card card, View v);
@@ -35,28 +35,30 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
         void onLongClick(Card card, View v);
     }
 
-    public CardsOfPackAdapter(CardsOfPackAdapter.OnRecyclerViewItemClickListener clickListener, CardsOfPackAdapter.OnRecyclerViewItemLongClickListener onLongClickListner) {
+    public CardsOfNowLearningAdapter(CardsOfNowLearningAdapter.OnRecyclerViewItemClickListener clickListener, CardsOfNowLearningAdapter.OnRecyclerViewItemLongClickListener onLongClickListner) {
         mClickListener = clickListener;
         mLongClickListener = onLongClickListner;
-        layoutIDforListItem = R.layout.card_of_pack_item;
+        layoutIDforListItem = R.layout.card_of_now_learning_item;
     }
 
     @NonNull
     @Override
-    public CardsOfPackAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+    public CardsOfNowLearningAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View view = inflater.inflate(layoutIDforListItem, parent, false);
 
-        CardsOfPackAdapter.ViewHolder packHolder = new CardsOfPackAdapter.ViewHolder(view);
+        CardsOfNowLearningAdapter.ViewHolder packHolder = new CardsOfNowLearningAdapter.ViewHolder(view);
 
         return packHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CardsOfPackAdapter.ViewHolder holder, int i) {
+    public void onBindViewHolder(@NonNull CardsOfNowLearningAdapter.ViewHolder holder, int i) {
         Card card = cardList.get(i);
+        String packIs = context.getString(R.string.pack_is)+" "+ card.getPackName();
+        holder.packName_textView.setText(packIs);
         holder.question_textView.setText(card.getQuestion());
         holder.answer_textView.setText(card.getAnswer());
         int iteratingTimes = card.getIteratingTimes();
@@ -101,7 +103,7 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-
+        TextView packName_textView;
         TextView question_textView;
         TextView answer_textView;
         TextView iterating_times_textView;
@@ -109,6 +111,7 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
 
         public ViewHolder(View itemView) {
             super(itemView);
+            packName_textView = itemView.findViewById(R.id.pack_name_text_view);
             question_textView = itemView.findViewById(R.id.question_text_view);
             answer_textView = itemView.findViewById(R.id.answer_text_view);
             iterating_times_textView = itemView.findViewById(R.id.iterating_times_text_view);
