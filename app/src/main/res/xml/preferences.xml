@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Category"
+        android:key="pref_key_storage_settings">
+        <com.test.TimePreference
+            android:key="some_time"
+            android:title="Set some time"
+            android:defaultValue="12:00"
+            android:summary="Set some time"/>
+    </PreferenceCategory>
+</PreferenceScreen>

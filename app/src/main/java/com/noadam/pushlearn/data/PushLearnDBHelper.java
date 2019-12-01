@@ -45,7 +45,8 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         if (i < 1) {
             sqLiteDatabase.execSQL(createPackTableCommand);
-            sqLiteDatabase.execSQL(createCardTableCommand); }
+            sqLiteDatabase.execSQL(createCardTableCommand);
+        }
 
     }
 
@@ -191,14 +192,6 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void changeCardWithId(Card card) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues forUpdate = new ContentValues();
-        forUpdate.put(CARD_COLUMN_QUESTION, card.getQuestion());
-        forUpdate.put(CARD_COLUMN_ANSWER, card.getAnswer());
-        db.update(CARD_TABLE_NAME, forUpdate, CARD_COLUMN_ID+" = ?", new String[]{Integer.toString(card.get_id())});
-        db.close();
-    }
 
 
 

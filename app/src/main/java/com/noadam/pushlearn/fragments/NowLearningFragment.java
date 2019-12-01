@@ -1,11 +1,14 @@
 package com.noadam.pushlearn.fragments;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,29 +25,29 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.CardsOfNowLearningAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.fragments.dialog.CreateCardDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
+import com.noadam.pushlearn.push.MyReceiver;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 
 public class NowLearningFragment extends Fragment {
-    public void setPackName(String packName)
-    {
-        this.packName = packName;
-    }
 
     private Context context;
+    private SharedPreferences sharedPrefs;
     private PushLearnDBHelper dbHelper;
     private RecyclerView recyclerView;
     private CardsOfNowLearningAdapter cardListAdapter;
-    private String packName;
     private ArrayList<Card> cardList;
     private Toolbar toolbar;
     private TextView textViewNoCards;
@@ -82,7 +85,7 @@ public class NowLearningFragment extends Fragment {
             textViewNoCards.setVisibility(View.GONE);
         }
         else {
-            textViewNoCards.setText(R.string.no_cards_in_pack);
+            textViewNoCards.setText(R.string.no_learning_card);
             textViewNoCards.setVisibility(View.VISIBLE);
         }
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -120,6 +123,9 @@ public class NowLearningFragment extends Fragment {
         cardListAdapter.setCardList(cardList, context);
         recyclerView.setAdapter(cardListAdapter);
         recyclerView.getAdapter().notifyDataSetChanged();
+
+
+
     }
 
 
@@ -158,6 +164,7 @@ public class NowLearningFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+        sharedPrefs = this.getActivity().getSharedPreferences("app_settings", Context.MODE_PRIVATE);
         context = container.getContext();
         dbHelper = new PushLearnDBHelper(context);
         View view = inflater.inflate(R.layout.frag_my_packs, null);
@@ -191,12 +198,6 @@ public class NowLearningFragment extends Fragment {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_activity_create_item:
-                CreateCardDialogFragment dialogFrag = CreateCardDialogFragment.newInstance(new Card(packName,"","",5));
-                dialogFrag.setTargetFragment(this, 41);
-                dialogFrag.show(getFragmentManager().beginTransaction(), "packName");
-
-                return true;
             case R.id.menu_activity_search:
                 SearchView searchView = (SearchView)item.getActionView();
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
