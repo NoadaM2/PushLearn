@@ -28,6 +28,7 @@ public class NotifyClickReceiver extends BroadcastReceiver {
        int cardID = intent.getIntExtra("card_id", -5);
 
        if (action.equals("onDelete")) {
+
            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
            int shownCards = prefs.getInt("ShownCards",0);
            SharedPreferences.Editor editor = prefs.edit();
@@ -60,12 +61,14 @@ public class NotifyClickReceiver extends BroadcastReceiver {
 
                    Intent onDeleteIntent = new Intent(context, NotifyClickReceiver.class);
                    onDeleteIntent.putExtra("action", "onDelete");
+                   onDeleteIntent.putExtra("card_id", cardID);
                    PendingIntent onDeletePendingIntent =
                            PendingIntent.getBroadcast(context, a + (int) (Math.random() * b), onDeleteIntent, 0);
                    builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                            .setSmallIcon(R.drawable.ic_main)
                            .setContentTitle(card.getQuestion())
                            .setContentText(card.getAnswer())
+                           .setStyle(new NotificationCompat.BigTextStyle())
                            .setPriority(NotificationCompat.PRIORITY_HIGH)
                            .setOnlyAlertOnce(true)
                            .addAction(R.drawable.icon_verified, context.getResources().getString(R.string.i_know), iKnowAnswerPendingIntent)
