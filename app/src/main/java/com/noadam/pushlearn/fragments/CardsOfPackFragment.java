@@ -158,7 +158,7 @@ public class CardsOfPackFragment extends Fragment {
         dbHelper = new PushLearnDBHelper(context);
         View view = inflater.inflate(R.layout.frag_my_packs, null);
 
-        toolbar = view.findViewById(R.id.mypacks_toolbar);
+        toolbar = view.findViewById(R.id.my_packs_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
         recyclerView = view.findViewById(R.id.pack_list_recyclerview);
@@ -208,7 +208,7 @@ public class CardsOfPackFragment extends Fragment {
                       }
                 }
                 );
-
+                break;
             case R.id.menu_activity_selected_items_delete:
                 DeleteConfirmationDialogFragment dialogFragDelete = new DeleteConfirmationDialogFragment();
                 dialogFragDelete.setTargetFragment(this, 42);
@@ -223,6 +223,7 @@ public class CardsOfPackFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void openCardEditDialog(Card card) {

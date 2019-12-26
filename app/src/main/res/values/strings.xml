@@ -13,7 +13,7 @@
     <string name="search">Search</string>
     <string name="sort">Sort</string>
     <string name="no_cards_in_pack">Create the first card in \'My packs\'</string>
-    <string name="no_packs">There isn no pack \n Please create the first one</string>
+    <string name="no_packs">There is no pack \n Please create the first one</string>
     <string name="no_cards">There is no card in the pack \n Please create the first one</string>
     <string name="question">Question</string>
     <string name="enter_question">Enter the question</string>
@@ -46,5 +46,13 @@
     <string name="honest_is_achievement">Being honest with yourself is already a great achievement</string>
     <string name="no_learning_card">No card is learning now, create a new one or edit yours</string>
     <string name="close">Close</string>
+    <string name="how_often_to_send_notifies">How often to send notifications</string>
+    <string name="frag_settings_presentation">Here you can set the following settings: \n 1)How many notifications you want to see in your notification bar \n 2)The period between notifications \n 3) Your community profile settings</string>
+    <string name="coming_soon">Coming soon...</string>
+    <string name="language">Language</string>
+    <string name="change_language">Change language</string>
+    <string name="my_profile">My profile</string>
+    <string name="how_many_notifies_u_want_to_see">How many notifications you want to see in your notification bar at the same time?</string>
+    <string name="pref_time_period_between_notifies">Time period between notifications</string>
 
 </resources>

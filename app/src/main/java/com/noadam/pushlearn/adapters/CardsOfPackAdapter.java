@@ -117,6 +117,7 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
                 @Override
                 public void onClick(View v) {
                     Card card = cardList.get(getAdapterPosition());
+                    card.setIteratingTimes(Math.abs(card.getIteratingTimes()));
                     if (mClickListener != null) {
                         mClickListener.onClick(card, v);
                     }
@@ -126,7 +127,7 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
                 @Override
                 public boolean onLongClick(View v) {
                     Card card = cardList.get(getAdapterPosition());
-                   // String packName = card.getPackName();
+                    card.setIteratingTimes(Math.abs(card.getIteratingTimes()));
                     if (mLongClickListener != null) {
                         mLongClickListener.onLongClick(card, v);
                     }

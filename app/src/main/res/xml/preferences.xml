@@ -3,10 +3,13 @@
     <PreferenceCategory
         android:title="Category"
         android:key="pref_key_storage_settings">
-        <com.test.TimePreference
-            android:key="some_time"
-            android:title="Set some time"
-            android:defaultValue="12:00"
-            android:summary="Set some time"/>
+        <Preference
+            android:key="pref_number_of_notifies_in_bar"
+            android:summary="summary"
+            android:title="@string/how_many_notifies_u_want_to_see" />
+        <Preference
+            android:key="pref_time_period_between_notifies"
+            android:summary="summary"
+            android:title="@string/pref_time_period_between_notifies"/>
     </PreferenceCategory>
 </PreferenceScreen>

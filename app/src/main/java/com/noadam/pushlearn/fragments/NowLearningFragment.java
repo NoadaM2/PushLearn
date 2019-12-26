@@ -1,8 +1,6 @@
 package com.noadam.pushlearn.fragments;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,20 +23,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.CardsOfNowLearningAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.fragments.dialog.CreateCardDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
-import com.noadam.pushlearn.push.MyReceiver;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.Queue;
 
 
 public class NowLearningFragment extends Fragment {
@@ -169,7 +163,7 @@ public class NowLearningFragment extends Fragment {
         dbHelper = new PushLearnDBHelper(context);
         View view = inflater.inflate(R.layout.frag_my_packs, null);
 
-        toolbar = view.findViewById(R.id.mypacks_toolbar);
+        toolbar = view.findViewById(R.id.my_packs_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
         recyclerView = view.findViewById(R.id.pack_list_recyclerview);
@@ -213,7 +207,7 @@ public class NowLearningFragment extends Fragment {
                                                       }
                                                   }
                 );
-
+            break;
             case R.id.menu_activity_selected_items_delete:
                 DeleteConfirmationDialogFragment dialogFragDelete = new DeleteConfirmationDialogFragment();
                 dialogFragDelete.setTargetFragment(this, 42);
@@ -225,9 +219,11 @@ public class NowLearningFragment extends Fragment {
                 refactorToolBarForSelection(false);
                 selectedCards.clear();
                 fillRecyclerView();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void openCardEditDialog(Card card) {
