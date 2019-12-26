@@ -39,7 +39,6 @@ public class MyPacksFragment extends Fragment{
     private PackListAdapter packListAdapter;
     private PushLearnDBHelper dbHelper;
     private Toolbar toolbar;
-    private Toolbar selectionToolbar;
     private Context context;
     private TextView textViewNoPacks;
     private List<Pack> packList;
@@ -146,7 +145,7 @@ public class MyPacksFragment extends Fragment{
         context = container.getContext();
         dbHelper = new PushLearnDBHelper(context);
         View view = inflater.inflate(R.layout.frag_my_packs, null);
-        toolbar = view.findViewById(R.id.mypacks_toolbar);
+        toolbar = view.findViewById(R.id.my_packs_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         textViewNoPacks = view.findViewById(R.id.no_items_textview);
         packListRecyclerView = view.findViewById(R.id.pack_list_recyclerview);

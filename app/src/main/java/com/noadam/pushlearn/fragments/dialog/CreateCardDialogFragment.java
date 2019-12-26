@@ -28,7 +28,6 @@ public class CreateCardDialogFragment extends DialogFragment {
         bundle.putInt("iteratingTimes", card.getIteratingTimes());
         dialogFragment.setArguments(bundle);
         return dialogFragment;
-
     }
 
     @Override
@@ -39,8 +38,8 @@ public class CreateCardDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_create_card, null);
         TextView QuestionEditText = view.findViewById(R.id.dialog_card_question_edit_text);
         TextView AnswerEditText = view.findViewById(R.id.dialog_card_answer_edit_text);
-        SeekBar horizontalCounter = view.findViewById(R.id.dialog_card_iterating_times_horizontal_counter);;
-        int iteratingTimes = 5;
+        SeekBar horizontalCounter = view.findViewById(R.id.dialog_card_iterating_times_horizontal_counter);
+        int iteratingTimes = 3;
         Bundle bundle = getArguments();
         if (bundle != null) {
             id = bundle.getInt("id");

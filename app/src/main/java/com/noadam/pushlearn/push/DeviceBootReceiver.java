@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import java.util.Calendar;
 
@@ -23,9 +25,14 @@ public class DeviceBootReceiver extends BroadcastReceiver {
             calendar.set(Calendar.HOUR_OF_DAY, 7);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 1);
-
+            //--------------------------------------------------------------------------------------
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putInt("ShownCards", 0);
+            editor.apply();
+            //--------------------------------------------------------------------------------------
             manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), // TODO Interval here
-                    AlarmManager.INTERVAL_DAY, pendingIntent);
+                    1000 * 60, pendingIntent);
         }
     }
 }

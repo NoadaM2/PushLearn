@@ -20,14 +20,11 @@ public class CreatePackDialogFragment extends DialogFragment {
 
 
     public static CreatePackDialogFragment newInstance(String packName){
-
         CreatePackDialogFragment dialogFragment = new CreatePackDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putString("packName", packName);
         dialogFragment.setArguments(bundle);
-
         return dialogFragment;
-
     }
 
     @Override

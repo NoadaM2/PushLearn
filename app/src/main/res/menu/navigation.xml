@@ -17,8 +17,8 @@
         android:title="@string/title_CommunityPacks" />
 
     <item
-        android:id="@+id/navigation_settings"
-        android:icon="@drawable/icon_settings"
-        android:title="@string/title_Settings" />
+        android:id="@+id/navigation_my_profile"
+        android:icon="@drawable/icon_my_profile"
+        android:title="@string/my_profile" />
 
 </menu>

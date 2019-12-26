@@ -18,7 +18,6 @@ public class DeleteConfirmationDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
         Integer action = getTargetRequestCode();
         String title = "";
         switch (action) {
@@ -40,8 +39,7 @@ public class DeleteConfirmationDialogFragment extends DialogFragment {
                     .setPositiveButton(R.string.ok,
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    Intent intent = getActivity().getIntent();
-                                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
                                 }
                             }
                     )
