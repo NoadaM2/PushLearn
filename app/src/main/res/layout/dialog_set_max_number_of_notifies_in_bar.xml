@@ -8,6 +8,7 @@
         android:id="@+id/dialog_number_of_notifies_in_bar_seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:progressTint="@color/colorPrimary"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="12sp"
         android:max="10"

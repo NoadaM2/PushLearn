@@ -53,7 +53,6 @@ public class CardsOfPackFragment extends Fragment {
     private ArrayList<Card> selectedCards = new ArrayList<>();
     private String mode;
     private View longPressedView;
-    private MenuItem shareSelectedItemsMenuItem;
     private MenuItem deleteSelectedItemsMenuItem;
     private MenuItem createCardMenuItem;
     private MenuItem searchCardMenuItem;
@@ -121,7 +120,6 @@ public class CardsOfPackFragment extends Fragment {
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.add(0, MENU_SELECT, 1, R.string.select);
-        menu.add(0, MENU_SHARE, 2, R.string.share);
         menu.add(0, MENU_EDIT, 3, R.string.edit);
         menu.add(0, MENU_DELETE, 4, R.string.delete);
     }
@@ -133,9 +131,6 @@ public class CardsOfPackFragment extends Fragment {
                 mode = "selection";
                 refactorToolBarForSelection(true);
                 longPressedView.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
-                break;
-            case MENU_SHARE:
-
                 break;
             case MENU_EDIT:
                 openCardEditDialog(cardLongClicked);
@@ -172,7 +167,6 @@ public class CardsOfPackFragment extends Fragment {
         inflater.inflate(R.menu.toolbar_for_recycler_view, menu);
         createCardMenuItem = menu.findItem(R.id.menu_activity_create_item);
         searchCardMenuItem = menu.findItem(R.id.menu_activity_search);
-        shareSelectedItemsMenuItem = menu.findItem(R.id.menu_activity_selected_items_share);
         deleteSelectedItemsMenuItem = menu.findItem(R.id.menu_activity_selected_items_delete);
         refactorToolBarForSelection(false);
         super.onCreateOptionsMenu(menu,inflater);
@@ -181,7 +175,6 @@ public class CardsOfPackFragment extends Fragment {
     private void refactorToolBarForSelection(boolean mode){
         createCardMenuItem.setVisible(!mode);
         searchCardMenuItem.setVisible(!mode);
-        shareSelectedItemsMenuItem.setVisible(mode);
         deleteSelectedItemsMenuItem.setVisible(mode);
     }
 
@@ -215,11 +208,6 @@ public class CardsOfPackFragment extends Fragment {
                 dialogFragDelete.show(getFragmentManager().beginTransaction(), "packName");
                 return true;
 
-            case R.id.menu_activity_selected_items_share: // TODO SHARING LIST OF CARDS
-                mode = "";
-                refactorToolBarForSelection(false);
-                selectedCards.clear();
-                fillRecyclerView();
             default:
                 return super.onOptionsItemSelected(item);
         }

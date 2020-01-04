@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.noadam.pushlearn.R;
+import com.noadam.pushlearn.activities.LearnPackActivity;
 import com.noadam.pushlearn.adapters.CardsOfNowLearningAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
@@ -46,10 +47,9 @@ public class NowLearningFragment extends Fragment {
     private Toolbar toolbar;
     private TextView textViewNoCards;
     private Card cardLongClicked;
-    private ArrayList<Card> selectedCards = new ArrayList<>();
     private String mode;
     private View longPressedView;
-    private MenuItem shareSelectedItemsMenuItem;
+    private MenuItem learnNowLearning;
     private MenuItem deleteSelectedItemsMenuItem;
     private MenuItem createCardMenuItem;
     private MenuItem searchCardMenuItem;
@@ -87,24 +87,7 @@ public class NowLearningFragment extends Fragment {
         cardListAdapter = new CardsOfNowLearningAdapter(new CardsOfNowLearningAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onClick(Card card, View v) {
-                if (mode == "selection") {
-                    if (!selectedCards.contains(card)) {
-                        // view selected
-                        selectedCards.add(card);
-                        v.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
-                    } else {
-                        // view reselected
-                        selectedCards.remove(card);
-                        v.setBackgroundColor(ContextCompat.getColor(context, R.color.white_gray));
-                    }
-                    if(selectedCards.isEmpty()) {
-                        mode = "";
-                        refactorToolBarForSelection(false);
-                    }
-                }
-                else {
                     openCardEditDialog(card);
-                }
             }
         }, new CardsOfNowLearningAdapter.OnRecyclerViewItemLongClickListener() {
             @Override
@@ -124,7 +107,7 @@ public class NowLearningFragment extends Fragment {
 
 
 
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+   /* public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.add(0, MENU_SELECT, 1, R.string.select);
         menu.add(0, MENU_SHARE, 2, R.string.share);
         menu.add(0, MENU_EDIT, 3, R.string.edit);
@@ -152,7 +135,7 @@ public class NowLearningFragment extends Fragment {
                 break;
         }
         return super.onContextItemSelected(item);
-    }
+    }*/
 
     @Nullable
     @Override
@@ -174,20 +157,10 @@ public class NowLearningFragment extends Fragment {
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.toolbar_for_recycler_view, menu);
-        createCardMenuItem = menu.findItem(R.id.menu_activity_create_item);
+        inflater.inflate(R.menu.toolbar_for_now_learning, menu);
         searchCardMenuItem = menu.findItem(R.id.menu_activity_search);
-        shareSelectedItemsMenuItem = menu.findItem(R.id.menu_activity_selected_items_share);
-        deleteSelectedItemsMenuItem = menu.findItem(R.id.menu_activity_selected_items_delete);
-        refactorToolBarForSelection(false);
+        learnNowLearning = menu.findItem(R.id.menu_toolbar_now_learning_learn);
         super.onCreateOptionsMenu(menu,inflater);
-    }
-
-    private void refactorToolBarForSelection(boolean mode){
-        createCardMenuItem.setVisible(false);
-        searchCardMenuItem.setVisible(!mode);
-        shareSelectedItemsMenuItem.setVisible(mode);
-        deleteSelectedItemsMenuItem.setVisible(mode);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -208,18 +181,15 @@ public class NowLearningFragment extends Fragment {
                                                   }
                 );
             break;
-            case R.id.menu_activity_selected_items_delete:
-                DeleteConfirmationDialogFragment dialogFragDelete = new DeleteConfirmationDialogFragment();
-                dialogFragDelete.setTargetFragment(this, 42);
-                dialogFragDelete.show(getFragmentManager().beginTransaction(), "packName");
+            case R.id.menu_toolbar_now_learning_learn:
+                if(!cardList.isEmpty()) {
+                    context.startActivity(new LearnPackActivity().createIntent(context, "", "now_learning"));
+                }
+                else {
+                    Toast.makeText(context, R.string.no_card_to_learn, Toast.LENGTH_SHORT).show();
+                }
                 return true;
 
-            case R.id.menu_activity_selected_items_share: // TODO SHARING LIST OF CARDS
-                mode = "";
-                refactorToolBarForSelection(false);
-                selectedCards.clear();
-                fillRecyclerView();
-                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -236,44 +206,6 @@ public class NowLearningFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch(requestCode) {
 
-            case 2:
-                if (resultCode == Activity.RESULT_OK) {                                                                                 // After Ok code.
-                    int id = data.getIntExtra("id",0);
-                    String question =  data.getStringExtra("question");
-                    String answer =  data.getStringExtra("answer");
-                    int iteratingTimes = data.getIntExtra("iteratingTimes",5);
-                    if (question.trim().length() > 0) {                                                                                 // проверка на корректность
-                        if (answer.trim().length() > 0) {                                                                               //  question и answer
-                            dbHelper.editCardById(id, question, answer, iteratingTimes);
-                            fillRecyclerView();
-                        } else {
-                            Toast.makeText(context, R.string.enter_correct_answer, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                    else {
-                        Toast.makeText(context, R.string.enter_correct_question, Toast.LENGTH_SHORT).show();
-                    }
-                } else if (resultCode == Activity.RESULT_CANCELED){                                                                     // After Cancel code.
-                }
-                break;
-            case 41:
-                if (resultCode == Activity.RESULT_OK) {
-                    if (cardLongClicked != null) {
-                        dbHelper.deleteCardById(cardLongClicked.get_id());
-                        fillRecyclerView();
-                    }
-                }
-                break;
-            case 42:
-                for (Card card : selectedCards) {
-                    dbHelper.deleteCardById(card.get_id());
-                }
-                mode = "";
-                refactorToolBarForSelection(false);
-                selectedCards.clear();
-                fillRecyclerView();
-
-                break;
         }
     }
 }

@@ -27,6 +27,7 @@ public class LearnPackActivity extends AppCompatActivity {
 
     private Intent intent;
     private String packName;
+    private String mode;
     private int cardListSize;
     private PushLearnDBHelper dbHelper;
     private String answer;
@@ -48,6 +49,7 @@ public class LearnPackActivity extends AppCompatActivity {
         //-----------------------------------INTENT UNPACKING----------------------------------------------------
         intent = getIntent();
         packName = intent.getStringExtra(PACK_NAME);
+        mode = intent.getStringExtra("mode");
         dbHelper = new PushLearnDBHelper(this);
         refreshCardList();
 
@@ -76,7 +78,6 @@ public class LearnPackActivity extends AppCompatActivity {
         i_know_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Card card;
                 card = cardList.get(0);
                 if (card.getIteratingTimes() == 1) {
@@ -98,10 +99,18 @@ public class LearnPackActivity extends AppCompatActivity {
                     i_do_not_know_button.setVisibility(View.INVISIBLE);
                 } else {
                     // NO CARD IN PACK TO LEARN
-                    Toast.makeText(getApplicationContext(), R.string.congrats_you_learnt_pack, Toast.LENGTH_SHORT).show();
+
                     Intent intent = new Intent(LearnPackActivity.this, MenuActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra("fragment","my_packs");
+                    switch (mode) {
+                        case "pack": Toast.makeText(getApplicationContext(), R.string.congrats_you_learnt_pack, Toast.LENGTH_SHORT).show();
+                        intent.putExtra("fragment", "my_packs");
+                        break;
+                        case "now_learning":
+                            Toast.makeText(getApplicationContext(), R.string.congrats_you_learnt_all_cards, Toast.LENGTH_SHORT).show();
+                            intent.putExtra("fragment", "now_learning");
+                            break;
+                    }
                     startActivity(intent);
                 }
             }
@@ -144,8 +153,16 @@ public class LearnPackActivity extends AppCompatActivity {
     }
 
     private void refreshCardList() {
-        dbHelper.setCardsOfPackUnShown(packName); // need to be tested
-        cardList = dbHelper.getCardListByPackName(packName, 0);
+        switch (mode) {
+            case "pack":
+            dbHelper.setCardsOfPackUnShown(packName); // need to be tested
+            cardList = dbHelper.getCardListByPackName(packName, 0);
+            break;
+            case "now_learning":
+                dbHelper.setCardsUnShown();
+                cardList = dbHelper.getNowLearningCardList(0);
+                break;
+        }
         Collections.shuffle(cardList);
     }
 
@@ -154,8 +171,10 @@ public class LearnPackActivity extends AppCompatActivity {
         super.onStart();
     }
 
-    public Intent createIntent(Context context, String packName) {
+    public Intent createIntent(Context context, String packName, String mode) {
         return new Intent(context, LearnPackActivity.class)
-                .putExtra(PACK_NAME, packName);
+                .putExtra(PACK_NAME, packName)
+                .putExtra("mode", mode);
+
     }
 }

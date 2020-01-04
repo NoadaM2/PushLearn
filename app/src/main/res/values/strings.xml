@@ -60,5 +60,7 @@
     <string name="answer_double_dot">Answer:</string>
     <string name="congrats_you_learnt_card">Congratulations! You have learnt this card!</string>
     <string name="congrats_you_learnt_pack">Congratulations! You have learnt this pack!</string>
+    <string name="congrats_you_learnt_all_cards">Congratulations! You have learnt all cards!</string>
+    <string name="no_card_to_learn">There is no card to learn</string>
 
 </resources>

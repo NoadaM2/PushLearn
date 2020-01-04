@@ -69,8 +69,7 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
             holder.pack_item_start_quiz_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    dbHelper.setCardsUnShown();
-                    context.startActivity(new LearnPackActivity().createIntent(context, pack.getPackName()));
+                    context.startActivity(new LearnPackActivity().createIntent(context, pack.getPackName(),"pack"));
                 }
             });
         }

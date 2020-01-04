@@ -148,7 +148,7 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
 
     public void setCardsOfPackIterationTimes(String packName, int iteratingTimes) {
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("UPDATE "+CARD_TABLE_NAME+" SET "+CARD_COLUMN_ITERATING_NUMBER+" = "+iteratingTimes + " WHERE "+CARD_COLUMN_PACK_NAME+" = "+ packName);
+        db.execSQL("UPDATE "+CARD_TABLE_NAME+" SET "+CARD_COLUMN_ITERATING_NUMBER+" = "+iteratingTimes + " WHERE "+CARD_COLUMN_PACK_NAME+"= '"+ packName+"'");
         db.close();
     }
 

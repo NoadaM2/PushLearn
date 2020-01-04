@@ -125,7 +125,7 @@ public class CardsOfNowLearningAdapter extends RecyclerView.Adapter<CardsOfNowLe
                     }
                 }
             });
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+           /* itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     Card card = cardList.get(getAdapterPosition());
@@ -135,7 +135,7 @@ public class CardsOfNowLearningAdapter extends RecyclerView.Adapter<CardsOfNowLe
                     }
                     return false;
                 }
-            });
+            });*/
         }
 
 

@@ -60,5 +60,7 @@
     <string name="answer_double_dot">Ответ:</string>
     <string name="congrats_you_learnt_card">Поздравляем! Вы выучили эту карту!</string>
     <string name="congrats_you_learnt_pack">Поздравляем! Вы выучили этот сборник!</string>
+    <string name="congrats_you_learnt_all_cards">Поздравляем! Вы выучили все карты!</string>
+    <string name="no_card_to_learn">Нет карт для изучения</string>
 
 </resources>
