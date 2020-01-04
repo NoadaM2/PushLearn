@@ -135,10 +135,20 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
 
     public void setCardsUnShown() {
         SQLiteDatabase db = getWritableDatabase();
-      /*  ContentValues forUpdate = new ContentValues();
-        forUpdate.put(CARD_COLUMN_SHOWN, false);
-        db.update(CARD_TABLE_NAME, forUpdate,CARD_COLUMN_ITERATING_NUMBER + " >", new String[]{String.valueOf(-10)});*/
-         db.execSQL("UPDATE "+CARD_TABLE_NAME+" SET "+CARD_COLUMN_SHOWN+" = 0");
+        db.execSQL("UPDATE "+CARD_TABLE_NAME+" SET "+CARD_COLUMN_SHOWN+" = 0");
+        db.close();
+    }
+
+    public void setCardsOfPackUnShown(String packName) {
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "UPDATE "+CARD_TABLE_NAME+" SET "+CARD_COLUMN_SHOWN+" = 0 "+" WHERE "+CARD_COLUMN_PACK_NAME+" = '"+ packName+"'";
+        db.execSQL(query);
+        db.close();
+    }
+
+    public void setCardsOfPackIterationTimes(String packName, int iteratingTimes) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("UPDATE "+CARD_TABLE_NAME+" SET "+CARD_COLUMN_ITERATING_NUMBER+" = "+iteratingTimes + " WHERE "+CARD_COLUMN_PACK_NAME+" = "+ packName);
         db.close();
     }
 
@@ -154,7 +164,7 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public ArrayList<Card> getCardListByPackName(String packName) {
+    public ArrayList<Card> getCardListByPackName(String packName, int moreThenIterationTimes) {
         ArrayList<Card> cards = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(String.format("SELECT %s, %s, %s, %s, %s FROM %s WHERE %s = ?", CARD_COLUMN_ID, CARD_COLUMN_QUESTION, CARD_COLUMN_ANSWER, CARD_COLUMN_ITERATING_NUMBER, CARD_COLUMN_SHOWN, CARD_TABLE_NAME, CARD_COLUMN_PACK_NAME), new String[]{packName});
@@ -170,7 +180,9 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
                 answer = cursor.getString(cursor.getColumnIndex(CARD_COLUMN_ANSWER));
                 iterating_number = cursor.getInt(cursor.getColumnIndex(CARD_COLUMN_ITERATING_NUMBER));
                 shown = cursor.getInt(cursor.getColumnIndex(CARD_COLUMN_SHOWN)) == 1;
-                cards.add(new Card(_id, packName, question, answer, iterating_number, shown));
+                if(iterating_number > moreThenIterationTimes) {
+                    cards.add(new Card(_id, packName, question, answer, iterating_number, shown));
+                }
             } while (cursor.moveToNext());
         }
         db.close();

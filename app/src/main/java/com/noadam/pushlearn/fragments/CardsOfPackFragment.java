@@ -72,7 +72,7 @@ public class CardsOfPackFragment extends Fragment {
     }
 
     private void fillRecyclerView() {
-        cardList = dbHelper.getCardListByPackName(packName);
+        cardList = dbHelper.getCardListByPackName(packName,-1);
         if (!cardList.isEmpty()) {
             textViewNoCards.setVisibility(View.GONE);
         }

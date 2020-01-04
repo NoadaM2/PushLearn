@@ -21,7 +21,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity android:name=".activities.LearnPackActivity"
+            android:noHistory="true"/>
         <receiver android:name=".push.MyReceiver" />
         <receiver android:name=".push.DeviceBootReceiver">
             <intent-filter>

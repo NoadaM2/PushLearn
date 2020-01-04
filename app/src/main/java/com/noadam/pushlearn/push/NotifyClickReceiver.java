@@ -13,9 +13,7 @@ import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
 
-import static android.app.Notification.EXTRA_NOTIFICATION_ID;
 import static com.noadam.pushlearn.activities.MenuActivity.CHANNEL_ID;
-import static java.lang.Thread.getAllStackTraces;
 import static java.lang.Thread.sleep;
 
 public class NotifyClickReceiver extends BroadcastReceiver {
@@ -71,7 +69,7 @@ public class NotifyClickReceiver extends BroadcastReceiver {
                            .setStyle(new NotificationCompat.BigTextStyle())
                            .setPriority(NotificationCompat.PRIORITY_HIGH)
                            .setOnlyAlertOnce(true)
-                           .addAction(R.drawable.icon_verified, context.getResources().getString(R.string.i_know), iKnowAnswerPendingIntent)
+                           .addAction(R.drawable.ic_check_white_24dp, context.getResources().getString(R.string.i_know), iKnowAnswerPendingIntent)
                            .setDeleteIntent(onDeletePendingIntent)
                            .addAction(R.drawable.ic_cancel_white_24dp, context.getResources().getString(R.string.i_do_not_know), iDontKnowAnswerPendingIntent);
                    notificationManager = NotificationManagerCompat.from(context);
@@ -80,7 +78,7 @@ public class NotifyClickReceiver extends BroadcastReceiver {
 
                case "i_know":
                    builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                           .setSmallIcon(R.drawable.icon_verified)
+                           .setSmallIcon(R.drawable.ic_check_white_24dp)
                            .setContentTitle(context.getResources().getString(R.string.well_done))
                            .setContentText(context.getResources().getString(R.string.we_hope_you_honest))
                            .setPriority(NotificationCompat.PRIORITY_HIGH)

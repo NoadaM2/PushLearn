@@ -6,7 +6,7 @@
     <string name="title_CommunityPacks">Community Packs</string>
     <string name="title_Settings">Settings</string>
     <string name="ok">OK</string>
-    <string name="cancel">cancel</string>
+    <string name="cancel">Cancel</string>
     <string name="enter_packName">Enter the pack name</string>
     <string name="name">Name</string>
     <string name="create">Create</string>
@@ -54,5 +54,11 @@
     <string name="my_profile">My profile</string>
     <string name="how_many_notifies_u_want_to_see">How many notifications you want to see in your notification bar at the same time?</string>
     <string name="pref_time_period_between_notifies">Time period between notifications</string>
+    <string name="learn">Learn</string>
+    <string name="iterating_times_double_dot">Repeating times:</string>
+    <string name="question_double_dot">Question:</string>
+    <string name="answer_double_dot">Answer:</string>
+    <string name="congrats_you_learnt_card">Congratulations! You have learnt this card!</string>
+    <string name="congrats_you_learnt_pack">Congratulations! You have learnt this pack!</string>
 
 </resources>

@@ -51,5 +51,14 @@
     <string name="coming_soon">Скоро...</string>
     <string name="language">Язык</string>
     <string name="change_language">Сменить язык</string>
+    <string name="my_profile">Мой профиль</string>
+    <string name="how_many_notifies_u_want_to_see">Сколько уведомлений отображать одновременно в шторке уведомлений?</string>
+    <string name="pref_time_period_between_notifies">Временной промежуток между уведомлениями</string>
+    <string name="learn">Учить</string>
+    <string name="iterating_times_double_dot">Количество повторений:</string>
+    <string name="question_double_dot">Вопрос:</string>
+    <string name="answer_double_dot">Ответ:</string>
+    <string name="congrats_you_learnt_card">Поздравляем! Вы выучили эту карту!</string>
+    <string name="congrats_you_learnt_pack">Поздравляем! Вы выучили этот сборник!</string>
 
 </resources>

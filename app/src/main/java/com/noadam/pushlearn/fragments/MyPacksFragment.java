@@ -28,6 +28,7 @@ import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
+import com.noadam.pushlearn.fragments.dialog.SetIterationTimesDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,7 @@ public class MyPacksFragment extends Fragment{
     final int MENU_SHARE = 2;
     final int MENU_EDIT = 3;
     final int MENU_DELETE = 4;
+    final int MENU_LEARN = 5;
 
     private void fillRecyclerView()
     {
@@ -113,6 +115,7 @@ public class MyPacksFragment extends Fragment{
         menu.add(0, MENU_SHARE, 2, R.string.share);
         menu.add(0, MENU_EDIT, 3, R.string.edit);
         menu.add(0, MENU_DELETE, 4, R.string.delete);
+        menu.add(0, MENU_LEARN, 5, R.string.learn);
     }
 
     public boolean onContextItemSelected(MenuItem item) {
@@ -135,6 +138,12 @@ public class MyPacksFragment extends Fragment{
                 DeleteConfirmationDialogFragment dialogFragDelete = new DeleteConfirmationDialogFragment();
                 dialogFragDelete.setTargetFragment(this, 51);
                 dialogFragDelete.show(getFragmentManager().beginTransaction(), "packName");
+                break;
+            case MENU_LEARN:
+                // TODO REALLY NEED Dialog about iteration times
+                SetIterationTimesDialogFragment dialogFragIterationTimes = new SetIterationTimesDialogFragment().newInstance(5);
+                dialogFragIterationTimes.setTargetFragment(this, 99);
+                dialogFragIterationTimes.show(getFragmentManager().beginTransaction(), "");
                 break;
         }
         return super.onContextItemSelected(item);
@@ -287,6 +296,12 @@ public class MyPacksFragment extends Fragment{
                     fillRecyclerView();
                     selectedPacks.clear();
                 }
+                break;
+            case 99: // Learn Pack
+                if (resultCode == Activity.RESULT_OK) {
+                    dbHelper.setCardsOfPackIterationTimes(packLongClicked, data.getIntExtra("iteration_times", 5));
+                }
+                fillRecyclerView();
                 break;
         }
     }

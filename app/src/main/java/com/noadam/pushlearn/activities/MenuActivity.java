@@ -15,6 +15,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.Filterable;
 
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
@@ -31,22 +32,33 @@ import java.util.Calendar;
 //implement the interface OnNavigationItemSelectedListener in your activity class
 public class MenuActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-
     public static final String CHANNEL_ID = "PushLearn_notification_channel_ID";
-   // public static final String NOTIFY_CLICK_ACTION = "com.noadam.action.NOTIFY_CLICK_ACTION";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-
-        //loading the default fragment
-        loadFragment(new NowLearningFragment());
-        //addSocialScience();
+        Fragment fragment = new NowLearningFragment();
         //getting bottom navigation view and attaching the listener
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
-        Context context = getApplicationContext();
+        //loading the default fragment
+        Intent intent = getIntent();
+        if (intent.hasExtra("fragment")) {
+            switch (intent.getStringExtra("fragment")) {
+                case "my_packs":
+                    fragment = new MyPacksFragment();
+                    navigation.setSelectedItemId(R.id.navigation_myPacks);
+                    break;
+                default:
+                    fragment = new NowLearningFragment();
+                    navigation.setSelectedItemId(R.id.navigation_now_learning);
+                break;
+            }
+        }
+        loadFragment(fragment);
+        //addSocialScience();
+
         createNotificationChannel();
 
 
@@ -106,7 +118,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                 break;
 
             case R.id.navigation_my_profile:
-                fragment = new ComPacksFragment();
+                fragment = new ComPacksFragment(); // TODO HACK FOR "MY PROFILE" DEVELOPMENT
                 break;
         }
 
@@ -197,4 +209,5 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
         dbHelper.addNewCard(new Card("Обществознание термины для ЕГЭ", "Склонность", "направленность индивида на определённую деятельность"));
         dbHelper.addNewCard(new Card("Обществознание термины для ЕГЭ", "Социальная роль", "ожидаемое поведение индивида"));
     }
+
 }

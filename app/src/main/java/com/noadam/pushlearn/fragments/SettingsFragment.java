@@ -3,19 +3,12 @@ package com.noadam.pushlearn.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+
 import com.noadam.pushlearn.R;
-import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
-import com.noadam.pushlearn.fragments.dialog.SetMaxNumberOfNotifiesInBarDialogFragment;
+import com.noadam.pushlearn.fragments.dialog.SetIterationTimesDialogFragment;
 
 
 public class SettingsFragment extends PreferenceFragment {
@@ -29,14 +22,14 @@ public class SettingsFragment extends PreferenceFragment {
         // Load the preferences from an XML resource
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-       int count_notifies_in_bar = prefs.getInt("number_of_notifies_in_bar",3);
+        int count_notifies_in_bar = prefs.getInt("number_of_notifies_in_bar",3);
         Preference prefHowManyNotifiesUWantToSee = findPreference("pref_number_of_notifies_in_bar");
 
         prefHowManyNotifiesUWantToSee.setSummary(String.valueOf(count_notifies_in_bar));
         prefHowManyNotifiesUWantToSee.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                SetMaxNumberOfNotifiesInBarDialogFragment dialogFrag = SetMaxNumberOfNotifiesInBarDialogFragment.newInstance(count_notifies_in_bar);
+                SetIterationTimesDialogFragment dialogFrag = SetIterationTimesDialogFragment.newInstance(count_notifies_in_bar);
                 dialogFrag.setTargetFragment(getTargetFragment(), 1);
                 dialogFrag.show(getFragmentManager().beginTransaction(), "");
                 return true;

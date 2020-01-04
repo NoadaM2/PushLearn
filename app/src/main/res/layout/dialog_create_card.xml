@@ -66,6 +66,7 @@
         android:id="@+id/dialog_card_iterating_times_horizontal_counter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:progressTint="@color/colorPrimary"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="12sp"
         android:max="10"

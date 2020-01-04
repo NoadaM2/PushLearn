@@ -11,6 +11,7 @@ import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import com.noadam.pushlearn.R;
+import com.noadam.pushlearn.activities.LearnPackActivity;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.Pack;
@@ -26,7 +27,7 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     private int layoutIDforListItem;
     private OnRecyclerViewItemClickListener mClickListener;
     private OnRecyclerViewItemLongClickListener mLongClickListener;
-    private final ArrayList<String> selected = new ArrayList<>();
+    private Context context;
 
     public interface OnRecyclerViewItemClickListener {
         void onClick(String packName, View v);
@@ -44,7 +45,7 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        Context context = parent.getContext();
+        context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         if (dbHelper == null) {
             dbHelper = new PushLearnDBHelper(context);
@@ -59,12 +60,19 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
         Pack pack = packList.get(i);
-        List<Card> cardList = dbHelper.getCardListByPackName(pack.getPackName());
+        List<Card> cardList = dbHelper.getCardListByPackName(pack.getPackName(), 0);
         String packName = pack.getPackName();
         holder.pack_name_textView.setText(packName);
         if (!cardList.isEmpty()) {
             holder.pack_item_start_quiz_button.setClickable(true);
             holder.pack_item_start_quiz_button.setImageResource(R.drawable.ic_play_arrow_green_48dp);
+            holder.pack_item_start_quiz_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dbHelper.setCardsUnShown();
+                    context.startActivity(new LearnPackActivity().createIntent(context, pack.getPackName()));
+                }
+            });
         }
 
 
