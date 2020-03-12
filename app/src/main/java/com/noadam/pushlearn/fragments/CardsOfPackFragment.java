@@ -171,7 +171,7 @@ public class CardsOfPackFragment extends Fragment {
         refactorToolBarForSelection(false);
         super.onCreateOptionsMenu(menu,inflater);
     }
-
+    
     private void refactorToolBarForSelection(boolean mode){
         createCardMenuItem.setVisible(!mode);
         searchCardMenuItem.setVisible(!mode);

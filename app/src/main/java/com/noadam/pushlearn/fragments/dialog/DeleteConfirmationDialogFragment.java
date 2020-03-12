@@ -6,8 +6,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.DialogFragment;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -34,13 +36,31 @@ public class DeleteConfirmationDialogFragment extends DialogFragment {
             case 52: // Delete packs
                 title = getResources().getString( R.string.are_u_sure_to_delete_packs);
                 break;
+            case 666: // Delete card
+                title = getResources().getString( R.string.are_u_sure_to_log_out);
+                break;
         }
             builder
                     .setTitle(title)
                     .setPositiveButton(R.string.ok,
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
+                                    switch (action) {
+                                        case 666:
+                                            Intent intent = getActivity().getIntent();
+                                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                                            SharedPreferences.Editor editor = prefs.edit();
+                                            editor.putString("login", "");
+                                            editor.putString("password", "");
+                                            editor.apply();
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            intent.putExtra("fragment","settings");
+                                            startActivity(intent);
+                                            break;
+                                        default:
+                                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
+                                    break;
+                                    }
                                 }
                             }
                     )

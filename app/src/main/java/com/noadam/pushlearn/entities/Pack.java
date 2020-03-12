@@ -20,11 +20,6 @@ public class Pack {
         this.packName = packName;
     }
 
-    public Pack(int _id, String packName, ArrayList<Card> cards) {
-        this._id = _id;
-        this.packName = packName;
-        this.cards = cards;
-    }
 
     public Pack(String packName) {
         this.packName = packName;
@@ -34,15 +29,7 @@ public class Pack {
         return packName;
     }
 
-    public ArrayList<Card> getCards() {
-        return cards;
-    }
-
     public void setPackName(String packName) {
         this.packName = packName;
-    }
-
-    public void setCards(ArrayList<Card> cards) {
-        this.cards = cards;
     }
 }

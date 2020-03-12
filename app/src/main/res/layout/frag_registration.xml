@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+<android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/my_profile_toolbar"
+        layout="@layout/add_options_toolbar" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/log_in_using_social_networks_constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/my_profile_toolbar">
+
+        <TextView
+            android:id="@+id/log_in_using_social_networks_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/log_in_using_social_networks"
+            android:textColor="@color/white"
+            android:paddingBottom="24dp"
+            android:paddingTop="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/log_in_using_googlePlus_imageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:paddingBottom="32dp"
+            app:layout_constraintEnd_toStartOf="@+id/log_in_using_vk_imageButton"
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="@color/colorPrimary"
+            app:layout_constraintTop_toBottomOf="@+id/log_in_using_social_networks_textView"
+            app:srcCompat="@drawable/icon_google" />
+
+        <ImageButton
+            android:id="@+id/log_in_using_vk_imageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/log_in_using_instagram_imageButton"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/log_in_using_googlePlus_imageButton"
+            app:layout_constraintTop_toBottomOf="@+id/log_in_using_social_networks_textView"
+            android:background="@color/colorPrimary"
+            app:srcCompat="@drawable/icon_vk" />
+
+        <ImageButton
+            android:id="@+id/log_in_using_instagram_imageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/log_in_using_facebook_imageButton"
+            app:layout_constraintStart_toEndOf="@+id/log_in_using_vk_imageButton"
+            app:layout_constraintTop_toBottomOf="@+id/log_in_using_social_networks_textView"
+            android:background="@color/colorPrimary"
+            app:srcCompat="@drawable/icon_instagram"/>
+
+        <ImageButton
+            android:id="@+id/log_in_using_facebook_imageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/log_in_using_instagram_imageButton"
+            app:layout_constraintTop_toBottomOf="@+id/log_in_using_social_networks_textView"
+            android:background="@color/colorPrimary"
+            app:srcCompat="@drawable/icon_facebook" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/log_in_using_social_networks_constraintLayout">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/nick_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:counterEnabled="true"
+            app:counterMaxLength="15"
+            app:errorEnabled="true">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/nickName_editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:ems="15"
+                    android:inputType="text"
+                    android:hint="@string/create_a_nickname" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/email_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/nick_input_layout"
+            app:errorEnabled="true">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/email_editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/enter_your_email"
+                    android:inputType="textEmailAddress"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/password_input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/email_input_layout"
+            app:errorEnabled="true">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/password_editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:ems="10"
+                    android:hint="@string/create_a_password"
+                    android:inputType="textPassword"
+                    app:layout_constraintTop_toBottomOf="@+id/email_input_layout" />
+        </android.support.design.widget.TextInputLayout>
+
+        <CheckBox
+            android:id="@+id/terms_and_conditions_checkBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/i_accept_the_terms_and_conditions"
+            app:layout_constraintTop_toBottomOf="@id/password_input_layout" />
+
+        <Button
+            android:id="@+id/sing_up_button"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:background="@color/colorPrimary"
+            android:text="@string/sign_up"
+            android:textColor="@color/white"
+            android:clickable="false"
+            app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_checkBox" />
+
+
+        <TextView
+            android:id="@+id/already_have_an_account_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/already_have_an_account"
+            app:layout_constraintEnd_toStartOf="@+id/log_in_button"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sing_up_button" />
+
+        <Button
+            android:id="@+id/log_in_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/log_in"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textColor="@color/colorAccent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/already_have_an_account_textView"
+            app:layout_constraintTop_toBottomOf="@id/sing_up_button" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
+        app:srcCompat="@drawable/icon_up_down_arrows" />
+
+
+</android.support.constraint.ConstraintLayout></ScrollView>

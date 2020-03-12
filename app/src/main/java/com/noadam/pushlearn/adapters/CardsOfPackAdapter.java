@@ -111,8 +111,8 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
             super(itemView);
             question_textView = itemView.findViewById(R.id.question_text_view);
             answer_textView = itemView.findViewById(R.id.answer_text_view);
-            iterating_times_textView = itemView.findViewById(R.id.iterating_times_text_view);
-            notification_imageView = itemView.findViewById(R.id.notification_imageView);
+            iterating_times_textView = itemView.findViewById(R.id.rating_number_text_view);
+            notification_imageView = itemView.findViewById(R.id.star_imageView);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -161,7 +161,6 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
             }
             else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
-
                 for (Card item : cardFullList) {
                     if(item.getQuestion().toLowerCase().contains(filterPattern)) {
                         filteredList.add(item);

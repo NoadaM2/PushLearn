@@ -19,7 +19,7 @@
          android:paddingBottom="0dp"
          app:layout_constraintBottom_toTopOf="@id/answer_text_view"
          app:layout_constraintLeft_toLeftOf="parent"
-         app:layout_constraintRight_toLeftOf="@id/iterating_times_text_view"
+         app:layout_constraintRight_toLeftOf="@id/rating_number_text_view"
          app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
@@ -36,22 +36,22 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/question_text_view"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/iterating_times_text_view" />
+        app:layout_constraintRight_toLeftOf="@id/rating_number_text_view" />
 
 
     <TextView
-        android:id="@+id/iterating_times_text_view"
+        android:id="@+id/rating_number_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/open_sans_bold"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/notification_imageView"
+        app:layout_constraintEnd_toStartOf="@id/star_imageView"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginEnd="4dp"/>
 
     <ImageView
-        android:id="@+id/notification_imageView"
+        android:id="@+id/star_imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_notifications_none_primary_dark_24dp"

@@ -24,7 +24,6 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     private PushLearnDBHelper dbHelper;
     private List<Pack> packList;
     private List<Pack> packFullList;
-    private int layoutIDforListItem;
     private OnRecyclerViewItemClickListener mClickListener;
     private OnRecyclerViewItemLongClickListener mLongClickListener;
     private Context context;
@@ -40,8 +39,8 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     public PackListAdapter(OnRecyclerViewItemClickListener clickListener, OnRecyclerViewItemLongClickListener onLongClickListner) {
         mClickListener = clickListener;
         mLongClickListener = onLongClickListner;
-        layoutIDforListItem = R.layout.pack_list_item;
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
@@ -50,7 +49,7 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
         if (dbHelper == null) {
             dbHelper = new PushLearnDBHelper(context);
         }
-        View view = inflater.inflate(layoutIDforListItem, parent, false);
+        View view = inflater.inflate(R.layout.pack_list_item, parent, false);
 
         ViewHolder packHolder = new ViewHolder(view);
 
@@ -73,8 +72,6 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
                 }
             });
         }
-
-
     }
 
     @Override
@@ -113,8 +110,6 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
                 }
             });
         }
-
-
     }
 
     public void setPackList(List<Pack> packList) {

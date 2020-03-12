@@ -39,10 +39,8 @@ public class MyPacksFragment extends Fragment{
     private RecyclerView packListRecyclerView;
     private PackListAdapter packListAdapter;
     private PushLearnDBHelper dbHelper;
-    private Toolbar toolbar;
     private Context context;
     private TextView textViewNoPacks;
-    private List<Pack> packList;
     private String packLongClicked;
     private ArrayList<String> selectedPacks = new ArrayList<>();
     private String mode;
@@ -58,9 +56,8 @@ public class MyPacksFragment extends Fragment{
     final int MENU_DELETE = 4;
     final int MENU_LEARN = 5;
 
-    private void fillRecyclerView()
-    {
-        packList = dbHelper.getPackList();
+    private void fillRecyclerView() {
+        List<Pack> packList = dbHelper.getPackList();
         if (!packList.isEmpty()) {
             textViewNoPacks.setVisibility(View.GONE);
         }
@@ -107,8 +104,6 @@ public class MyPacksFragment extends Fragment{
         packListRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
-
-
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.add(0, MENU_SELECT, 1, R.string.select);
@@ -140,7 +135,6 @@ public class MyPacksFragment extends Fragment{
                 dialogFragDelete.show(getFragmentManager().beginTransaction(), "packName");
                 break;
             case MENU_LEARN:
-                // TODO REALLY NEED Dialog about iteration times
                 SetIterationTimesDialogFragment dialogFragIterationTimes = new SetIterationTimesDialogFragment().newInstance(5);
                 dialogFragIterationTimes.setTargetFragment(this, 99);
                 dialogFragIterationTimes.show(getFragmentManager().beginTransaction(), "");
@@ -154,7 +148,7 @@ public class MyPacksFragment extends Fragment{
         context = container.getContext();
         dbHelper = new PushLearnDBHelper(context);
         View view = inflater.inflate(R.layout.frag_my_packs, null);
-        toolbar = view.findViewById(R.id.my_packs_toolbar);
+        Toolbar toolbar = view.findViewById(R.id.my_packs_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         textViewNoPacks = view.findViewById(R.id.no_items_textview);
         packListRecyclerView = view.findViewById(R.id.pack_list_recyclerview);
@@ -200,7 +194,7 @@ public class MyPacksFragment extends Fragment{
                 dialogFragDelete.setTargetFragment(this, 52);
                 dialogFragDelete.show(getFragmentManager().beginTransaction(), "packName");
                 return true;
-            case R.id.menu_activity_selected_items_share: // TODO SHARING LIST OF PACKS
+            case R.id.menu_activity_selected_items_share: // TODO TURN OFF SHARING LIST OF PACKS
                 mode = "";
                 refactorToolBarForSelection(false);
                 selectedPacks.clear();

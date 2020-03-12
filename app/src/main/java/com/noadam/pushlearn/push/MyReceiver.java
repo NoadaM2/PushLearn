@@ -21,9 +21,8 @@ import java.util.Comparator;
 import static com.noadam.pushlearn.activities.MenuActivity.CHANNEL_ID;
 
 public class MyReceiver extends BroadcastReceiver {
+
     private Context context;
-    public MyReceiver() {
-    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -32,7 +31,8 @@ public class MyReceiver extends BroadcastReceiver {
         int shownCards = prefs.getInt("ShownCards",0);
         PushLearnDBHelper dbHelper = new PushLearnDBHelper(context);
         ArrayList<Card> cardList = dbHelper.getNowLearningCardList(0);
-        if((!cardList.isEmpty()) & (shownCards < 6)) {  // TODO How many notifications in one time can be in the notification bar
+        int maxNotifiesNumber = prefs.getInt("number_of_notifies_in_bar",3);
+        if((!cardList.isEmpty()) & (shownCards < (maxNotifiesNumber))) {  // How many notifications in one time can be in the notification bar
             sortCardList(cardList);
             Card pushCard = null;
             for (Card card: cardList) {
@@ -47,13 +47,12 @@ public class MyReceiver extends BroadcastReceiver {
             }
             sendNowLearningCard(pushCard, context);
             pushCard.setShown(true);
-            dbHelper.editCardById(pushCard.get_id(), pushCard.getQuestion(), pushCard.getAnswer(), pushCard.getIteratingTimes(),pushCard.getShown());
+            dbHelper.editCardById(pushCard.get_id(), pushCard.getQuestion(), pushCard.getAnswer(), pushCard.getIteratingTimes(), pushCard.getShown());
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt("ShownCards", shownCards + 1);
             editor.apply();
         }
     }
-
 
     private ArrayList<Card> sortCardList(ArrayList<Card> cardList) {
         Collections.sort(cardList, new Comparator<Card>() { // sorting
@@ -73,7 +72,7 @@ public class MyReceiver extends BroadcastReceiver {
 
     private void sendNowLearningCard(Card card, Context context) {
         int a = 0; // Начальное значение диапазона - "от"
-        int b = 10000; // Конечное значение диапазона - "до"
+        int b = 1000000; // Конечное значение диапазона - "до"
         Intent showAnswerIntent = new Intent(context, NotifyClickReceiver.class);
         showAnswerIntent.putExtra("card_id", card.get_id());
         showAnswerIntent.putExtra("action", "show");

@@ -101,8 +101,6 @@ public class NowLearningFragment extends Fragment {
         recyclerView.setAdapter(cardListAdapter);
         recyclerView.getAdapter().notifyDataSetChanged();
 
-
-
     }
 
 

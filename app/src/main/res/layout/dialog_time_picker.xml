@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+    android:id="@+id/hours_textView"
+    android:text="@string/hours"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@id/minutes_NumberPicker"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/hours_NumberPicker"
+        />
+
+    <NumberPicker
+        android:id="@+id/hours_NumberPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@id/minutes_NumberPicker"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hours_textView" />
+
+    <TextView
+        android:id="@+id/minutes_textView"
+        android:text="@string/minutes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/hours_textView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/minutes_NumberPicker"
+        android:paddingStart="24dp"/>
+
+    <NumberPicker
+        android:id="@+id/minutes_NumberPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/hours_NumberPicker"
+        app:layout_constraintTop_toBottomOf="@id/minutes_textView"
+        android:paddingStart="24dp"/>
+
+</android.support.constraint.ConstraintLayout>

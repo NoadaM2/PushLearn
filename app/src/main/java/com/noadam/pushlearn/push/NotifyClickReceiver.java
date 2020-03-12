@@ -26,7 +26,6 @@ public class NotifyClickReceiver extends BroadcastReceiver {
        int cardID = intent.getIntExtra("card_id", -5);
 
        if (action.equals("onDelete")) {
-
            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
            int shownCards = prefs.getInt("ShownCards",0);
            SharedPreferences.Editor editor = prefs.edit();
@@ -91,7 +90,7 @@ public class NotifyClickReceiver extends BroadcastReceiver {
                        public void run() {
                            try {
                                Card pushCard = dbHelper.getCardByID(cardID);
-                               dbHelper.editCardById(pushCard.get_id(), pushCard.getQuestion(), pushCard.getAnswer(), pushCard.getIteratingTimes() - 1);
+                               dbHelper.editCardById(pushCard.get_id(), pushCard.getQuestion(), pushCard.getAnswer(), pushCard.getIteratingTimes() - 1,false);
                                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                                int shownCards = prefs.getInt("ShownCards",0);
                                SharedPreferences.Editor editor = prefs.edit();
@@ -122,7 +121,7 @@ public class NotifyClickReceiver extends BroadcastReceiver {
                        public void run() {
                            try {
                                Card pushCard = dbHelper.getCardByID(cardID);
-                               dbHelper.editCardById(pushCard.get_id(), pushCard.getQuestion(), pushCard.getAnswer(),  Math.abs(pushCard.getIteratingTimes() + 3));
+                               dbHelper.editCardById(pushCard.get_id(), pushCard.getQuestion(), pushCard.getAnswer(),  Math.abs(pushCard.getIteratingTimes() + 3),false);
                                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                                int shownCards = prefs.getInt("ShownCards",0);
                                SharedPreferences.Editor editor = prefs.edit();

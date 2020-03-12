@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:title="Category"
-        android:key="pref_key_storage_settings">
+        android:title="@string/app_settings"
+        android:key="pref_key_app_settings">
         <Preference
             android:key="pref_number_of_notifies_in_bar"
             android:summary="summary"
@@ -11,5 +11,13 @@
             android:key="pref_time_period_between_notifies"
             android:summary="summary"
             android:title="@string/pref_time_period_between_notifies"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/account_settings"
+        android:key="pref_key_account_settings">
+    <Preference
+        android:key="pref_log_out"
+        android:summary="@string/exit_the_account"
+        android:title="@string/log_out" />
     </PreferenceCategory>
 </PreferenceScreen>

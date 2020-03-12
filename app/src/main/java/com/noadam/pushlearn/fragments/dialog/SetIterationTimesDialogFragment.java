@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 
 import com.noadam.pushlearn.R;
+import com.noadam.pushlearn.activities.LearnPackActivity;
+import com.noadam.pushlearn.activities.MenuActivity;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 
 public class SetIterationTimesDialogFragment extends DialogFragment {
@@ -49,25 +51,15 @@ public class SetIterationTimesDialogFragment extends DialogFragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 Intent intent = getActivity().getIntent();
-                                switch (getTargetRequestCode()) {
-                                    case 1:
-                                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                                        SharedPreferences.Editor editor = prefs.edit();
-                                        editor.putInt("number_of_notifies_in_bar", (int) Math.round(seekBar.getProgress()));
-                                        editor.apply();
-                                        break;
-                                    case 99: // Learn Pack
                                         intent.putExtra("iteration_times", (int) Math.round(seekBar.getProgress()));
-                                        break;
-                                }
-                                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                                 }
                             }
 
                 )
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
+                            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
                     }
                 });
 

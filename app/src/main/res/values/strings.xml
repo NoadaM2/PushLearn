@@ -62,5 +62,30 @@
     <string name="congrats_you_learnt_pack">Congratulations! You have learnt this pack!</string>
     <string name="congrats_you_learnt_all_cards">Congratulations! You have learnt all cards!</string>
     <string name="no_card_to_learn">There is no card to learn</string>
+    <string name="hours">Hours</string>
+    <string name="minutes">Minutes</string>
+    <string name="app_settings">App settings</string>
+    <string name="log_in_using_social_networks">Log in using social networks</string>
+    <string name="enter_your_email">Enter your email</string>
+    <string name="create_a_password">Create a password</string>
+    <string name="i_accept_the_terms_and_conditions">I accept PushLearn\'s <b><font fgcolor='#0C4E8C'>Terms of Use</font></b> and <b><font fgcolor='#0C4E8C'>Privacy Policy</font></b>.</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="log_in">LOG IN</string>
+    <string name="create_a_nickname">Create a nickname</string>
+    <string name="this_email_is_busy">This email is busy</string>
+    <string name="this_nickname_is_busy">This nickname is busy</string>
+    <string name="something_is_wrong">Oops... Something is wrong. Try to use another email.</string>
+    <string name="successful_registration">Welcome to PushLearn communtity!</string>
+    <string name="password_should_be_longer">Password should be longer then 8 symbols</string>
+    <string name="packs">packs</string>
+    <string name="rating_double_dot">Rating:</string>
+    <string name="incorrect_password_or_email">Incorrect password or email</string>
+    <string name="successful_sign_in">We are glad to see you in our community again!</string>
+    <string name="account_settings">Account Settings</string>
+    <string name="exit_the_account">Exit the account</string>
+    <string name="log_out">Log Out</string>
+    <string name="are_u_sure_to_log_out">Do you really want to exit your account?</string>
+    <string name="you_published_no_packs">You haven\'t published any pack \n Your community packs will be here</string>
 
 </resources>

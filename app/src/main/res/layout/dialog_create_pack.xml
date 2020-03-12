@@ -9,6 +9,8 @@
         android:id="@+id/dialog_add_pack_title_edit_text"
         android:inputType="text|textCapSentences|textAutoCorrect"
         android:layout_width="0dp"
+        android:textCursorDrawable="@null"
+        android:backgroundTint="@color/colorPrimary"
         android:layout_height="wrap_content"
         android:hint="@string/name"
         android:lines="1"
