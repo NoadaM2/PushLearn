@@ -71,7 +71,7 @@ public class LearnPackActivity extends AppCompatActivity {
             questionTextView.setText(cardList.get(0).getQuestion());
         } else {
             // NO CARD IN PACK TO LEARN
-            setContentView(R.layout.frag_com_packs);
+            setContentView(R.layout.frag_community_packs);
         }
 
 //----------------------------------I_KNOW_BUTTON ON CLICK LISTENER--------------------------------------------------
@@ -137,7 +137,7 @@ public class LearnPackActivity extends AppCompatActivity {
                     i_do_not_know_button.setVisibility(View.INVISIBLE);
                 } else {
                     // NO CARD IN PACK TO LEARN
-                    setContentView(R.layout.frag_com_packs);
+                    setContentView(R.layout.frag_community_packs);
                 }
             }
         });

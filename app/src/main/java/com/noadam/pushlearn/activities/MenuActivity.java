@@ -15,7 +15,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
@@ -28,12 +27,8 @@ import com.noadam.pushlearn.fragments.MyProfileFragment;
 import com.noadam.pushlearn.fragments.NowLearningFragment;
 import com.noadam.pushlearn.fragments.RegistrationFragment;
 import com.noadam.pushlearn.fragments.SettingsFragment;
-import com.noadam.pushlearn.internet.BusyEmailCallBack;
-import com.noadam.pushlearn.internet.BusyNickNameCallBack;
-import com.noadam.pushlearn.internet.GetComPackByIDCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
-import com.noadam.pushlearn.internet.SignInCallBack;
-import com.noadam.pushlearn.internet.UpdateMyComPacksCallBack;
 import com.noadam.pushlearn.push.MyReceiver;
 
 import java.util.ArrayList;
@@ -241,6 +236,8 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             editor.putString("login", "");
             editor.putString("nickname", "NickName");
             editor.putString("account_hash", "");
+            editor.putString("account_rating", "");
+
             editor.putString("password", "");
             editor.putInt("account_language", 0);
             editor.apply();
@@ -249,16 +246,17 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
 
     private void TryToSignIn(String login, String password) {
         PushLearnServerResponse response = new PushLearnServerResponse(getApplicationContext());
-        response.sendSignInResponse(login, password, new SignInCallBack() {
+        response.sendSignInResponse(login, password, new PushLearnServerCallBack() {
             @Override
-            public void getHashFromSignIn(String hash) {
+            public void onResponse(String hash) {
                 if (hash.equals("dont sign_in")) {
                     loadFragment(new RegistrationFragment());
                 }  else {
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("account_hash", hash);
-                    String extractedIDsOfSavedMyComPacks = extractIDsOfSavedMyComPacks(dbHelper.getSavedMyComPacksList());
-                    updateMyComPackList(extractedIDsOfSavedMyComPacks, hash);
+                    editor.apply();
+                   // String extractedIDsOfSavedMyComPacks = extractIDsOfSavedMyComPacks(dbHelper.getSavedMyComPacksList());
+                   // updateMyComPackList(extractedIDsOfSavedMyComPacks, hash);
                     loadFragment(new MyProfileFragment());
                 }
             }
@@ -270,11 +268,11 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
         });
     }
 
-    private void updateMyComPackList(String extractedIDsOfSavedMyComPacks, String hash) {
+  /*  private void updateMyComPackList(String extractedIDsOfSavedMyComPacks, String hash) { // TODO Test
         PushLearnServerResponse response = new PushLearnServerResponse(getApplicationContext());
-        response.sendUpdateMyComPackListResponse(extractedIDsOfSavedMyComPacks, hash, new UpdateMyComPacksCallBack() {
+        response.sendUpdateMyComPackListResponse(extractedIDsOfSavedMyComPacks, hash, new PushLearnServerCallBack() {
             @Override
-            public void getIDsOfMissingMyComPacks(String value) {
+            public void onResponse(String value) {
                 if(!value.equals("ok")) {
                     String str[] = value.split(",");
                     List<String> al = new ArrayList<String>();
@@ -290,8 +288,8 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             }
         });
     }
-
-    private String extractIDsOfSavedMyComPacks(ArrayList<ComPack> myComPackList) { // TODO Test
+*/
+  /*  private String extractIDsOfSavedMyComPacks(ArrayList<ComPack> myComPackList) { // TODO Test
         String result = "";
         for (ComPack myComPack : myComPackList) {
             result += (String.valueOf(myComPack.getMyComPackId()) + ", ");
@@ -301,12 +299,12 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
         }
         return result;
     }
-
+*/
     private void getMyComPackByID(String id, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(getApplicationContext());
-        response.sendGetComPackByIDResponse(id, hash, new GetComPackByIDCallBack() {
+        response.sendGetComPackByIDResponse(id, hash, new PushLearnServerCallBack() {
             @Override
-            public void getComPack(String value) {
+            public void onResponse(String value) {
                 // add pack to myComPackTable
             }
             @Override

@@ -155,7 +155,7 @@ public class CardsOfPackFragment extends Fragment {
 
         toolbar = view.findViewById(R.id.my_packs_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-
+        toolbar.setTitle(packName);
         recyclerView = view.findViewById(R.id.pack_list_recyclerview);
         registerForContextMenu(recyclerView);
         textViewNoCards = view.findViewById(R.id.no_items_textview);

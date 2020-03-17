@@ -15,7 +15,7 @@ import java.util.List;
 
 public class  PushLearnDBHelper extends SQLiteOpenHelper {
 
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 1;
     private static final String DB_NAME = "PushLearnDB";
 
     private static final String CARD_COLUMN_ID = "card_id";
@@ -35,6 +35,7 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
 
     private static final String MY_COM_PACK_TABLE_NAME = "myComPackTable";
     private static final String MY_COM_PACK_COLUMN_ID = "myComPack_id";
+    private static final String MY_COM_PACK_COLUMN_OWNER_ID = "myComPackOwner_id";
     private static final String MY_COM_PACK_COLUMN_PACK_NAME = "myComPackName";
     private static final String MY_COM_PACK_COLUMN_PACK_RATING = "myComPackRating";
     private static final String MY_COM_PACK_COLUMN_PACK_DESCRIPTION = "myComPackDescription";
@@ -50,7 +51,7 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
 //    MY_COM_PACK_COLUMN_PACK_DIRECTORY_ID
 //    MY_COM_PACK_COLUMN_PACK_SUBDIRECTORY_ID
 
-    private final String createMyComPackTableCommand = String.format("CREATE TABLE %s (%s INTEGER,  %s TEXT UNIQUE, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s INTEGER)", MY_COM_PACK_TABLE_NAME, MY_COM_PACK_COLUMN_ID, MY_COM_PACK_COLUMN_PACK_NAME, MY_COM_PACK_COLUMN_PACK_RATING, MY_COM_PACK_COLUMN_PACK_DESCRIPTION, MY_COM_PACK_COLUMN_PACK_ACCESS, MY_COM_PACK_COLUMN_PACK_DIRECTORY_ID, MY_COM_PACK_COLUMN_PACK_SUBDIRECTORY_ID);
+    private final String createMyComPackTableCommand = String.format("CREATE TABLE %s (%s INTEGER, %s INTEGER,  %s TEXT, %s INTEGER, %s TEXT, %s TEXT, %s INTEGER, %s INTEGER)", MY_COM_PACK_TABLE_NAME, MY_COM_PACK_COLUMN_ID, MY_COM_PACK_COLUMN_OWNER_ID, MY_COM_PACK_COLUMN_PACK_NAME, MY_COM_PACK_COLUMN_PACK_RATING, MY_COM_PACK_COLUMN_PACK_DESCRIPTION, MY_COM_PACK_COLUMN_PACK_ACCESS, MY_COM_PACK_COLUMN_PACK_DIRECTORY_ID, MY_COM_PACK_COLUMN_PACK_SUBDIRECTORY_ID);
 
 
     public PushLearnDBHelper(Context context) {
@@ -64,35 +65,38 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        if (DB_VERSION < 1) {
+        if (DB_VERSION < 2) {
             sqLiteDatabase.execSQL(createPackTableCommand);
             sqLiteDatabase.execSQL(createCardTableCommand);
-        }
-        if (DB_VERSION > 1) {
             sqLiteDatabase.execSQL(createMyComPackTableCommand);
         }
 
     }
 
-    public void saveMyComPack(ComPack comPack) {
-        ContentValues packValues = new ContentValues();
-        packValues.put(MY_COM_PACK_COLUMN_ID, comPack.getMyComPackId());
-        packValues.put(MY_COM_PACK_COLUMN_PACK_NAME, comPack.getMyComPackName());
-        packValues.put(MY_COM_PACK_COLUMN_PACK_RATING, comPack.getMyComPackRating());
-        packValues.put(MY_COM_PACK_COLUMN_PACK_DESCRIPTION, comPack.getMyComPackDescription());
-        packValues.put(MY_COM_PACK_COLUMN_PACK_ACCESS, comPack.getMyComPackAccess());
-        packValues.put(MY_COM_PACK_COLUMN_PACK_DIRECTORY_ID, comPack.getMyComPackDirectoryId());
-        packValues.put(MY_COM_PACK_COLUMN_PACK_SUBDIRECTORY_ID, comPack.getMyComPackSubdirectoryId());
+    public void saveMyComPacks(ArrayList<ComPack> comPacks) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.insert(MY_COM_PACK_TABLE_NAME, null, packValues);
+        db.execSQL("DELETE FROM "+ MY_COM_PACK_TABLE_NAME);
+        for (ComPack comPack : comPacks) {
+            ContentValues packValues = new ContentValues();
+            packValues.put(MY_COM_PACK_COLUMN_ID, comPack.getComPackID());
+            packValues.put(MY_COM_PACK_COLUMN_OWNER_ID, comPack.getComPackOwnerID());
+            packValues.put(MY_COM_PACK_COLUMN_PACK_NAME, comPack.getComPackName());
+            packValues.put(MY_COM_PACK_COLUMN_PACK_RATING, comPack.getComPackRating());
+            packValues.put(MY_COM_PACK_COLUMN_PACK_DESCRIPTION, comPack.getComPackDescription());
+            packValues.put(MY_COM_PACK_COLUMN_PACK_ACCESS, comPack.getComPackAccess());
+            packValues.put(MY_COM_PACK_COLUMN_PACK_DIRECTORY_ID, comPack.getComPackDirectoryId());
+            packValues.put(MY_COM_PACK_COLUMN_PACK_SUBDIRECTORY_ID, comPack.getComPackSubdirectoryId());
+            db.insert(MY_COM_PACK_TABLE_NAME, null, packValues);
+        }
         db.close();
-    } // TODO test
+    }
 
     public ArrayList<ComPack> getSavedMyComPacksList() {
         ArrayList<ComPack> myComPacks = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.query(MY_COM_PACK_TABLE_NAME, new String[]{MY_COM_PACK_COLUMN_ID, MY_COM_PACK_COLUMN_PACK_NAME, MY_COM_PACK_COLUMN_PACK_RATING, MY_COM_PACK_COLUMN_PACK_DESCRIPTION, MY_COM_PACK_COLUMN_PACK_ACCESS, MY_COM_PACK_COLUMN_PACK_DIRECTORY_ID, MY_COM_PACK_COLUMN_PACK_SUBDIRECTORY_ID}, null, null, null, null, null);
+        Cursor cursor = db.query(MY_COM_PACK_TABLE_NAME, new String[]{MY_COM_PACK_COLUMN_ID,MY_COM_PACK_COLUMN_OWNER_ID, MY_COM_PACK_COLUMN_PACK_NAME, MY_COM_PACK_COLUMN_PACK_RATING, MY_COM_PACK_COLUMN_PACK_DESCRIPTION, MY_COM_PACK_COLUMN_PACK_ACCESS, MY_COM_PACK_COLUMN_PACK_DIRECTORY_ID, MY_COM_PACK_COLUMN_PACK_SUBDIRECTORY_ID}, null, null, null, null, null);
         int myComPackId;
+        int myComPackOwnerId;
         String myComPackName;
         int myComPackRating;
         String myComPackDescription;
@@ -102,19 +106,20 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 myComPackId = Integer.parseInt(cursor.getString(cursor.getColumnIndex(MY_COM_PACK_COLUMN_ID)));
+                myComPackOwnerId = Integer.parseInt(cursor.getString(cursor.getColumnIndex(MY_COM_PACK_COLUMN_OWNER_ID)));
                 myComPackName = cursor.getString(cursor.getColumnIndex(MY_COM_PACK_COLUMN_PACK_NAME));
                 myComPackRating = cursor.getInt(cursor.getColumnIndex(MY_COM_PACK_COLUMN_PACK_RATING));
                 myComPackDescription = cursor.getString(cursor.getColumnIndex(MY_COM_PACK_COLUMN_PACK_DESCRIPTION));
                 myComPackAccess = cursor.getString(cursor.getColumnIndex(MY_COM_PACK_COLUMN_PACK_ACCESS));
                 myComPackDirectoryId = cursor.getInt(cursor.getColumnIndex(MY_COM_PACK_COLUMN_PACK_DIRECTORY_ID));
                 myComPackSubdirectoryId = cursor.getInt(cursor.getColumnIndex(MY_COM_PACK_COLUMN_PACK_SUBDIRECTORY_ID));
-                myComPacks.add(new ComPack(myComPackId, myComPackName, myComPackRating, myComPackDescription, myComPackAccess, myComPackDirectoryId, myComPackSubdirectoryId));
+                myComPacks.add(new ComPack(myComPackId,myComPackOwnerId, myComPackName, myComPackRating, myComPackDescription, myComPackAccess, myComPackDirectoryId, myComPackSubdirectoryId));
             } while (cursor.moveToNext());
         }
         db.close();
         cursor.close();
         return myComPacks;
-    } // TODO test
+    }
 
     public void addNewPack(Pack pack) {
         ContentValues packValues = new ContentValues();

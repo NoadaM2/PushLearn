@@ -46,7 +46,7 @@ public class PushLearnServerResponse {
 
     }
 
-    public void sendBusyEmailResponse(String email, BusyEmailCallBack callback) { // checked stable
+    public void sendBusyEmailResponse(String email, PushLearnServerCallBack callback) { // checked stable
         try {
             JSONObject childData = new JSONObject();
             childData.put("email",email);
@@ -61,7 +61,7 @@ public class PushLearnServerResponse {
 
                     if (response != null) {
                         String a = response.body();
-                        callback.getBusyEmail(a);
+                        callback.onResponse(a);
                     }
                 }
             @Override
@@ -76,7 +76,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetNickNameByHashResponse(String hash, GetNickNameByHashCallBack callback) {
+    public void sendGetNickNameByHashResponse(String hash, PushLearnServerCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("hash",hash);
@@ -91,7 +91,7 @@ public class PushLearnServerResponse {
 
                     if (response != null) {
                         String a = response.body();
-                        callback.getNickName(a);
+                        callback.onResponse(a);
                     }
                 }
             @Override
@@ -106,112 +106,53 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendUpdateMyComPackListResponse(String IDsOfSavedMyComPacks, String hash, UpdateMyComPacksCallBack callback) {
+    public void sendGetNickNameByIDResponse(int id, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("id",id);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "get_nickname_by_id");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.getNickNameByHash(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError();
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void sendGetCardsOfComPackByPackIDResponse(int packID, String hash, PushLearnServerCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("hash", hash);
-            childData.put("ids", IDsOfSavedMyComPacks);
+            childData.put("id_pack", packID);
             JSONObject finalObject = new JSONObject();
-            finalObject.put("type", "update_packs");
+            finalObject.put("type", "get_cards_by_packID");
             finalObject.put("object", childData);
 
-            Call<String> userCall = apiInterface.updateMyComPacks(finalObject.toString());
+            Call<String> userCall = apiInterface.getCardsOfComPackByPackID(finalObject.toString());
             userCall.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     if (response != null) {
                         String a = response.body();
-                        callback.getIDsOfMissingMyComPacks(a);
-                    }
-                }
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
-                Log.v("SERVER  ERROR", t+"");
-            }
-        });
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void sendGetComPackByIDResponse(String id, String hash, GetComPackByIDCallBack callback) {
-        try {
-            JSONObject childData = new JSONObject();
-            childData.put("hash", hash);
-            childData.put("id_pack", id);
-            JSONObject finalObject = new JSONObject();
-            finalObject.put("type", "update_packs");
-            finalObject.put("object", childData);
-
-            Call<String> userCall = apiInterface.getComPackByID(finalObject.toString());
-            userCall.enqueue(new Callback<String>() {
-                @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-                    if (response != null) {
-                        String a = response.body();
-                        callback.getComPack(a);
-                    }
-                }
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
-                Log.v("SERVER  ERROR", t+"");
-            }
-        });
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void sendBusyNickNameResponse(String nickname, BusyNickNameCallBack callback) {
-        try {
-            JSONObject childData = new JSONObject();
-            childData.put("nickname", nickname);
-            JSONObject finalObject = new JSONObject();
-            finalObject.put("type", "busy_nickname");
-            finalObject.put("object", childData);
-
-            Call<String> userCall = apiInterface.busyNickName(finalObject.toString());
-            userCall.enqueue(new Callback<String>() {
-                @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-
-                    if (response != null) {
-                        String a = response.body();
-                        callback.getBusyNickName(a);
-                    }
-                }
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
-                Log.v("SERVER  ERROR", t+"");
-            }
-        });
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void sendSignInResponse(String login, String password, SignInCallBack callback) { // checked stable
-        try {
-            JSONObject childData = new JSONObject();
-            childData.put("email",login);
-            childData.put("password",password);
-            JSONObject finalObject = new JSONObject();
-            finalObject.put("type", "sign_in");
-            finalObject.put("object", childData);
-
-            Call<String> userCall = apiInterface.signIn(finalObject.toString());
-            userCall.enqueue(new Callback<String>() {
-                @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-                    if (response != null) {
-                        String a = response.body();
-                        callback.getHashFromSignIn(a);
+                        callback.onResponse(a);
                     }
                 }
                 @Override
@@ -226,7 +167,213 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendSignUpResponse(String email, String password, String nickname, int language_id, SignUpCallBack callback) { // checked stable
+
+    public void sendGetComPackByIDResponse(String id, String hash, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("hash", hash);
+            childData.put("id_pack", id);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "update_packs");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.getComPackByID(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError();
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+ public void sendGetPacksByNickNameResponse(String nickname, String hash, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("hash", hash);
+            childData.put("nickname", nickname);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "get_packs_by_nickname");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.getPacksByNickName(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError();
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendBusyNickNameResponse(String nickname, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("nickname", nickname);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "busy_nickname");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.busyNickName(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError();
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public void sendGetNumberOfComPacksByNickNameResponse(String nickname, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("nickname", nickname);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "get_number_of_packs_by_nickname");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.getNumberOfComPacksByNickName(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError();
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public void sendGetRatingByNickNameResponse(String nickname, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("nickname", nickname);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "get_rating_by_nickname");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.getRatingByNickName(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError();
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendGetLanguageIDByNickNameResponse(String nickname, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("nickname", nickname);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "get_language_id_by_nickname");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.getLanguageIDByNickName(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError();
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendSignInResponse(String login, String password, PushLearnServerCallBack callback) { // checked stable
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("email",login);
+            childData.put("password",password);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "sign_in");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.signIn(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError();
+                    Log.v("SERVER  ERROR", t+"");
+                }
+            });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendSignUpResponse(String email, String password, String nickname, int language_id, PushLearnServerCallBack callback) { // checked stable
         try {
             JSONObject childData = new JSONObject();
             childData.put("email",email);
@@ -243,7 +390,7 @@ public class PushLearnServerResponse {
                 public void onResponse(Call<String> call, Response<String> response) {
                     if (response != null) {
                         String a = response.body();
-                        callback.getHashFromSignUp(a);
+                        callback.onResponse(a);
                     }
                 }
                 @Override

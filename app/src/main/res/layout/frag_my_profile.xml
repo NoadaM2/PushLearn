@@ -10,18 +10,17 @@
         layout="@layout/add_options_toolbar" />
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/userInfo_constraintLayout"
+        android:id="@+id/myInfo_constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@color/colorPrimary"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/my_profile_toolbar">
 
 
         <ImageView
-            android:id="@+id/avatar_imageView"
+            android:id="@+id/user_avatar_imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
@@ -33,56 +32,56 @@
             app:srcCompat="@mipmap/ic_launcher" />
 
         <TextView
-            android:id="@+id/nickname_textView"
+            android:id="@+id/user_nickname_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
+            android:text=""
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
             android:textColor="@color/white"
-            android:text="NickName"
-            app:layout_constraintStart_toEndOf="@+id/avatar_imageView"
+            app:layout_constraintStart_toEndOf="@+id/user_avatar_imageView"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/flag_imageView"
+            android:id="@+id/user_flag_imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="20dp"
-            app:layout_constraintStart_toEndOf="@+id/nickname_textView"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_flag_russia" />
+            app:layout_constraintStart_toEndOf="@+id/user_nickname_textView"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/rating_label_textView"
+            android:id="@+id/user_rating_label_textView"
             android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:text="@string/rating_double_dot"
-            app:layout_constraintStart_toEndOf="@+id/avatar_imageView"
-            app:layout_constraintTop_toBottomOf="@+id/nickname_textView" />
+            app:layout_constraintStart_toEndOf="@id/user_avatar_imageView"
+            app:layout_constraintTop_toBottomOf="@id/user_nickname_textView" />
 
         <TextView
-            android:id="@+id/rating_number_textView"
+            android:id="@+id/user_rating_number_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="rating_number"
+            android:text=""
             android:textColor="@color/yellow"
-            app:layout_constraintStart_toEndOf="@+id/rating_label_textView"
-            app:layout_constraintTop_toBottomOf="@+id/nickname_textView" />
+            app:layout_constraintStart_toEndOf="@id/user_rating_label_textView"
+            app:layout_constraintTop_toBottomOf="@id/user_nickname_textView" />
 
         <ImageView
             android:id="@+id/star_imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
-            app:layout_constraintStart_toEndOf="@+id/rating_number_textView"
-            app:layout_constraintTop_toBottomOf="@+id/nickname_textView"
+            app:layout_constraintStart_toEndOf="@id/user_rating_number_textView"
+            app:layout_constraintTop_toBottomOf="@id/user_nickname_textView"
             app:srcCompat="@drawable/ic_star_outlined" />
 
         <TextView
@@ -91,21 +90,22 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="number_of_packs"
+            android:text=""
             android:textColor="@color/white"
-            app:layout_constraintStart_toEndOf="@+id/avatar_imageView"
-            app:layout_constraintTop_toBottomOf="@+id/rating_label_textView" />
+            app:layout_constraintStart_toEndOf="@id/user_avatar_imageView"
+            app:layout_constraintTop_toBottomOf="@id/user_rating_label_textView" />
 
         <TextView
             android:id="@+id/packs_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:paddingBottom="16dp"
+            android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
             android:text="@string/packs"
             android:textColor="@color/white"
             app:layout_constraintStart_toEndOf="@+id/number_of_packs_textView"
-            app:layout_constraintTop_toBottomOf="@+id/rating_number_textView" />
+            app:layout_constraintTop_toBottomOf="@+id/user_rating_number_textView" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.v7.widget.RecyclerView
@@ -115,7 +115,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/userInfo_constraintLayout" />
+        app:layout_constraintTop_toBottomOf="@id/myInfo_constraintLayout" />
 
     <TextView
         android:id="@+id/no_my_com_packs_textView"
@@ -133,7 +133,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/userInfo_constraintLayout" />
+        app:layout_constraintTop_toBottomOf="@id/myInfo_constraintLayout" />
 
 
 </android.support.constraint.ConstraintLayout>

@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,12 +23,8 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.noadam.pushlearn.R;
-import com.noadam.pushlearn.internet.BusyEmailCallBack;
-import com.noadam.pushlearn.internet.BusyNickNameCallBack;
-import com.noadam.pushlearn.internet.GetNickNameByHashCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
-import com.noadam.pushlearn.internet.SignInCallBack;
-import com.noadam.pushlearn.internet.SignUpCallBack;
 
 public class RegistrationFragment extends Fragment {
     private Context context;
@@ -121,9 +116,9 @@ public class RegistrationFragment extends Fragment {
     private void TryToSignUp(String email, String password, String nickname, int language_id) {
         if(password.length() < 8) { PasswordEditText.setError(getString(R.string.password_should_be_longer)); return; }
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendSignUpResponse(email, password,nickname, language_id, new SignUpCallBack() {
+        response.sendSignUpResponse(email, password,nickname, language_id, new PushLearnServerCallBack() {
             @Override
-            public void getHashFromSignUp(String value) {
+            public void onResponse(String value) {
                 if (value.contains("email_busy")) {
                     Toast.makeText(context, getString(R.string.something_is_wrong), Toast.LENGTH_SHORT).show();
                 }  else {
@@ -149,9 +144,9 @@ public class RegistrationFragment extends Fragment {
 
     private void TryToSignIn(String email, String password) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendSignInResponse(email, password, new SignInCallBack() {
+        response.sendSignInResponse(email, password, new PushLearnServerCallBack() {
             @Override
-            public void getHashFromSignIn(String hash) {
+            public void onResponse(String hash) {
                 if (hash.contains("sign_in")) {
                     PasswordEditText.setError(getString(R.string.incorrect_password_or_email));
                     EmailEditText.setError(getString(R.string.incorrect_password_or_email));
@@ -161,8 +156,7 @@ public class RegistrationFragment extends Fragment {
                     editor.putString("account_hash", hash);
                     editor.putString("login", email);
                     editor.putString("password", password);
-                    getNickNameByHashResponse(hash);
-                  //  editor.putInt("account_language", language_id); TODO Integrate get_language_id_by_nickname
+                    editor.putInt("account_language", getLanguageId(getSystemLanguage()));
                     editor.apply();
                     loadFragment(new MyProfileFragment());
                     Toast.makeText(context, getString(R.string.successful_sign_in), Toast.LENGTH_SHORT).show();
@@ -185,12 +179,12 @@ public class RegistrationFragment extends Fragment {
 
     private void ifBusyEmail(String email) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendBusyEmailResponse(email, new BusyEmailCallBack() {
+        response.sendBusyEmailResponse(email, new PushLearnServerCallBack() {
             @Override
-            public void getBusyEmail(String value) {
+            public void onResponse(String value) {
                 if(value.equals("ok")) { ifBusyNickName(String.valueOf(NickNameEditText.getText()),email);
                 } else {
-                            EmailEditText.setError(getString(R.string.this_email_is_busy));
+                    EmailEditText.setError(getString(R.string.this_email_is_busy));
                 }
             }
             @Override
@@ -202,12 +196,13 @@ public class RegistrationFragment extends Fragment {
 
     private void getNickNameByHashResponse(String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetNickNameByHashResponse(hash, new GetNickNameByHashCallBack() {
+        response.sendGetNickNameByHashResponse(hash, new PushLearnServerCallBack() {
             @Override
-            public void getNickName(String value) {
+            public void onResponse(String value) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("nickname", value);
+                editor.apply();
             }
             @Override
             public void onError() {
@@ -218,11 +213,10 @@ public class RegistrationFragment extends Fragment {
 
     private void ifBusyNickName(String nickname, String email) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendBusyNickNameResponse(nickname, new BusyNickNameCallBack() {
+        response.sendBusyNickNameResponse(nickname, new PushLearnServerCallBack() {
             @Override
-            public void getBusyNickName(String value) {
-                String language = getSystemLanguage();
-                int language_id = getLanguageId(language);
+            public void onResponse(String value) {
+                int language_id = getLanguageId(getSystemLanguage());
                 if(value.equals("ok")) { TryToSignUp(email, String.valueOf(PasswordEditText.getText()), nickname, language_id);
                 } else {
                     NickNameEditText.setError(getString(R.string.this_nickname_is_busy));
