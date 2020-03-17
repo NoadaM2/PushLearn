@@ -2,87 +2,98 @@ package com.noadam.pushlearn.entities;
 
 public class ComPack {
 
-    private int myComPackId;
-    private String myComPackName;
-    private int myComPackRating;
-    private String myComPackDescription;
-    private String myComPackAccess;
-    private int myComPackDirectoryId;
-    private int myComPackSubdirectoryId;
+    private int comPackID;
+    private int comPackOwnerID;
+    private String comPackName;
+    private int comPackRating;
+    private String comPackDescription;
+    private String comPackAccess;
+    private int comPackDirectoryId;
+    private int comPackSubdirectoryId;
 
     public ComPack(String packName) { // From pack
-        this.myComPackId = 0;
-        this.myComPackName = packName;
-        this.myComPackRating = 0;
-        this.myComPackDescription = "";
-        this.myComPackAccess = "public";
-        this.myComPackDirectoryId = 0;
-        this.myComPackSubdirectoryId = 0;
+        this.comPackID = 0;
+        this.comPackOwnerID = 0;
+        this.comPackName = packName;
+        this.comPackRating = 0;
+        this.comPackDescription = "";
+        this.comPackAccess = "public";
+        this.comPackDirectoryId = 0;
+        this.comPackSubdirectoryId = 0;
     }
 
-    public ComPack(int id, String packName, int rating, String description, String access, int directory_id, int subdirectory_id) { // From server
-        this.myComPackId = id;
-        this.myComPackName = packName;
-        this.myComPackRating = rating;
-        this.myComPackDescription = description;
-        this.myComPackAccess = access;
-        this.myComPackDirectoryId = directory_id;
-        this.myComPackSubdirectoryId = subdirectory_id;
+    public ComPack(int id, int owner_id,String packName, int rating, String description, String access, int directory_id, int subdirectory_id) { // From server
+        this.comPackID = id;
+        this.comPackOwnerID = owner_id;
+        this.comPackName = packName;
+        this.comPackRating = rating;
+        this.comPackDescription = description;
+        this.comPackAccess = access;
+        this.comPackDirectoryId = directory_id;
+        this.comPackSubdirectoryId = subdirectory_id;
     }
 
-    public int getMyComPackId() {
-        return myComPackId;
+    public int getComPackID() {
+        return comPackID;
     }
 
-    public void setMyComPackId(int myComPackId) {
-        this.myComPackId = myComPackId;
+    public void setComPackID(int comPackID) {
+        this.comPackID = comPackID;
     }
 
-    public String getMyComPackName() {
-        return myComPackName;
+    public String getComPackName() {
+        return comPackName;
     }
 
-    public void setMyComPackName(String myComPackName) {
-        this.myComPackName = myComPackName;
+    public void setComPackName(String comPackName) {
+        this.comPackName = comPackName;
     }
 
-    public int getMyComPackRating() {
-        return myComPackRating;
+    public int getComPackRating() {
+        return comPackRating;
     }
 
-    public void setMyComPackRating(int myComPackRating) {
-        this.myComPackRating = myComPackRating;
+    public void setComPackRating(int comPackRating) {
+        this.comPackRating = comPackRating;
     }
 
-    public String getMyComPackDescription() {
-        return myComPackDescription;
+    public String getComPackDescription() {
+        return comPackDescription;
     }
 
-    public void setMyComPackDescription(String myComPackDescription) {
-        this.myComPackDescription = myComPackDescription;
+    public void setComPackDescription(String comPackDescription) {
+        this.comPackDescription = comPackDescription;
     }
 
-    public String getMyComPackAccess() {
-        return myComPackAccess;
+    public String getComPackAccess() {
+        return comPackAccess;
     }
 
-    public void setMyComPackAccess(String myComPackAccess) {
-        this.myComPackAccess = myComPackAccess;
+    public void setComPackAccess(String comPackAccess) {
+        this.comPackAccess = comPackAccess;
     }
 
-    public int getMyComPackDirectoryId() {
-        return myComPackDirectoryId;
+    public int getComPackDirectoryId() {
+        return comPackDirectoryId;
     }
 
-    public void setMyComPackDirectoryId(int myComPackDirectoryId) {
-        this.myComPackDirectoryId = myComPackDirectoryId;
+    public void setComPackDirectoryId(int comPackDirectoryId) {
+        this.comPackDirectoryId = comPackDirectoryId;
     }
 
-    public int getMyComPackSubdirectoryId() {
-        return myComPackSubdirectoryId;
+    public int getComPackSubdirectoryId() {
+        return comPackSubdirectoryId;
     }
 
-    public void setMyComPackSubdirectoryId(int myComPackSubdirectoryId) {
-        this.myComPackSubdirectoryId = myComPackSubdirectoryId;
+    public void setComPackSubdirectoryId(int comPackSubdirectoryId) {
+        this.comPackSubdirectoryId = comPackSubdirectoryId;
+    }
+
+    public int getComPackOwnerID() {
+        return comPackOwnerID;
+    }
+
+    public void setComPackOwnerID(int comPackOwnerID) {
+        this.comPackOwnerID = comPackOwnerID;
     }
 }

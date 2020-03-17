@@ -212,7 +212,7 @@ public class MyPacksFragment extends Fragment{
     }
 
     private void onRecyclerViewItemClick(String packName) {
-        CardsOfPackFragment nextFrag= new CardsOfPackFragment();
+        CardsOfPackFragment nextFrag = new CardsOfPackFragment();
         nextFrag.setPackName(packName);
         getActivity().getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, nextFrag, "findThisFragment")

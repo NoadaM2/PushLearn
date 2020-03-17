@@ -57,10 +57,10 @@ public class MyComPacksAdapter extends RecyclerView.Adapter<MyComPacksAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
         ComPack pack = comPackList.get(i);
-        String packName = pack.getMyComPackName();
-        int myComPackRating = pack.getMyComPackRating();
+        String packName = pack.getComPackName();
+        int myComPackRating = pack.getComPackRating();
         holder.myComPackName_textView.setText(packName);
-        holder.myComPackRating_textView.setText(myComPackRating);
+        holder.myComPackRating_textView.setText(String.valueOf(myComPackRating));
     }
 
     @Override

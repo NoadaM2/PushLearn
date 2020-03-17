@@ -30,10 +30,26 @@ public interface PushLearnServer {
     Call<String> getNickNameByHash(@Body String body);
 
     @Headers("Content-Type: application/json")
-    @POST("update_packs")
-    Call<String> updateMyComPacks(@Body String body);
-
-    @Headers("Content-Type: application/json")
     @POST("return_pack_from_id")
     Call<String> getComPackByID(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("get_cards_by_packID")
+    Call<String> getCardsOfComPackByPackID(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("get_number_of_packs_by_nickname")
+    Call<String> getNumberOfComPacksByNickName(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("get_rating_by_nickname")
+    Call<String> getRatingByNickName(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("get_language_id_by_nickname")
+    Call<String> getLanguageIDByNickName(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("get_packs_by_nickname")
+    Call<String> getPacksByNickName(@Body String body);
 }

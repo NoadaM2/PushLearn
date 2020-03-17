@@ -15,7 +15,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@color/colorPrimary"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/my_profile_toolbar">
 
@@ -37,9 +36,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
+            android:text=""
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
             android:textColor="@color/white"
-            android:text="NickName"
             app:layout_constraintStart_toEndOf="@+id/avatar_imageView"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -50,8 +50,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="20dp"
             app:layout_constraintStart_toEndOf="@+id/nickname_textView"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_flag_russia" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/rating_label_textView"
@@ -61,8 +60,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:text="@string/rating_double_dot"
-            app:layout_constraintStart_toEndOf="@+id/avatar_imageView"
-            app:layout_constraintTop_toBottomOf="@+id/nickname_textView" />
+            app:layout_constraintStart_toEndOf="@id/avatar_imageView"
+            app:layout_constraintTop_toBottomOf="@id/nickname_textView" />
 
         <TextView
             android:id="@+id/rating_number_textView"
@@ -70,19 +69,19 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="rating_number"
+            android:text=""
             android:textColor="@color/yellow"
-            app:layout_constraintStart_toEndOf="@+id/rating_label_textView"
-            app:layout_constraintTop_toBottomOf="@+id/nickname_textView" />
+            app:layout_constraintStart_toEndOf="@id/rating_label_textView"
+            app:layout_constraintTop_toBottomOf="@id/nickname_textView" />
 
         <ImageView
             android:id="@+id/star_imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
-            app:layout_constraintStart_toEndOf="@+id/rating_number_textView"
-            app:layout_constraintTop_toBottomOf="@+id/nickname_textView"
+            app:layout_constraintStart_toEndOf="@id/rating_number_textView"
+            app:layout_constraintTop_toBottomOf="@id/nickname_textView"
             app:srcCompat="@drawable/ic_star_outlined" />
 
         <TextView
@@ -91,16 +90,17 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="number_of_packs"
+            android:text=""
             android:textColor="@color/white"
-            app:layout_constraintStart_toEndOf="@+id/avatar_imageView"
-            app:layout_constraintTop_toBottomOf="@+id/rating_label_textView" />
+            app:layout_constraintStart_toEndOf="@id/avatar_imageView"
+            app:layout_constraintTop_toBottomOf="@id/rating_label_textView" />
 
         <TextView
             android:id="@+id/packs_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:paddingBottom="16dp"
+            android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
             android:text="@string/packs"
             android:textColor="@color/white"
