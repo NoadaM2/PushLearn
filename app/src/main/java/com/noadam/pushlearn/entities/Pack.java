@@ -6,23 +6,18 @@ import java.util.ArrayList;
 
 public class Pack {
 
-    @SerializedName("id")
-    private int _id;
-
-    @SerializedName("packName")
     private String packName;
+    private String type;
 
-    @SerializedName("cards")
-    private ArrayList<Card> cards = new ArrayList<>();
-
-    public Pack(int _id, String packName) {
-        this._id = _id;
+    public Pack(String packName,String type) {
+        this.type = type;
         this.packName = packName;
     }
 
 
     public Pack(String packName) {
         this.packName = packName;
+        this.type = "created";
     }
 
     public String getPackName() {
@@ -32,4 +27,9 @@ public class Pack {
     public void setPackName(String packName) {
         this.packName = packName;
     }
+
+    public String getType() {
+        return type;
+    }
+
 }

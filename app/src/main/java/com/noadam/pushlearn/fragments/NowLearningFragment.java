@@ -30,6 +30,7 @@ import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.fragments.dialog.CreateCardDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
+import com.noadam.pushlearn.fragments.dialog.SetIterationTimesDialogFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -195,15 +196,17 @@ public class NowLearningFragment extends Fragment {
     }
 
     private void openCardEditDialog(Card card) {
-        CreateCardDialogFragment dialogFrag = CreateCardDialogFragment.newInstance(card);
-        dialogFrag.setTargetFragment(this, 2);
+        SetIterationTimesDialogFragment dialogFrag = SetIterationTimesDialogFragment.newInstance(card);
+        dialogFrag.setTargetFragment(this, 3);
         dialogFrag.show(getFragmentManager().beginTransaction(), "");
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch(requestCode) {
-
+            case 3:
+                fillRecyclerView();
+                break;
         }
     }
 }

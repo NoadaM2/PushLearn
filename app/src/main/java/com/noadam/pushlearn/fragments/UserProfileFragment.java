@@ -36,48 +36,51 @@ import java.util.Collections;
 import java.util.Comparator;
 
 
-public class MyProfileFragment extends Fragment {
+public class UserProfileFragment extends Fragment {
     private Context context;
     private PushLearnDBHelper dbHelper;
     private TextView nickNameTextView;
-    private TextView noMyComPacksTextView;
+    private TextView noComPacksTextView;
     private TextView ratingTextView;
     private TextView numberOfPacksTextView;
     private ImageView avatarImageView;
     private ImageView flagImageView;
-    private RecyclerView myComPacksRecyclerView;
-    private MyComPacksAdapter myComPacksAdapter;
-    private ArrayList<ComPack> myComPackList;
+    private RecyclerView userComPacksRecyclerView;
+    private MyComPacksAdapter userComPacksAdapter;
+    private ArrayList<ComPack> userComPackList;
+    private int userID;
+
+    public void setUserID(int id) {
+        userID = id;
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        View view = inflater.inflate(R.layout.frag_my_profile, null);
+        View view = inflater.inflate(R.layout.frag_user_profile, null);
         context = getActivity();
         dbHelper = new PushLearnDBHelper(context);
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
-        Toolbar toolbar = view.findViewById(R.id.my_profile_toolbar);
+        Toolbar toolbar = view.findViewById(R.id.user_profile_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
-        nickNameTextView = view.findViewById(R.id.my_nickname_textView);
-        noMyComPacksTextView = view.findViewById(R.id.no_my_com_packs_textView);
-        ratingTextView = view.findViewById(R.id.my_rating_number_textView);
-        numberOfPacksTextView = view.findViewById(R.id.my_number_of_packs_textView);
-        avatarImageView = view.findViewById(R.id.my_avatar_imageView);
-        flagImageView = view.findViewById(R.id.my_flag_imageView);
+        nickNameTextView = view.findViewById(R.id.user_nickname_textView);
+        noComPacksTextView = view.findViewById(R.id.no_user_com_packs_textView);
+        ratingTextView = view.findViewById(R.id.user_rating_number_textView);
+        numberOfPacksTextView = view.findViewById(R.id.user_number_of_packs_textView);
+        avatarImageView = view.findViewById(R.id.user_avatar_imageView);
+        flagImageView = view.findViewById(R.id.user_flag_imageView);
         setValuesForViews();
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
-        myComPacksRecyclerView = view.findViewById(R.id.my_com_packs_RecyclerView);
-        registerForContextMenu(myComPacksRecyclerView);
-
-        fillRecyclerView();
+        userComPacksRecyclerView = view.findViewById(R.id.user_com_packs_RecyclerView);
+        registerForContextMenu(userComPacksRecyclerView);
 
         return view;
     }
 
     private void sortComPackList() {
-        Collections.sort(myComPackList, new Comparator<ComPack>() { // sorting
+        Collections.sort(userComPackList, new Comparator<ComPack>() { // sorting
             @Override
             public int compare(ComPack lhs, ComPack rhs) {
                 return Integer.valueOf(rhs.getComPackRating()).compareTo(Integer.valueOf(lhs.getComPackRating()));
@@ -86,18 +89,18 @@ public class MyProfileFragment extends Fragment {
     }
 
     private void fillRecyclerView() {
-        myComPackList = dbHelper.getSavedMyComPacksList();
+        userComPackList = dbHelper.getSavedMyComPacksList();
         sortComPackList();
-        if (!myComPackList.isEmpty()) {
-            noMyComPacksTextView.setVisibility(View.GONE);
+        if (!userComPackList.isEmpty()) {
+            noComPacksTextView.setVisibility(View.GONE);
         }
         else {
-            noMyComPacksTextView.setText(R.string.you_published_no_packs);
-            noMyComPacksTextView.setVisibility(View.VISIBLE);
+            noComPacksTextView.setText(R.string.you_published_no_packs);
+            noComPacksTextView.setVisibility(View.VISIBLE);
         }
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        myComPacksRecyclerView.setLayoutManager(layoutManager);
-        myComPacksAdapter = new MyComPacksAdapter(new MyComPacksAdapter.OnRecyclerViewItemClickListener() {
+        userComPacksRecyclerView.setLayoutManager(layoutManager);
+        userComPacksAdapter = new MyComPacksAdapter(new MyComPacksAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onClick(ComPack myComPack, View v) {
                 CommunityPackFragment nextFrag= new CommunityPackFragment();
@@ -113,59 +116,25 @@ public class MyProfileFragment extends Fragment {
 
             }
         });
-        myComPacksAdapter.setComPackList(myComPackList);
-        myComPacksRecyclerView.setAdapter(myComPacksAdapter);
-        myComPacksRecyclerView.getAdapter().notifyDataSetChanged();
+        userComPacksAdapter.setComPackList(userComPackList);
+        userComPacksRecyclerView.setAdapter(userComPacksAdapter);
+        userComPacksRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
     private void setValuesForViews() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String hash = prefs.getString("account_hash","");
-        nickNameTextView.setText(prefs.getString("nickname",""));
-        ratingTextView.setText(prefs.getString("account_rating",""));
-        String a = prefs.getString("account_count_of_packs","");
-        numberOfPacksTextView.setText(String.valueOf(a));
-        switch (prefs.getInt("account_language",0)) {
-            case 0:
-                break;
-            case 1:
-                flagImageView.setImageResource(R.drawable.ic_united_kingdom);
-                break;
-            case 11:
-                flagImageView.setImageResource(R.drawable.ic_united_states);
-                break;
-            case 2:
-                flagImageView.setImageResource(R.drawable.ic_flag_russia);
-                break;
-        }
-        getNickNameByHashResponse(hash);
+        setNickNameByIDResponse(userID);
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.toolbar_for_my_profile, menu);
+        inflater.inflate(R.menu.toolbar_only_options, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.my_profile_toolbar_settings:
-                Fragment fragment = new SettingsFragment();
-                loadFragment(fragment);
-                break;
+
         }
         return true;
-    }
-
-    private boolean loadFragment(Fragment fragment) {
-        //switching fragment
-        if (fragment != null) {
-            getFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .commit();
-            return true;
-        }
-        return false;
     }
 
     private void setNumberOfComPacksByNickName(String nickname) {
@@ -173,10 +142,6 @@ public class MyProfileFragment extends Fragment {
         response.sendGetNumberOfComPacksByNickNameResponse(nickname, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String value) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("account_count_of_packs", value);
-                editor.apply();
                 numberOfPacksTextView.setText(value);
             }
             @Override
@@ -191,10 +156,6 @@ public class MyProfileFragment extends Fragment {
         response.sendGetRatingByNickNameResponse(nickname, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String value) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("account_rating", value);
-                editor.apply();
                 ratingTextView.setText(value);
             }
             @Override
@@ -203,16 +164,12 @@ public class MyProfileFragment extends Fragment {
             }
         });
     }
-    
+
     private void setLanguageIDByNickName(String nickname) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
         response.sendGetLanguageIDByNickNameResponse(nickname, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String value) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putInt("account_language", Integer.valueOf(value));
-                editor.apply();
                 switch (value) {
                     case "0":
                         break;
@@ -235,36 +192,31 @@ public class MyProfileFragment extends Fragment {
         });
     }
 
-    private void getNickNameByHashResponse(String hash) {
+    private void setNickNameByIDResponse(int id) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetNickNameByHashResponse(hash, new PushLearnServerCallBack() {
+        response.sendGetNickNameByIDResponse(id, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String nickName) {
                 nickNameTextView.setText(nickName);
-                setNumberOfComPacksByNickName(nickName);
-                setRatingByNickName(nickName);
                 setLanguageIDByNickName(nickName);
-                saveMyComPacksByNickNameResponse(nickName,hash);
+                setRatingByNickName(nickName);
+                setNumberOfComPacksByNickName(nickName);
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("nickname", nickName);
-                editor.apply();
+                String hash = prefs.getString("account_hash","");
+                fillUserComPacksByNickNameResponse(nickName, hash);
             }
             @Override
             public void onError() {
-
             }
         });
     }
 
-    private void saveMyComPacksByNickNameResponse(String nickname, String hash) {
+    private void fillUserComPacksByNickNameResponse(String nickname, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
         response.sendGetPacksByNickNameResponse(nickname, hash, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
-                ArrayList<ComPack> comPacks = parseJsonComPacksArray(jsonResponse);
-                dbHelper.saveMyComPacks(comPacks);
-                dbHelper.close();
+                userComPackList = parseJsonComPacksArray(jsonResponse);
                 fillRecyclerView();
             }
             @Override
@@ -293,6 +245,6 @@ public class MyProfileFragment extends Fragment {
         } catch (JSONException err){
             Log.d("JSON Error", err.toString());
         }
-            return comPacks;
+        return comPacks;
     }
 }

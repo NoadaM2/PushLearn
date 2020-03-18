@@ -268,38 +268,6 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
         });
     }
 
-  /*  private void updateMyComPackList(String extractedIDsOfSavedMyComPacks, String hash) { // TODO Test
-        PushLearnServerResponse response = new PushLearnServerResponse(getApplicationContext());
-        response.sendUpdateMyComPackListResponse(extractedIDsOfSavedMyComPacks, hash, new PushLearnServerCallBack() {
-            @Override
-            public void onResponse(String value) {
-                if(!value.equals("ok")) {
-                    String str[] = value.split(",");
-                    List<String> al = new ArrayList<String>();
-                    al = Arrays.asList(str);
-                    for (String id : al) {
-                        getMyComPackByID(id, hash);
-                    }
-                }
-            }
-            @Override
-            public void onError() {
-
-            }
-        });
-    }
-*/
-  /*  private String extractIDsOfSavedMyComPacks(ArrayList<ComPack> myComPackList) { // TODO Test
-        String result = "";
-        for (ComPack myComPack : myComPackList) {
-            result += (String.valueOf(myComPack.getMyComPackId()) + ", ");
-        }
-        if (!myComPackList.isEmpty()) {
-            result = result.substring(0, result.length() - 2);
-        }
-        return result;
-    }
-*/
     private void getMyComPackByID(String id, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(getApplicationContext());
         response.sendGetComPackByIDResponse(id, hash, new PushLearnServerCallBack() {

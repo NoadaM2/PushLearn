@@ -29,9 +29,10 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
     private static final String PACK_TABLE_NAME = "packTable";
     private static final String PACK_COLUMN_ID = "pack_id";
     private static final String PACK_COLUMN_PACK_NAME = "packPackName";
+    private static final String PACK_COLUMN_TYPE = "packType";
 
     private final String createCardTableCommand = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s TEXT, %s INT, %s BOOLEAN)", CARD_TABLE_NAME, CARD_COLUMN_ID, CARD_COLUMN_PACK_NAME, CARD_COLUMN_QUESTION, CARD_COLUMN_ANSWER, CARD_COLUMN_ITERATING_NUMBER, CARD_COLUMN_SHOWN);
-    private final String createPackTableCommand = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT,  %s TEXT UNIQUE)", PACK_TABLE_NAME, PACK_COLUMN_ID, PACK_COLUMN_PACK_NAME);
+    private final String createPackTableCommand = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT,  %s TEXT UNIQUE, %s TEXT)", PACK_TABLE_NAME, PACK_COLUMN_ID, PACK_COLUMN_PACK_NAME, PACK_COLUMN_TYPE);
 
     private static final String MY_COM_PACK_TABLE_NAME = "myComPackTable";
     private static final String MY_COM_PACK_COLUMN_ID = "myComPack_id";
@@ -124,6 +125,7 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
     public void addNewPack(Pack pack) {
         ContentValues packValues = new ContentValues();
         packValues.put(PACK_COLUMN_PACK_NAME, pack.getPackName());
+        packValues.put(PACK_COLUMN_TYPE, pack.getType());
         SQLiteDatabase db = this.getWritableDatabase();
         db.insert(PACK_TABLE_NAME, null, packValues);
         db.close();
@@ -182,14 +184,14 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
     public List<Pack> getPackList() {
         List<Pack> packs = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.query(PACK_TABLE_NAME, new String[]{PACK_COLUMN_ID, PACK_COLUMN_PACK_NAME}, null, null, null, null, null);
-        int _id;
+        Cursor cursor = db.query(PACK_TABLE_NAME, new String[]{PACK_COLUMN_ID, PACK_COLUMN_PACK_NAME, PACK_COLUMN_TYPE}, null, null, null, null, null);
+        String type;
         String packName;
         if (cursor.moveToFirst()) {
             do {
-                _id = Integer.parseInt(cursor.getString(cursor.getColumnIndex(PACK_COLUMN_ID)));
                 packName = cursor.getString(cursor.getColumnIndex(PACK_COLUMN_PACK_NAME));
-                packs.add(new Pack(_id, packName));
+                type = cursor.getString(cursor.getColumnIndex(PACK_COLUMN_TYPE));
+                packs.add(new Pack(packName, type));
             } while (cursor.moveToNext());
         }
         db.close();

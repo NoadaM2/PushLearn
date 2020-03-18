@@ -59,7 +59,6 @@ public class Card {
         this.question = question;
     }
 
-
     public String getPackName() {
         return packName;
     }

@@ -17,8 +17,20 @@
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/pack_item_start_quiz_button"
+        app:layout_constraintRight_toLeftOf="@id/pack_type_imageView"
         app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageView
+            android:id="@+id/pack_type_imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/pack_item_start_quiz_button"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"/>
 
 
     <ImageButton

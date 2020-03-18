@@ -19,6 +19,7 @@ import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.activities.LearnPackActivity;
 import com.noadam.pushlearn.activities.MenuActivity;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
+import com.noadam.pushlearn.entities.Card;
 
 public class SetIterationTimesDialogFragment extends DialogFragment {
 
@@ -26,6 +27,17 @@ public class SetIterationTimesDialogFragment extends DialogFragment {
         SetIterationTimesDialogFragment dialogFragment = new SetIterationTimesDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("value", value);
+        dialogFragment.setArguments(bundle);
+        return dialogFragment;
+    }
+
+    public static SetIterationTimesDialogFragment newInstance(Card card){
+        SetIterationTimesDialogFragment dialogFragment = new SetIterationTimesDialogFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("_id", card.get_id());
+        bundle.putString("question", card.getQuestion());
+        bundle.putString("answer", card.getAnswer());
+        bundle.putInt("iterating_times", card.getIteratingTimes());
         dialogFragment.setArguments(bundle);
         return dialogFragment;
     }
@@ -38,10 +50,22 @@ public class SetIterationTimesDialogFragment extends DialogFragment {
         SeekBar seekBar = view.findViewById(R.id.dialog_pack_iterating_times_horizontal_counter);
 
         Bundle bundle = getArguments();
-        if (bundle != null) {
-            int value = bundle.getInt("value",3);
-            seekBar.setProgress(value);
-            seekBar.refreshDrawableState();
+        if(getTargetRequestCode() == 99) {
+            if (bundle != null) {
+                int value = bundle.getInt("value", 3);
+                seekBar.setProgress(value);
+                seekBar.refreshDrawableState();
+            }
+        }
+       final int _id = bundle.getInt("_id", 3);
+       final String question = bundle.getString("question");
+       final String answer  = bundle.getString("answer");
+        if(getTargetRequestCode() == 3) {
+            if (bundle != null) {
+                int iterating_times = bundle.getInt("iterating_times",3);
+                seekBar.setProgress(iterating_times);
+                seekBar.refreshDrawableState();
+            }
         }
 
         builder
@@ -50,9 +74,16 @@ public class SetIterationTimesDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                Intent intent = getActivity().getIntent();
-                                        intent.putExtra("iteration_times", (int) Math.round(seekBar.getProgress()));
-                                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                                if(getTargetRequestCode() == 99) {
+                                    Intent intent = getActivity().getIntent();
+                                    intent.putExtra("iteration_times", (int) Math.round(seekBar.getProgress()));
+                                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                                }
+                                if(getTargetRequestCode() == 3) {
+                                   PushLearnDBHelper dbHelper = new PushLearnDBHelper(getActivity());
+                                   dbHelper.editCardById(_id,question,answer,(int)Math.round(seekBar.getProgress()));
+                                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
+                                }
                                 }
                             }
 

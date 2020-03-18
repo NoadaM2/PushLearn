@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.activities.LearnPackActivity;
@@ -59,9 +60,15 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
         Pack pack = packList.get(i);
-        List<Card> cardList = dbHelper.getCardListByPackName(pack.getPackName(), 0);
         String packName = pack.getPackName();
         holder.pack_name_textView.setText(packName);
+        switch (pack.getType()) {
+            case "downloaded":
+                holder.pack_type_imageView.setImageResource(R.drawable.ic_star);
+                holder.pack_type_imageView.setVisibility(View.VISIBLE);
+                break;
+        }
+        List<Card> cardList = dbHelper.getCardListByPackName(pack.getPackName(), 0);
         if (!cardList.isEmpty()) {
             holder.pack_item_start_quiz_button.setClickable(true);
             holder.pack_item_start_quiz_button.setImageResource(R.drawable.ic_play_arrow_green_48dp);
@@ -83,10 +90,11 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
 
         TextView pack_name_textView;
         ImageButton pack_item_start_quiz_button;
-
+        ImageView pack_type_imageView;
         public ViewHolder(View itemView) {
             super(itemView);
             pack_name_textView = itemView.findViewById(R.id.pack_name_text_view);
+            pack_type_imageView = itemView.findViewById(R.id.pack_type_imageView);
             pack_item_start_quiz_button = itemView.findViewById(R.id.pack_item_start_quiz_button);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

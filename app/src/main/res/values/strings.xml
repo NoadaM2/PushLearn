@@ -92,6 +92,6 @@
     <string name="cards">cards</string>
     <string name="description">Description:</string>
     <string name="no_cards_in_com_pack">There is no card in the pack</string>
-    <string name="creator_double_dot">Creator:</string>
+    <string name="you_already_have_pack_with_such_name">You already have pack with such name. Please rename your pack before adding this.</string>
 
 </resources>

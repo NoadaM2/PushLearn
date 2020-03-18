@@ -17,15 +17,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.CardsOfComPackAdapter;
 import com.noadam.pushlearn.adapters.MyComPacksAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
+import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.ComCard;
 import com.noadam.pushlearn.entities.ComPack;
+import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
@@ -46,6 +50,7 @@ public class CommunityPackFragment extends Fragment {
    private TextView numberOfCardsInComPackTextView;
    private TextView descriptionOfComPackTextView;
    private ImageView flagImageView;
+   private ImageButton downloadComPack;
     private RecyclerView cardsOfComPackRecyclerView;
     private ComPack comPack;
     private CardsOfComPackAdapter cardsOfComPackAdapter;
@@ -63,22 +68,42 @@ public class CommunityPackFragment extends Fragment {
         View view = inflater.inflate(R.layout.frag_community_pack, null);
         context = getActivity();
         dbHelper = new PushLearnDBHelper(context);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String hash = prefs.getString("account_hash","");
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
         Toolbar toolbar = view.findViewById(R.id.only_options_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         toolbar.setTitle(comPack.getComPackName());
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
         creatorTextView = view.findViewById(R.id.creator_nickname_textView);
+        creatorTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserProfileFragment fragment = new UserProfileFragment();
+                fragment.setUserID(comPack.getComPackOwnerID());
+                loadFragment(fragment);
+            }
+        });
         noMyComCardsInComPackTextView = view.findViewById(R.id.no_cards_of_com_pack_textView);
         ratingOfComPackTextView = view.findViewById(R.id.ratingOfComPack_number_textView);
         numberOfCardsInComPackTextView = view.findViewById(R.id.number_of_cards_textView);
         descriptionOfComPackTextView = view.findViewById(R.id.pack_description_textView);
         flagImageView = view.findViewById(R.id.flagOfCreator_imageView);
+        downloadComPack = view.findViewById(R.id.download_community_pack_button);
+        downloadComPack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!dbHelper.doesPackExistByPackName(comPack.getComPackName())){
+                        starPack(comPack.getComPackID(), hash);
+                } else {
+                    Toast.makeText(context, getString(R.string.you_already_have_pack_with_such_name), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         setValuesForViews();
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
         cardsOfComPackRecyclerView = view.findViewById(R.id.cards_of_com_pack_RecyclerView);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String hash = prefs.getString("account_hash","");
+
         fillCardsOfComPackListAndRecyclerView(comPack.getComPackID(), hash);
         return view;
     }
@@ -109,6 +134,25 @@ public class CommunityPackFragment extends Fragment {
         cardsOfComPackRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
+    private void starPack(int packID, String hash) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendStarPackByHashResponse(packID, hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String value) {
+                dbHelper.addNewPack(new Pack(comPack.getComPackName(),"downloaded"));
+                for(ComCard card : cardsOfComPackList) {
+                    dbHelper.addNewCard(new Card(comPack.getComPackName(), card.getQuestion(), card.getAnswer()));
+                }
+                ratingOfComPackTextView.setText(String.valueOf(comPack.getComPackRating() + 1));
+                downloadComPack.setImageResource(R.drawable.ic_star_filled_72dp);
+            }
+            @Override
+            public void onError() {
+
+            }
+        });
+    }
+
     private void fillCardsOfComPackListAndRecyclerView(int packID, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
         response.sendGetCardsOfComPackByPackIDResponse(packID, hash, new PushLearnServerCallBack() {
@@ -127,9 +171,11 @@ public class CommunityPackFragment extends Fragment {
 
     private void setValuesForViews() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String hash = prefs.getString("account_hash","");
          ratingOfComPackTextView.setText(String.valueOf(comPack.getComPackRating()));
          descriptionOfComPackTextView.setText(comPack.getComPackDescription());
          setNickNameByIDResponse(comPack.getComPackOwnerID());
+         setStarButtonResponse(comPack.getComPackID(), hash);
     }
 
     private void setNickNameByIDResponse(int id) {
@@ -139,6 +185,23 @@ public class CommunityPackFragment extends Fragment {
             public void onResponse(String nickName) {
                 creatorTextView.setText(nickName);
                 setLanguageIDByNickName(nickName);
+            }
+            @Override
+            public void onError() {
+            }
+        });
+    }
+
+    private void setStarButtonResponse(int packID, String hash) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendIfUserStaredPackByHashAndPackIDResponse(packID, hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String answer) {
+                if(answer.equals("no")) {
+                    downloadComPack.setImageResource(R.drawable.ic_star_only_outline_yellow_72dp);
+                } else {
+                    downloadComPack.setImageResource(R.drawable.ic_star_filled_72dp);
+                }
             }
             @Override
             public void onError() {
@@ -202,5 +265,17 @@ public class CommunityPackFragment extends Fragment {
             Log.d("JSON Error", err.toString());
         }
         return comCards;
+    }
+
+    private boolean loadFragment(Fragment fragment) {
+        //switching fragment
+        if (fragment != null) {
+            getFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .commit();
+            return true;
+        }
+        return false;
     }
 }

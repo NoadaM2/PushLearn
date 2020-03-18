@@ -56,4 +56,12 @@ public interface PushLearnServer {
     @Headers("Content-Type: application/json")
     @POST("get_packs_by_nickname")
     Call<String> getPacksByNickName(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("join_pack")
+    Call<String> starPackByHash(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("if_user_starred_pack")
+    Call<String> ifUserStaredPackByHashAndPackID(@Body String body);
 }
