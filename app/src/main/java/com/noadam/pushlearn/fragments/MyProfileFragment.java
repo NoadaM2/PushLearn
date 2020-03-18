@@ -1,6 +1,8 @@
 package com.noadam.pushlearn.fragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -11,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +27,7 @@ import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.MyComPacksAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.ComPack;
+import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
@@ -48,6 +52,9 @@ public class MyProfileFragment extends Fragment {
     private RecyclerView myComPacksRecyclerView;
     private MyComPacksAdapter myComPacksAdapter;
     private ArrayList<ComPack> myComPackList;
+    private ComPack longClickedComPack;
+
+    final int MENU_DELETE = 1;
 
     @Nullable
     @Override
@@ -110,12 +117,42 @@ public class MyProfileFragment extends Fragment {
         }, new MyComPacksAdapter.OnRecyclerViewItemLongClickListener() {
             @Override
             public void onLongClick(ComPack myComPack, View v) {
-
+                longClickedComPack = myComPack;
             }
         });
         myComPacksAdapter.setComPackList(myComPackList);
         myComPacksRecyclerView.setAdapter(myComPacksAdapter);
         myComPacksRecyclerView.getAdapter().notifyDataSetChanged();
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        menu.add(0, MENU_DELETE, 1, R.string.delete);
+    }
+
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_DELETE:
+                DeleteConfirmationDialogFragment dialogFragDelete = new DeleteConfirmationDialogFragment();
+                dialogFragDelete.setTargetFragment(this, 53);
+                dialogFragDelete.show(getFragmentManager().beginTransaction(), "packName");
+                break;
+        }
+        return true;
+    }
+
+    private void deletePackResponse(int id, String hash) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendDeletePackByHashAndPackIDResponse(id, hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String answer) {
+                if(answer.equals("ok")) {
+                }
+            }
+            @Override
+            public void onError() {
+            }
+        });
     }
 
     private void setValuesForViews() {
@@ -294,5 +331,18 @@ public class MyProfileFragment extends Fragment {
             Log.d("JSON Error", err.toString());
         }
             return comPacks;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) { // добавление пакета
+        switch (requestCode) {
+            case 53:
+                if (resultCode == Activity.RESULT_OK) {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    String hash = prefs.getString("account_hash","");
+                    deletePackResponse(longClickedComPack.getComPackID(), hash);
+                    setValuesForViews();
+                }
+        }
     }
 }

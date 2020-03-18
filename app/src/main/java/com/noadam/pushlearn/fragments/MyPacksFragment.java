@@ -3,7 +3,9 @@ package com.noadam.pushlearn.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -29,6 +31,8 @@ import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.SetIterationTimesDialogFragment;
+import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,7 +112,7 @@ public class MyPacksFragment extends Fragment{
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.add(0, MENU_SELECT, 1, R.string.select);
         menu.add(0, MENU_SHARE, 2, R.string.share);
-        menu.add(0, MENU_EDIT, 3, R.string.edit);
+        menu.add(0, MENU_EDIT, 3, R.string.rename);
         menu.add(0, MENU_DELETE, 4, R.string.delete);
         menu.add(0, MENU_LEARN, 5, R.string.learn);
     }
@@ -273,10 +277,17 @@ public class MyPacksFragment extends Fragment{
             case 51:
                 if (resultCode == Activity.RESULT_OK) {
                     // After Ok code.
-                    if (packLongClicked != "") {
+                    if (dbHelper.getPackTypeByName(packLongClicked).equals("downloaded")) {
+                        if (packLongClicked != "") {
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                            String email = prefs.getString("login", "");
+                            String password = prefs.getString("password", "");
+                            TryToSignIn(email, password);
+                        }
+                    } else {
                         dbHelper.deletePackByPackName(packLongClicked);
+                        fillRecyclerView();
                     }
-                    fillRecyclerView();
                 }
                 break;
             case 52:
@@ -298,5 +309,43 @@ public class MyPacksFragment extends Fragment{
                 fillRecyclerView();
                 break;
         }
+    }
+    private void unStarPackResponse(int id, String hash) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendUnStarPackByHashAndPackIDResponse(id, hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String answer) {
+                if(answer.equals("ok")) {
+                    dbHelper.deletePackByPackName(packLongClicked);
+                    fillRecyclerView();
+                }
+            }
+            @Override
+            public void onError() {
+            }
+        });
+    }
+
+    private void TryToSignIn(String email, String password) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendSignInResponse(email, password, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String hash) {
+                if (hash.contains("sign_in")) {
+                    Toast.makeText(context, getString(R.string.something_is_wrong), Toast.LENGTH_SHORT).show();
+                }  else {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("account_hash", hash);
+                    editor.apply();
+                    unStarPackResponse(dbHelper.getPackComIDByName(packLongClicked), hash);
+                }
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
     }
 }

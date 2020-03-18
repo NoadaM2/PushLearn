@@ -75,7 +75,8 @@
     <string name="create_a_nickname">Create a nickname</string>
     <string name="this_email_is_busy">This email is busy</string>
     <string name="this_nickname_is_busy">This nickname is busy</string>
-    <string name="something_is_wrong">Oops... Something is wrong. Try to use another email.</string>
+    <string name="something_is_wrong_try_another_email">Oops... Something is wrong. Try to use another email.</string>
+    <string name="something_is_wrong">Oops... Something is wrong. Log In to your account</string>
     <string name="successful_registration">Welcome to PushLearn communtity!</string>
     <string name="password_should_be_longer">Password should be longer then 8 symbols</string>
     <string name="packs">packs</string>
@@ -93,5 +94,8 @@
     <string name="description">Description:</string>
     <string name="no_cards_in_com_pack">There is no card in the pack</string>
     <string name="you_already_have_pack_with_such_name">You already have pack with such name. Please rename your pack before adding this.</string>
+    <string name="are_u_sure_to_delete_com_pack">Are you sure you want to delete this pack from your device?</string>
+    <string name="rename">Rename</string>
+    <string name="are_u_sure_to_delete_pack_from_community">Are you sure you want to delete this pack from community? \n Your rating will be changed after it.</string>
 
 </resources>

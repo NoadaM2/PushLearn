@@ -120,7 +120,7 @@ public class RegistrationFragment extends Fragment {
             @Override
             public void onResponse(String value) {
                 if (value.contains("email_busy")) {
-                    Toast.makeText(context, getString(R.string.something_is_wrong), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, getString(R.string.something_is_wrong_try_another_email), Toast.LENGTH_SHORT).show();
                 }  else {
                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                     SharedPreferences.Editor editor = prefs.edit();

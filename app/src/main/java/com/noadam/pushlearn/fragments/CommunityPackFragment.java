@@ -1,6 +1,8 @@
 package com.noadam.pushlearn.fragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -30,6 +32,7 @@ import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.ComCard;
 import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Pack;
+import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
@@ -55,6 +58,7 @@ public class CommunityPackFragment extends Fragment {
     private ComPack comPack;
     private CardsOfComPackAdapter cardsOfComPackAdapter;
     private ArrayList<ComCard> cardsOfComPackList;
+    boolean comPackStarred = false;
 
     public void setComPack(ComPack comPack)
     {
@@ -93,10 +97,15 @@ public class CommunityPackFragment extends Fragment {
         downloadComPack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!dbHelper.doesPackExistByPackName(comPack.getComPackName())){
+                if(!comPackStarred) {
+                    if (!dbHelper.doesPackExistByPackName(comPack.getComPackName())) {
                         starPack(comPack.getComPackID(), hash);
+                    } else {
+                        Toast.makeText(context, getString(R.string.you_already_have_pack_with_such_name), Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(context, getString(R.string.you_already_have_pack_with_such_name), Toast.LENGTH_SHORT).show();
+                    // delete pack from user
+                    unStarPackResponse(comPack.getComPackID(), hash);
                 }
             }
         });
@@ -139,12 +148,13 @@ public class CommunityPackFragment extends Fragment {
         response.sendStarPackByHashResponse(packID, hash, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String value) {
-                dbHelper.addNewPack(new Pack(comPack.getComPackName(),"downloaded"));
+                dbHelper.addNewPack(new Pack(comPack.getComPackName(),"downloaded", comPack.getComPackID()));
                 for(ComCard card : cardsOfComPackList) {
                     dbHelper.addNewCard(new Card(comPack.getComPackName(), card.getQuestion(), card.getAnswer()));
                 }
-                ratingOfComPackTextView.setText(String.valueOf(comPack.getComPackRating() + 1));
+                ratingOfComPackTextView.setText(String.valueOf(Integer.valueOf(String.valueOf(ratingOfComPackTextView.getText())) + 1));
                 downloadComPack.setImageResource(R.drawable.ic_star_filled_72dp);
+                comPackStarred = true;
             }
             @Override
             public void onError() {
@@ -192,6 +202,24 @@ public class CommunityPackFragment extends Fragment {
         });
     }
 
+    private void unStarPackResponse(int id, String hash) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendUnStarPackByHashAndPackIDResponse(id, hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String answer) {
+                if(answer.equals("ok")) {
+                    dbHelper.deletePackByPackName(comPack.getComPackName());
+                    ratingOfComPackTextView.setText(String.valueOf(Integer.valueOf(String.valueOf(ratingOfComPackTextView.getText())) - 1));
+                    downloadComPack.setImageResource(R.drawable.ic_star_only_outline_yellow_72dp);
+                    comPackStarred = false;
+                }
+            }
+            @Override
+            public void onError() {
+            }
+        });
+    }
+
     private void setStarButtonResponse(int packID, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
         response.sendIfUserStaredPackByHashAndPackIDResponse(packID, hash, new PushLearnServerCallBack() {
@@ -199,8 +227,10 @@ public class CommunityPackFragment extends Fragment {
             public void onResponse(String answer) {
                 if(answer.equals("no")) {
                     downloadComPack.setImageResource(R.drawable.ic_star_only_outline_yellow_72dp);
+                    comPackStarred = false;
                 } else {
                     downloadComPack.setImageResource(R.drawable.ic_star_filled_72dp);
+                    comPackStarred = true;
                 }
             }
             @Override
@@ -278,4 +308,5 @@ public class CommunityPackFragment extends Fragment {
         }
         return false;
     }
+
 }

@@ -9,12 +9,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import com.noadam.pushlearn.R;
+import com.noadam.pushlearn.fragments.CommunityPackFragment;
 
 public class DeleteConfirmationDialogFragment extends DialogFragment {
 
@@ -35,6 +37,9 @@ public class DeleteConfirmationDialogFragment extends DialogFragment {
                 break;
             case 52: // Delete packs
                 title = getResources().getString( R.string.are_u_sure_to_delete_packs);
+                break;
+                case 53: // Delete pack from community
+                title = getResources().getString( R.string.are_u_sure_to_delete_pack_from_community);
                 break;
             case 666: // Delete card
                 title = getResources().getString( R.string.are_u_sure_to_log_out);
@@ -58,7 +63,7 @@ public class DeleteConfirmationDialogFragment extends DialogFragment {
                                             startActivity(intent);
                                             break;
                                         default:
-                                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
+                                            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
                                     break;
                                     }
                                 }

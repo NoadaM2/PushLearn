@@ -166,6 +166,69 @@ public class PushLearnServerResponse {
         }
     }
 
+
+    public void sendUnStarPackByHashAndPackIDResponse(int packID, String hash, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("hash", hash);
+            childData.put("from", "user");
+            childData.put("id_pack",packID);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "delete_pack");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.unStarPackByHashAndPackID(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError();
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+public void sendDeletePackByHashAndPackIDResponse(int packID, String hash, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("hash", hash);
+            childData.put("from", "bd");
+            childData.put("id_pack",packID);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "delete_pack");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.deletePackByHashAndPackID(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError();
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void sendGetNickNameByIDResponse(int id, PushLearnServerCallBack callback) {
         try {
             JSONObject childData = new JSONObject();

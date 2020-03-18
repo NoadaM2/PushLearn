@@ -30,9 +30,10 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
     private static final String PACK_COLUMN_ID = "pack_id";
     private static final String PACK_COLUMN_PACK_NAME = "packPackName";
     private static final String PACK_COLUMN_TYPE = "packType";
+    private static final String PACK_COLUMN_COM_PACK_ID = "pack_id";
 
     private final String createCardTableCommand = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s TEXT, %s INT, %s BOOLEAN)", CARD_TABLE_NAME, CARD_COLUMN_ID, CARD_COLUMN_PACK_NAME, CARD_COLUMN_QUESTION, CARD_COLUMN_ANSWER, CARD_COLUMN_ITERATING_NUMBER, CARD_COLUMN_SHOWN);
-    private final String createPackTableCommand = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT,  %s TEXT UNIQUE, %s TEXT)", PACK_TABLE_NAME, PACK_COLUMN_ID, PACK_COLUMN_PACK_NAME, PACK_COLUMN_TYPE);
+    private final String createPackTableCommand = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT,  %s TEXT UNIQUE, %s TEXT, %s INTEGER)", PACK_TABLE_NAME, PACK_COLUMN_ID, PACK_COLUMN_PACK_NAME, PACK_COLUMN_TYPE, PACK_COLUMN_COM_PACK_ID);
 
     private static final String MY_COM_PACK_TABLE_NAME = "myComPackTable";
     private static final String MY_COM_PACK_COLUMN_ID = "myComPack_id";
@@ -126,6 +127,7 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         ContentValues packValues = new ContentValues();
         packValues.put(PACK_COLUMN_PACK_NAME, pack.getPackName());
         packValues.put(PACK_COLUMN_TYPE, pack.getType());
+        packValues.put(PACK_COLUMN_COM_PACK_ID, pack.getIdComPack());
         SQLiteDatabase db = this.getWritableDatabase();
         db.insert(PACK_TABLE_NAME, null, packValues);
         db.close();
@@ -148,6 +150,26 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return id;
+    }
+
+    public int getPackComIDByName(String packName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT "+ PACK_COLUMN_COM_PACK_ID +" FROM "+ PACK_TABLE_NAME +" WHERE "+PACK_COLUMN_PACK_NAME+" = ?",  new String[]{packName});
+        cursor.moveToFirst();
+        int id = cursor.getInt(0);
+        cursor.close();
+        db.close();
+        return id;
+    }
+
+    public String getPackTypeByName(String packName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT "+ PACK_COLUMN_TYPE +" FROM "+ PACK_TABLE_NAME +" WHERE "+PACK_COLUMN_PACK_NAME+" = ?",  new String[]{packName});
+        cursor.moveToFirst();
+        String type = cursor.getString(0);
+        cursor.close();
+        db.close();
+        return type;
     }
 
     public void setPackNameById(int _id, String oldPackName, String packName) {
@@ -187,11 +209,13 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(PACK_TABLE_NAME, new String[]{PACK_COLUMN_ID, PACK_COLUMN_PACK_NAME, PACK_COLUMN_TYPE}, null, null, null, null, null);
         String type;
         String packName;
+        int comPackID;
         if (cursor.moveToFirst()) {
             do {
                 packName = cursor.getString(cursor.getColumnIndex(PACK_COLUMN_PACK_NAME));
                 type = cursor.getString(cursor.getColumnIndex(PACK_COLUMN_TYPE));
-                packs.add(new Pack(packName, type));
+                comPackID = cursor.getInt(cursor.getColumnIndex(PACK_COLUMN_COM_PACK_ID));
+                packs.add(new Pack(packName, type, comPackID));
             } while (cursor.moveToNext());
         }
         db.close();
