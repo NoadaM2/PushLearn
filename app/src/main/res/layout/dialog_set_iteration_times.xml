@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SeekBar
+        android:id="@+id/dialog_pack_iterating_times_horizontal_counter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimaryDark"
+        android:progressTint="@color/colorPrimary"
+        android:textSize="12sp"
+        android:max="10"
+        android:thumb="@drawable/ic_notifications_primary_dark_24dp"
+        android:theme="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:progress="1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+      />
+
+</android.support.constraint.ConstraintLayout>

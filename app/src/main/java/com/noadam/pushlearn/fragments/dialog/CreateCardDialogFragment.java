@@ -7,9 +7,10 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import android.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.noadam.pushlearn.R;
@@ -28,7 +29,6 @@ public class CreateCardDialogFragment extends DialogFragment {
         bundle.putInt("iteratingTimes", card.getIteratingTimes());
         dialogFragment.setArguments(bundle);
         return dialogFragment;
-
     }
 
     @Override
@@ -39,8 +39,8 @@ public class CreateCardDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_create_card, null);
         TextView QuestionEditText = view.findViewById(R.id.dialog_card_question_edit_text);
         TextView AnswerEditText = view.findViewById(R.id.dialog_card_answer_edit_text);
-        SeekBar horizontalCounter = view.findViewById(R.id.dialog_card_iterating_times_horizontal_counter);;
-        int iteratingTimes = 5;
+        SeekBar horizontalCounter = view.findViewById(R.id.dialog_card_iterating_times_horizontal_counter);
+        int iteratingTimes = 3;
         Bundle bundle = getArguments();
         if (bundle != null) {
             id = bundle.getInt("id");
@@ -98,7 +98,13 @@ public class CreateCardDialogFragment extends DialogFragment {
                         });
                 break;
         }
-            return builder.create();
+        AlertDialog alert = builder.create();
+        alert.show();
+        Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
+        nbutton.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+        pbutton.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        return alert;
         }
 
     }

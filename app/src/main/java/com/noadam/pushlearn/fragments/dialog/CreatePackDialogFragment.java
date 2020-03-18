@@ -7,9 +7,10 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import android.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import com.noadam.pushlearn.R;
 
@@ -20,14 +21,11 @@ public class CreatePackDialogFragment extends DialogFragment {
 
 
     public static CreatePackDialogFragment newInstance(String packName){
-
         CreatePackDialogFragment dialogFragment = new CreatePackDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putString("packName", packName);
         dialogFragment.setArguments(bundle);
-
         return dialogFragment;
-
     }
 
     @Override
@@ -80,6 +78,12 @@ public class CreatePackDialogFragment extends DialogFragment {
                         });
                 break;
         }
-        return builder.create();
+        AlertDialog alert = builder.create();
+        alert.show();
+        Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
+        nbutton.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+        pbutton.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        return alert;
     }
 }

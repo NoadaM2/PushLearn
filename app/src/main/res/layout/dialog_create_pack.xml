@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <EditText android:id="@+id/dialog_add_pack_title_edit_text"
+    <EditText
+        android:id="@+id/dialog_add_pack_title_edit_text"
         android:inputType="text|textCapSentences|textAutoCorrect"
         android:layout_width="0dp"
+        android:textCursorDrawable="@null"
+        android:backgroundTint="@color/colorPrimary"
         android:layout_height="wrap_content"
         android:hint="@string/name"
-        android:maxLength="30"
         android:lines="1"
         android:fontFamily="@font/open_sans_regular"
         app:layout_constraintTop_toTopOf="parent"

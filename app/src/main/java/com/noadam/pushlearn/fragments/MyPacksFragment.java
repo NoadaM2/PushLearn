@@ -3,9 +3,11 @@ package com.noadam.pushlearn.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +29,10 @@ import com.noadam.pushlearn.adapters.PackListAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
+import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
+import com.noadam.pushlearn.fragments.dialog.SetIterationTimesDialogFragment;
+import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +43,8 @@ public class MyPacksFragment extends Fragment{
     private RecyclerView packListRecyclerView;
     private PackListAdapter packListAdapter;
     private PushLearnDBHelper dbHelper;
-    private Toolbar toolbar;
-    private Toolbar selectionToolbar;
     private Context context;
     private TextView textViewNoPacks;
-    private List<Pack> packList;
     private String packLongClicked;
     private ArrayList<String> selectedPacks = new ArrayList<>();
     private String mode;
@@ -55,10 +58,10 @@ public class MyPacksFragment extends Fragment{
     final int MENU_SHARE = 2;
     final int MENU_EDIT = 3;
     final int MENU_DELETE = 4;
+    final int MENU_LEARN = 5;
 
-    private void fillRecyclerView()
-    {
-        packList = dbHelper.getPackList();
+    private void fillRecyclerView() {
+        List<Pack> packList = dbHelper.getPackList();
         if (!packList.isEmpty()) {
             textViewNoPacks.setVisibility(View.GONE);
         }
@@ -105,14 +108,13 @@ public class MyPacksFragment extends Fragment{
         packListRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
-
-
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.add(0, MENU_SELECT, 1, R.string.select);
         menu.add(0, MENU_SHARE, 2, R.string.share);
-        menu.add(0, MENU_EDIT, 3, R.string.edit);
+        menu.add(0, MENU_EDIT, 3, R.string.rename);
         menu.add(0, MENU_DELETE, 4, R.string.delete);
+        menu.add(0, MENU_LEARN, 5, R.string.learn);
     }
 
     public boolean onContextItemSelected(MenuItem item) {
@@ -132,10 +134,14 @@ public class MyPacksFragment extends Fragment{
                 dialogFrag.show(getFragmentManager().beginTransaction(), "");
                 break;
             case MENU_DELETE:
-                if (packLongClicked != ""){
-                    dbHelper.deletePackByPackName(packLongClicked);
-                }
-                fillRecyclerView();
+                DeleteConfirmationDialogFragment dialogFragDelete = new DeleteConfirmationDialogFragment();
+                dialogFragDelete.setTargetFragment(this, 51);
+                dialogFragDelete.show(getFragmentManager().beginTransaction(), "packName");
+                break;
+            case MENU_LEARN:
+                SetIterationTimesDialogFragment dialogFragIterationTimes = new SetIterationTimesDialogFragment().newInstance(5);
+                dialogFragIterationTimes.setTargetFragment(this, 99);
+                dialogFragIterationTimes.show(getFragmentManager().beginTransaction(), "");
                 break;
         }
         return super.onContextItemSelected(item);
@@ -146,7 +152,7 @@ public class MyPacksFragment extends Fragment{
         context = container.getContext();
         dbHelper = new PushLearnDBHelper(context);
         View view = inflater.inflate(R.layout.frag_my_packs, null);
-        toolbar = view.findViewById(R.id.mypacks_toolbar);
+        Toolbar toolbar = view.findViewById(R.id.my_packs_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         textViewNoPacks = view.findViewById(R.id.no_items_textview);
         packListRecyclerView = view.findViewById(R.id.pack_list_recyclerview);
@@ -188,15 +194,11 @@ public class MyPacksFragment extends Fragment{
                     }});
                 return true;
             case R.id.menu_activity_selected_items_delete:
-                for (String packName : selectedPacks) {
-                    dbHelper.deletePackByPackName(packName);
-                }
-                mode = "";
-                refactorToolBarForSelection(false);
-                fillRecyclerView();
-                selectedPacks.clear();
+                DeleteConfirmationDialogFragment dialogFragDelete = new DeleteConfirmationDialogFragment();
+                dialogFragDelete.setTargetFragment(this, 52);
+                dialogFragDelete.show(getFragmentManager().beginTransaction(), "packName");
                 return true;
-            case R.id.menu_activity_selected_items_share: // TODO SHARING LIST OF PACKS
+            case R.id.menu_activity_selected_items_share: // TODO TURN OFF SHARING LIST OF PACKS
                 mode = "";
                 refactorToolBarForSelection(false);
                 selectedPacks.clear();
@@ -214,13 +216,15 @@ public class MyPacksFragment extends Fragment{
     }
 
     private void onRecyclerViewItemClick(String packName) {
-        CardsOfPackFragment nextFrag= new CardsOfPackFragment();
+        CardsOfPackFragment nextFrag = new CardsOfPackFragment();
         nextFrag.setPackName(packName);
-        getActivity().getSupportFragmentManager().beginTransaction()
+        getActivity().getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, nextFrag, "findThisFragment")
                 .addToBackStack(null)
                 .commit();
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) { // добавление пакета
@@ -270,6 +274,78 @@ public class MyPacksFragment extends Fragment{
 
                 }
                 break;
+            case 51:
+                if (resultCode == Activity.RESULT_OK) {
+                    // After Ok code.
+                    if (dbHelper.getPackTypeByName(packLongClicked).equals("downloaded")) {
+                        if (packLongClicked != "") {
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                            String email = prefs.getString("login", "");
+                            String password = prefs.getString("password", "");
+                            TryToSignIn(email, password);
+                        }
+                    } else {
+                        dbHelper.deletePackByPackName(packLongClicked);
+                        fillRecyclerView();
+                    }
+                }
+                break;
+            case 52:
+                if (resultCode == Activity.RESULT_OK) {
+                    // After Ok code.
+                    for (String packName : selectedPacks) {
+                        dbHelper.deletePackByPackName(packName);
+                    }
+                    mode = "";
+                    refactorToolBarForSelection(false);
+                    fillRecyclerView();
+                    selectedPacks.clear();
+                }
+                break;
+            case 99: // Learn Pack
+                if (resultCode == Activity.RESULT_OK) {
+                    dbHelper.setCardsOfPackIterationTimes(packLongClicked, data.getIntExtra("iteration_times", 5));
+                }
+                fillRecyclerView();
+                break;
         }
+    }
+    private void unStarPackResponse(int id, String hash) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendUnStarPackByHashAndPackIDResponse(id, hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String answer) {
+                if(answer.equals("ok")) {
+                    dbHelper.deletePackByPackName(packLongClicked);
+                    fillRecyclerView();
+                }
+            }
+            @Override
+            public void onError() {
+            }
+        });
+    }
+
+    private void TryToSignIn(String email, String password) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendSignInResponse(email, password, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String hash) {
+                if (hash.contains("sign_in")) {
+                    Toast.makeText(context, getString(R.string.something_is_wrong), Toast.LENGTH_SHORT).show();
+                }  else {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("account_hash", hash);
+                    editor.apply();
+                    unStarPackResponse(dbHelper.getPackComIDByName(packLongClicked), hash);
+                }
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
     }
 }

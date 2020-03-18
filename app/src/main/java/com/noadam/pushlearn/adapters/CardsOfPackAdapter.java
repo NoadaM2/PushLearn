@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.entities.Card;
-import com.noadam.pushlearn.entities.Pack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,12 +111,13 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
             super(itemView);
             question_textView = itemView.findViewById(R.id.question_text_view);
             answer_textView = itemView.findViewById(R.id.answer_text_view);
-            iterating_times_textView = itemView.findViewById(R.id.iterating_times_text_view);
-            notification_imageView = itemView.findViewById(R.id.notification_imageView);
+            iterating_times_textView = itemView.findViewById(R.id.rating_number_text_view);
+            notification_imageView = itemView.findViewById(R.id.star_imageView);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Card card = cardList.get(getAdapterPosition());
+                    card.setIteratingTimes(Math.abs(card.getIteratingTimes()));
                     if (mClickListener != null) {
                         mClickListener.onClick(card, v);
                     }
@@ -127,7 +127,7 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
                 @Override
                 public boolean onLongClick(View v) {
                     Card card = cardList.get(getAdapterPosition());
-                   // String packName = card.getPackName();
+                    card.setIteratingTimes(Math.abs(card.getIteratingTimes()));
                     if (mLongClickListener != null) {
                         mLongClickListener.onLongClick(card, v);
                     }
@@ -161,7 +161,6 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
             }
             else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
-
                 for (Card item : cardFullList) {
                     if(item.getQuestion().toLowerCase().contains(filterPattern)) {
                         filteredList.add(item);

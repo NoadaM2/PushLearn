@@ -1,22 +1,18 @@
 package com.noadam.pushlearn.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.noadam.pushlearn.R;
+import com.noadam.pushlearn.activities.LearnPackActivity;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.Pack;
@@ -29,10 +25,9 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     private PushLearnDBHelper dbHelper;
     private List<Pack> packList;
     private List<Pack> packFullList;
-    private int layoutIDforListItem;
     private OnRecyclerViewItemClickListener mClickListener;
     private OnRecyclerViewItemLongClickListener mLongClickListener;
-    private final ArrayList<String> selected = new ArrayList<>();
+    private Context context;
 
     public interface OnRecyclerViewItemClickListener {
         void onClick(String packName, View v);
@@ -45,17 +40,17 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     public PackListAdapter(OnRecyclerViewItemClickListener clickListener, OnRecyclerViewItemLongClickListener onLongClickListner) {
         mClickListener = clickListener;
         mLongClickListener = onLongClickListner;
-        layoutIDforListItem = R.layout.pack_list_item;
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        Context context = parent.getContext();
+        context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         if (dbHelper == null) {
             dbHelper = new PushLearnDBHelper(context);
         }
-        View view = inflater.inflate(layoutIDforListItem, parent, false);
+        View view = inflater.inflate(R.layout.pack_list_item, parent, false);
 
         ViewHolder packHolder = new ViewHolder(view);
 
@@ -65,15 +60,25 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
         Pack pack = packList.get(i);
-        List<Card> cardList = dbHelper.getCardListByPackName(pack.getPackName());
         String packName = pack.getPackName();
         holder.pack_name_textView.setText(packName);
+        switch (pack.getType()) {
+            case "downloaded":
+                holder.pack_type_imageView.setImageResource(R.drawable.ic_star);
+                holder.pack_type_imageView.setVisibility(View.VISIBLE);
+                break;
+        }
+        List<Card> cardList = dbHelper.getCardListByPackName(pack.getPackName(), 0);
         if (!cardList.isEmpty()) {
             holder.pack_item_start_quiz_button.setClickable(true);
             holder.pack_item_start_quiz_button.setImageResource(R.drawable.ic_play_arrow_green_48dp);
+            holder.pack_item_start_quiz_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    context.startActivity(new LearnPackActivity().createIntent(context, pack.getPackName(),"pack"));
+                }
+            });
         }
-
-
     }
 
     @Override
@@ -85,10 +90,11 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
 
         TextView pack_name_textView;
         ImageButton pack_item_start_quiz_button;
-
+        ImageView pack_type_imageView;
         public ViewHolder(View itemView) {
             super(itemView);
             pack_name_textView = itemView.findViewById(R.id.pack_name_text_view);
+            pack_type_imageView = itemView.findViewById(R.id.pack_type_imageView);
             pack_item_start_quiz_button = itemView.findViewById(R.id.pack_item_start_quiz_button);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -112,8 +118,6 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
                 }
             });
         }
-
-
     }
 
     public void setPackList(List<Pack> packList) {
