@@ -24,7 +24,7 @@
     <string name="card_already_exists">Такая карточка уже существует</string>
     <string name="delete">Удалить</string>
     <string name="edit">Изменить</string>
-    <string name="share">Поделиться</string>
+    <string name="share_to_community">Опубликовать в сообществе</string>
     <string name="select">Выбрать</string>
     <string name="edit_packName">Введите имя сборника</string>
     <string name="enter_correct_pack_name">Введите корректное имя сборника</string>

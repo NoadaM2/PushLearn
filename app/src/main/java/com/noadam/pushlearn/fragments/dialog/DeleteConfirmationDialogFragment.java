@@ -59,7 +59,7 @@ public class DeleteConfirmationDialogFragment extends DialogFragment {
                                             editor.putString("password", "");
                                             editor.apply();
                                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            intent.putExtra("fragment","settings");
+                                            intent.putExtra("fragment","my_profile");
                                             startActivity(intent);
                                             break;
                                         default:
@@ -71,7 +71,17 @@ public class DeleteConfirmationDialogFragment extends DialogFragment {
                     )
                     .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
+                            switch (action) {
+                                case 666:
+                                    Intent intent = getActivity().getIntent();
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.putExtra("fragment","settings");
+                                    startActivity(intent);
+                                    break;
+                                default:
+                                    getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
+                                    break;
+                            }
                         }
                     });
 

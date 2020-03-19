@@ -24,7 +24,7 @@
     <string name="card_already_exists">This card already exists</string>
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
-    <string name="share">Share</string>
+    <string name="share_to_community">Publish in community</string>
     <string name="select">Select</string>
     <string name="edit_packName">Edit pack name</string>
     <string name="enter_correct_pack_name">Enter the correct pack name</string>
@@ -97,5 +97,13 @@
     <string name="are_u_sure_to_delete_com_pack">Are you sure you want to delete this pack from your device?</string>
     <string name="rename">Rename</string>
     <string name="are_u_sure_to_delete_pack_from_community">Are you sure you want to delete this pack from community? \n Your rating will be changed after it.</string>
+    <string name="title_double_dot">Title:</string>
+    <string name="enter_title">Enter Title</string>
+    <string name="description_double_dot">Description:</string>
+    <string name="subdirectory_double_dot">Subdirectory:</string>
+    <string name="directory_double_dot">Directory:</string>
+    <string name="enter_pack_description">Enter pack description</string>
+    <string name="pack_publish">Publish pack</string>
+    <string name="successful_pack_publication">Successful pack publication! \n Thank you for the contribution to our community!</string>
 
 </resources>
