@@ -88,4 +88,8 @@ public interface PushLearnServer {
     @Headers("Content-Type: application/json")
     @POST("create_card")
     Call<String> createCard(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("compare_user_id_and_hash")
+    Call<String> compareUSerIdAndHash(@Body String body);
 }

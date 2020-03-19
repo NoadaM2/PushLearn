@@ -237,11 +237,41 @@ public class PushLearnServerResponse {
             finalObject.put("type", "get_nickname_by_id");
             finalObject.put("object", childData);
 
-            Call<String> userCall = apiInterface.getNickNameByHash(finalObject.toString());
+            Call<String> userCall = apiInterface.getNickNameByID(finalObject.toString());
             userCall.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
 
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError();
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendCompareUSerIdAndHashResponse(int user_id,String hash, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("id_user",user_id);
+            childData.put("hash",hash);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "compare_user_id_and_hash");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.compareUSerIdAndHash(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
                     if (response != null) {
                         String a = response.body();
                         callback.onResponse(a);

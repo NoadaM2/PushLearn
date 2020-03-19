@@ -1,8 +1,6 @@
 package com.noadam.pushlearn.fragments;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -26,13 +24,11 @@ import android.widget.Toast;
 
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.CardsOfComPackAdapter;
-import com.noadam.pushlearn.adapters.MyComPacksAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.ComCard;
 import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Pack;
-import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
@@ -41,8 +37,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class CommunityPackFragment extends Fragment {
     private Context context;
@@ -56,13 +50,12 @@ public class CommunityPackFragment extends Fragment {
    private ImageButton downloadComPack;
     private RecyclerView cardsOfComPackRecyclerView;
     private ComPack comPack;
-    private CardsOfComPackAdapter cardsOfComPackAdapter;
     private ArrayList<ComCard> cardsOfComPackList;
     boolean comPackStarred = false;
+    private String mode;
 
-    public void setComPack(ComPack comPack)
-    {
-        this.comPack = comPack;
+    public void setComPack(ComPack comPack) {
+        this.comPack = comPack; this.mode = mode;
     }
 
     @Nullable
@@ -112,7 +105,6 @@ public class CommunityPackFragment extends Fragment {
         setValuesForViews();
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
         cardsOfComPackRecyclerView = view.findViewById(R.id.cards_of_com_pack_RecyclerView);
-
         fillCardsOfComPackListAndRecyclerView(comPack.getComPackID(), hash);
         return view;
     }
@@ -127,7 +119,7 @@ public class CommunityPackFragment extends Fragment {
         }
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         cardsOfComPackRecyclerView.setLayoutManager(layoutManager);
-        cardsOfComPackAdapter = new CardsOfComPackAdapter(new CardsOfComPackAdapter.OnRecyclerViewItemClickListener() {
+        CardsOfComPackAdapter cardsOfComPackAdapter = new CardsOfComPackAdapter(new CardsOfComPackAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onClick(ComCard myComPack, View v) {
 
@@ -185,7 +177,7 @@ public class CommunityPackFragment extends Fragment {
          ratingOfComPackTextView.setText(String.valueOf(comPack.getComPackRating()));
          descriptionOfComPackTextView.setText(comPack.getComPackDescription());
          setNickNameByIDResponse(comPack.getComPackOwnerID());
-         setStarButtonResponse(comPack.getComPackID(), hash);
+         compareUserIdAndHashResponse(comPack.getComPackOwnerID(), hash);
     }
 
     private void setNickNameByIDResponse(int id) {
@@ -195,6 +187,24 @@ public class CommunityPackFragment extends Fragment {
             public void onResponse(String nickName) {
                 creatorTextView.setText(nickName);
                 setLanguageIDByNickName(nickName);
+            }
+            @Override
+            public void onError() {
+            }
+        });
+    }
+
+    private void compareUserIdAndHashResponse(int user_id, String hash) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendCompareUSerIdAndHashResponse(user_id, hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String response) {
+             if(response.equals("yes")) {
+                 downloadComPack.setClickable(false);
+                 downloadComPack.setImageResource(R.drawable.ic_key_72dp);
+             } else {
+                 setStarButtonResponse(comPack.getComPackID(), hash);
+             }
             }
             @Override
             public void onError() {
