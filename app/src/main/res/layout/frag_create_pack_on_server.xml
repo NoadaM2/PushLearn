@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="fill_parent" android:layout_height="fill_parent">
+
+<android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent" android:layout_height="wrap_content">
+
+    <include
+            android:id="@+id/create_pack_toolbar"
+            layout="@layout/add_options_toolbar" />
+
+    <TextView
+            android:id="@+id/packName_double_dot_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/title_double_dot"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/create_pack_toolbar" />
+
+    <EditText
+            android:id="@+id/enter_title_editText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/enter_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/packName_double_dot_textView"
+            app:layout_constraintTop_toBottomOf="@+id/create_pack_toolbar" />
+
+    <TextView
+            android:id="@+id/subdirectory_label_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/subdirectory_double_dot"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/directory_label_textView" />
+
+    <TextView
+            android:id="@+id/description_label_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/description_double_dot"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/subdirectory_label_textView" />
+
+    <Spinner
+            android:id="@+id/subdirectory_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/subdirectory_label_textView"
+            app:layout_constraintTop_toBottomOf="@+id/directory_label_textView" />
+
+    <TextView
+            android:id="@+id/directory_label_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/directory_double_dot"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/enter_title_editText" />
+
+
+    <Spinner
+            android:id="@+id/directory_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/directory_label_textView"
+            app:layout_constraintTop_toBottomOf="@+id/enter_title_editText" />
+
+    <android.support.design.widget.TextInputEditText
+            android:id="@+id/enter_description_editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            app:counterEnabled="true"
+            app:counterMaxLength="255"
+            android:layout_marginTop="16dp"
+            android:hint="@string/enter_pack_description"
+            android:layout_marginEnd="8dp"
+            android:inputType="textMultiLine"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/description_label_textView" />
+
+    <ImageButton
+            android:id="@+id/create_pack_next_imageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/enter_description_editText"
+            app:srcCompat="@drawable/ic_right" />
+</android.support.constraint.ConstraintLayout>
+</ScrollView>

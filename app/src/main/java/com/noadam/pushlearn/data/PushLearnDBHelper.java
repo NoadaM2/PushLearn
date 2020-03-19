@@ -30,7 +30,7 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
     private static final String PACK_COLUMN_ID = "pack_id";
     private static final String PACK_COLUMN_PACK_NAME = "packPackName";
     private static final String PACK_COLUMN_TYPE = "packType";
-    private static final String PACK_COLUMN_COM_PACK_ID = "pack_id";
+    private static final String PACK_COLUMN_COM_PACK_ID = "comPack_id";
 
     private final String createCardTableCommand = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s TEXT, %s INT, %s BOOLEAN)", CARD_TABLE_NAME, CARD_COLUMN_ID, CARD_COLUMN_PACK_NAME, CARD_COLUMN_QUESTION, CARD_COLUMN_ANSWER, CARD_COLUMN_ITERATING_NUMBER, CARD_COLUMN_SHOWN);
     private final String createPackTableCommand = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY AUTOINCREMENT,  %s TEXT UNIQUE, %s TEXT, %s INTEGER)", PACK_TABLE_NAME, PACK_COLUMN_ID, PACK_COLUMN_PACK_NAME, PACK_COLUMN_TYPE, PACK_COLUMN_COM_PACK_ID);
@@ -172,6 +172,12 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         return type;
     }
 
+    public void setPackTypeByName(String packName, String type) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("UPDATE "+PACK_TABLE_NAME+" SET "+PACK_COLUMN_TYPE+" = '"+type + "' WHERE "+PACK_COLUMN_PACK_NAME+"= '"+ packName+"'");
+        db.close();
+    }
+
     public void setPackNameById(int _id, String oldPackName, String packName) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues forUpdate = new ContentValues();
@@ -206,7 +212,7 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
     public List<Pack> getPackList() {
         List<Pack> packs = new ArrayList<>();
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.query(PACK_TABLE_NAME, new String[]{PACK_COLUMN_ID, PACK_COLUMN_PACK_NAME, PACK_COLUMN_TYPE}, null, null, null, null, null);
+        Cursor cursor = db.query(PACK_TABLE_NAME, new String[]{PACK_COLUMN_ID, PACK_COLUMN_PACK_NAME, PACK_COLUMN_TYPE, PACK_COLUMN_COM_PACK_ID}, null, null, null, null, null);
         String type;
         String packName;
         int comPackID;

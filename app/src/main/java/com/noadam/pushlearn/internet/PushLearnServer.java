@@ -72,4 +72,20 @@ public interface PushLearnServer {
     @Headers("Content-Type: application/json")
     @POST("if_user_starred_pack")
     Call<String> deletePackByHashAndPackID(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("get_subdirectories_by_directory_id")
+    Call<String> getSubDirectoriesByDirectoryID(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("get_directories")
+    Call<String> getDirectories(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("create_pack")
+    Call<String> createPack(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("create_card")
+    Call<String> createCard(@Body String body);
 }

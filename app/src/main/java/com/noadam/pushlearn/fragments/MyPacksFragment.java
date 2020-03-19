@@ -49,7 +49,6 @@ public class MyPacksFragment extends Fragment{
     private ArrayList<String> selectedPacks = new ArrayList<>();
     private String mode;
     private View longPressedView;
-    private MenuItem shareSelectedItemsMenuItem;
     private MenuItem deleteSelectedItemsMenuItem;
     private MenuItem createPackMenuItem;
     private MenuItem searchPackMenuItem;
@@ -111,7 +110,7 @@ public class MyPacksFragment extends Fragment{
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.add(0, MENU_SELECT, 1, R.string.select);
-        menu.add(0, MENU_SHARE, 2, R.string.share);
+        menu.add(0, MENU_SHARE, 2, R.string.share_to_community);
         menu.add(0, MENU_EDIT, 3, R.string.rename);
         menu.add(0, MENU_DELETE, 4, R.string.delete);
         menu.add(0, MENU_LEARN, 5, R.string.learn);
@@ -126,7 +125,10 @@ public class MyPacksFragment extends Fragment{
                 longPressedView.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
                 break;
             case MENU_SHARE: // TODO SHARING PACKS
-
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                String email = prefs.getString("login", "");
+                String password = prefs.getString("password", "");
+                TryToSignInToSharePack(email, password);
                 break;
             case MENU_EDIT:
                 CreatePackDialogFragment dialogFrag = CreatePackDialogFragment.newInstance(packLongClicked);
@@ -166,7 +168,6 @@ public class MyPacksFragment extends Fragment{
         inflater.inflate(R.menu.toolbar_for_recycler_view, menu);
         createPackMenuItem = menu.findItem(R.id.menu_activity_create_item);
         searchPackMenuItem = menu.findItem(R.id.menu_activity_search);
-        shareSelectedItemsMenuItem = menu.findItem(R.id.menu_activity_selected_items_share);
         deleteSelectedItemsMenuItem = menu.findItem(R.id.menu_activity_selected_items_delete);
         refactorToolBarForSelection(false);
         super.onCreateOptionsMenu(menu, inflater);
@@ -198,11 +199,6 @@ public class MyPacksFragment extends Fragment{
                 dialogFragDelete.setTargetFragment(this, 52);
                 dialogFragDelete.show(getFragmentManager().beginTransaction(), "packName");
                 return true;
-            case R.id.menu_activity_selected_items_share: // TODO TURN OFF SHARING LIST OF PACKS
-                mode = "";
-                refactorToolBarForSelection(false);
-                selectedPacks.clear();
-                fillRecyclerView();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -211,7 +207,6 @@ public class MyPacksFragment extends Fragment{
     private void refactorToolBarForSelection(boolean mode){
         createPackMenuItem.setVisible(!mode);
         searchPackMenuItem.setVisible(!mode);
-        shareSelectedItemsMenuItem.setVisible(mode);
         deleteSelectedItemsMenuItem.setVisible(mode);
     }
 
@@ -282,7 +277,7 @@ public class MyPacksFragment extends Fragment{
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                             String email = prefs.getString("login", "");
                             String password = prefs.getString("password", "");
-                            TryToSignIn(email, password);
+                            TryToSignInToUnStar(email, password);
                         }
                     } else {
                         dbHelper.deletePackByPackName(packLongClicked);
@@ -326,7 +321,7 @@ public class MyPacksFragment extends Fragment{
         });
     }
 
-    private void TryToSignIn(String email, String password) {
+    private void TryToSignInToUnStar(String email, String password) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
         response.sendSignInResponse(email, password, new PushLearnServerCallBack() {
             @Override
@@ -347,5 +342,42 @@ public class MyPacksFragment extends Fragment{
 
             }
         });
+    }
+
+    private void TryToSignInToSharePack(String email, String password) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendSignInResponse(email, password, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String hash) {
+                if (hash.contains("sign_in")) {
+                    Toast.makeText(context, getString(R.string.something_is_wrong), Toast.LENGTH_SHORT).show();
+                } else {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("account_hash", hash);
+                    editor.apply();
+                    CreatePackFragment fragment = new CreatePackFragment();
+                    fragment.setBasePack(packLongClicked);
+                    loadFragment(fragment);
+                }
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+    }
+
+    private boolean loadFragment(Fragment fragment) {
+        //switching fragment
+        if (fragment != null) {
+            getFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .commit();
+            return true;
+        }
+        return false;
     }
 }

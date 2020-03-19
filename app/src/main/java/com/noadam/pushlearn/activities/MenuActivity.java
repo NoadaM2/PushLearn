@@ -68,7 +68,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                     break;
                 case "settings":
                     fragment = new SettingsFragment();
-                    navigation.setSelectedItemId(R.id.navigation_my_profile);
+                 //   navigation.setSelectedItemId(R.id.navigation_my_profile);
                     break;
                 default:
                     fragment = new NowLearningFragment();
@@ -78,7 +78,8 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
         }
         setInitialSharedPreferences();
         loadFragment(fragment);
-        //addSocialScience();
+//        addSocialScience();
+//        addTop50EnglishWords();
         createNotificationChannel();
         sendNotify(1, false);
     }
@@ -237,7 +238,6 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             editor.putString("nickname", "NickName");
             editor.putString("account_hash", "");
             editor.putString("account_rating", "");
-
             editor.putString("password", "");
             editor.putInt("account_language", 0);
             editor.apply();
@@ -261,20 +261,6 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                 }
             }
 
-            @Override
-            public void onError() {
-
-            }
-        });
-    }
-
-    private void getMyComPackByID(String id, String hash) {
-        PushLearnServerResponse response = new PushLearnServerResponse(getApplicationContext());
-        response.sendGetComPackByIDResponse(id, hash, new PushLearnServerCallBack() {
-            @Override
-            public void onResponse(String value) {
-                // add pack to myComPackTable
-            }
             @Override
             public void onError() {
 

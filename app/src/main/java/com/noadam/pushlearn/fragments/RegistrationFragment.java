@@ -159,7 +159,7 @@ public class RegistrationFragment extends Fragment {
                     editor.putInt("account_language", getLanguageId(getSystemLanguage()));
                     editor.apply();
                     loadFragment(new MyProfileFragment());
-                    Toast.makeText(context, getString(R.string.successful_sign_in), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, getString(R.string.successful_sign_in), Toast.LENGTH_LONG).show();
                 }
             }
 
