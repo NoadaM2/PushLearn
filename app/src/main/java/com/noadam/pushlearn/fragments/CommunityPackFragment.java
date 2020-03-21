@@ -52,10 +52,9 @@ public class CommunityPackFragment extends Fragment {
     private ComPack comPack;
     private ArrayList<ComCard> cardsOfComPackList;
     boolean comPackStarred = false;
-    private String mode;
 
     public void setComPack(ComPack comPack) {
-        this.comPack = comPack; this.mode = mode;
+        this.comPack = comPack;
     }
 
     @Nullable
@@ -149,7 +148,7 @@ public class CommunityPackFragment extends Fragment {
                 comPackStarred = true;
             }
             @Override
-            public void onError() {
+            public void onError( Throwable t) {
 
             }
         });
@@ -165,7 +164,7 @@ public class CommunityPackFragment extends Fragment {
                fillRecyclerView();
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });
@@ -189,7 +188,7 @@ public class CommunityPackFragment extends Fragment {
                 setLanguageIDByNickName(nickName);
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
             }
         });
     }
@@ -207,7 +206,7 @@ public class CommunityPackFragment extends Fragment {
              }
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
             }
         });
     }
@@ -225,7 +224,7 @@ public class CommunityPackFragment extends Fragment {
                 }
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
             }
         });
     }
@@ -244,7 +243,7 @@ public class CommunityPackFragment extends Fragment {
                 }
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
             }
         });
     }
@@ -269,7 +268,7 @@ public class CommunityPackFragment extends Fragment {
                 }
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });

@@ -34,6 +34,7 @@ import com.noadam.pushlearn.fragments.dialog.SetIterationTimesDialogFragment;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +49,7 @@ public class MyPacksFragment extends Fragment{
     private String packLongClicked;
     private ArrayList<String> selectedPacks = new ArrayList<>();
     private String mode;
+    private String type = "";
     private View longPressedView;
     private MenuItem deleteSelectedItemsMenuItem;
     private MenuItem createPackMenuItem;
@@ -58,6 +60,10 @@ public class MyPacksFragment extends Fragment{
     final int MENU_EDIT = 3;
     final int MENU_DELETE = 4;
     final int MENU_LEARN = 5;
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     private void fillRecyclerView() {
         List<Pack> packList = dbHelper.getPackList();
@@ -73,33 +79,41 @@ public class MyPacksFragment extends Fragment{
         packListAdapter = new PackListAdapter(new PackListAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onClick(String packName, View v) {
-                if (mode == "selection") {
-                    if (!selectedPacks.contains(packName)) {
-                        // view selected
-                        selectedPacks.add(packName);
-                        v.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
+                if(!type.equals("share_pack")) {
+                    if (mode == "selection") {
+                        if (!selectedPacks.contains(packName)) {
+                            // view selected
+                            selectedPacks.add(packName);
+                            v.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
+                        } else {
+                            // view reselected
+                            selectedPacks.remove(packName);
+                            v.setBackgroundColor(ContextCompat.getColor(context, R.color.white_gray));
+                        }
+                        if (selectedPacks.isEmpty()) {
+                            mode = "";
+                            refactorToolBarForSelection(false);
+                        }
+                        // we do not notify that an item has been selected
+                        // because that work is done here.  we instead send
+                        // notifications for items to be deselected
                     } else {
-                        // view reselected
-                        selectedPacks.remove(packName);
-                        v.setBackgroundColor(ContextCompat.getColor(context, R.color.white_gray));
+                        onRecyclerViewItemClick(packName);
                     }
-                    if(selectedPacks.isEmpty()) {
-                    mode = "";
-                    refactorToolBarForSelection(false);
-                    }
-                    // we do not notify that an item has been selected
-                    // because that work is done here.  we instead send
-                    // notifications for items to be deselected
-                }
-                else {
-                    onRecyclerViewItemClick(packName);
+                } else {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    String email = prefs.getString("login", "");
+                    String password = prefs.getString("password", "");
+                    TryToSignInToSharePack(email, password, packName);
                 }
             }
         }, new PackListAdapter.OnRecyclerViewItemLongClickListener() {
             @Override
             public void onLongClick(String packName, View v) {
-                packLongClicked = packName;
-                longPressedView = v;
+                if(!type.equals("share_pack")) {
+                    packLongClicked = packName;
+                    longPressedView = v;
+                }
             }
         });
         packListAdapter.setPackList(packList);
@@ -124,11 +138,11 @@ public class MyPacksFragment extends Fragment{
                 refactorToolBarForSelection(true);
                 longPressedView.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
                 break;
-            case MENU_SHARE: // TODO SHARING PACKS
+            case MENU_SHARE:
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 String email = prefs.getString("login", "");
                 String password = prefs.getString("password", "");
-                TryToSignInToSharePack(email, password);
+                TryToSignInToSharePack(email, password, packLongClicked);
                 break;
             case MENU_EDIT:
                 CreatePackDialogFragment dialogFrag = CreatePackDialogFragment.newInstance(packLongClicked);
@@ -156,6 +170,16 @@ public class MyPacksFragment extends Fragment{
         View view = inflater.inflate(R.layout.frag_my_packs, null);
         Toolbar toolbar = view.findViewById(R.id.my_packs_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        if(type.equals("share_pack")) {
+            toolbar.setTitle(R.string.choose_pack_to_share);
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    loadFragment(new MyProfileFragment());
+                }
+            });
+        }
         textViewNoPacks = view.findViewById(R.id.no_items_textview);
         packListRecyclerView = view.findViewById(R.id.pack_list_recyclerview);
         registerForContextMenu(packListRecyclerView);
@@ -316,7 +340,7 @@ public class MyPacksFragment extends Fragment{
                 }
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
             }
         });
     }
@@ -327,7 +351,7 @@ public class MyPacksFragment extends Fragment{
             @Override
             public void onResponse(String hash) {
                 if (hash.contains("sign_in")) {
-                    Toast.makeText(context, getString(R.string.something_is_wrong), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, getString(R.string.something_is_wrong), Toast.LENGTH_LONG).show();
                 }  else {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                     SharedPreferences.Editor editor = prefs.edit();
@@ -338,13 +362,19 @@ public class MyPacksFragment extends Fragment{
             }
 
             @Override
-            public void onError() {
-
+            public void onError(Throwable t) {
+                if (t instanceof IOException) {
+                    Toast.makeText(context, R.string.no_internet, Toast.LENGTH_LONG).show();
+                    // logging probably not necessary
+                }
+                else {
+                  //  Toast.makeText(context, "conversion issue! big problems :(", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
-    private void TryToSignInToSharePack(String email, String password) {
+    private void TryToSignInToSharePack(String email, String password, String packName) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
         response.sendSignInResponse(email, password, new PushLearnServerCallBack() {
             @Override
@@ -357,14 +387,20 @@ public class MyPacksFragment extends Fragment{
                     editor.putString("account_hash", hash);
                     editor.apply();
                     CreatePackFragment fragment = new CreatePackFragment();
-                    fragment.setBasePack(packLongClicked);
+                    fragment.setBasePack(packName);
                     loadFragment(fragment);
                 }
             }
 
             @Override
-            public void onError() {
-
+            public void onError(Throwable t) {
+                if (t instanceof IOException) {
+                    Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                    // logging probably not necessary
+                }
+                else {
+                  //  Toast.makeText(context, "conversion issue! big problems :(", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

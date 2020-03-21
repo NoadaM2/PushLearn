@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="fill_parent" android:layout_height="fill_parent">
+
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+    <include
+            android:id="@+id/my_profile_toolbar"
+            layout="@layout/add_options_toolbar" />
+
+    <android.support.constraint.ConstraintLayout
+            android:id="@+id/log_in_using_social_networks_in_log_in_constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/my_profile_toolbar">
+
+        <TextView
+                android:id="@+id/log_in_using_social_networks_in_log_in_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/log_in_using_social_networks"
+                android:textColor="@color/white"
+                android:paddingBottom="24dp"
+                android:paddingTop="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+                android:id="@+id/log_in_using_google_in_log_in_imageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:paddingBottom="48dp"
+                app:layout_constraintEnd_toStartOf="@id/log_in_using_vk_in_log_in_imageButton"
+                app:layout_constraintStart_toStartOf="parent"
+                android:background="@color/colorPrimary"
+                app:layout_constraintTop_toBottomOf="@id/log_in_using_social_networks_in_log_in_textView"
+                app:srcCompat="@drawable/icon_google" />
+
+        <ImageButton
+                android:id="@+id/log_in_using_vk_in_log_in_imageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toStartOf="@id/log_in_using_instagram_in_log_in_imageButton"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@id/log_in_using_google_in_log_in_imageButton"
+                app:layout_constraintTop_toBottomOf="@id/log_in_using_social_networks_in_log_in_textView"
+                android:background="@color/colorPrimary"
+                app:srcCompat="@drawable/icon_vk" />
+
+        <ImageButton
+                android:id="@+id/log_in_using_instagram_in_log_in_imageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toStartOf="@id/log_in_using_facebook_in_log_in_imageButton"
+                app:layout_constraintStart_toEndOf="@id/log_in_using_vk_in_log_in_imageButton"
+                app:layout_constraintTop_toBottomOf="@id/log_in_using_social_networks_in_log_in_textView"
+                android:background="@color/colorPrimary"
+                app:srcCompat="@drawable/icon_instagram"/>
+
+        <ImageButton
+                android:id="@+id/log_in_using_facebook_in_log_in_imageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/log_in_using_instagram_in_log_in_imageButton"
+                app:layout_constraintTop_toBottomOf="@id/log_in_using_social_networks_in_log_in_textView"
+                android:background="@color/colorPrimary"
+                app:srcCompat="@drawable/icon_facebook" />
+
+    </android.support.constraint.ConstraintLayout>
+
+
+    <android.support.constraint.ConstraintLayout
+            android:id="@+id/log_in_using_email_ConstraintLayout"
+        android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/log_in_using_social_networks_in_log_in_constraintLayout">
+
+
+        <EditText
+                android:id="@+id/enter_email_in_log_in_editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="8dp"
+                android:hint="@string/enter_your_email"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.design.widget.TextInputLayout
+                android:id="@+id/password_in_log_in_input_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/enter_email_in_log_in_editText"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                app:errorEnabled="true">
+            <android.support.design.widget.TextInputEditText
+                    android:id="@+id/enter_password_in_log_in_editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:hint="@string/enter_your_password"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/enter_email_in_log_in_editText" />
+        </android.support.design.widget.TextInputLayout>
+
+    <ImageButton
+            android:id="@+id/next_in_log_in_imageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/password_in_log_in_input_layout"
+            app:srcCompat="@drawable/ic_right" />
+
+    </android.support.constraint.ConstraintLayout>
+        <android.support.design.widget.FloatingActionButton
+                android:id="@+id/floatingActionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                app:layout_constraintBottom_toTopOf="@id/log_in_using_email_ConstraintLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/log_in_using_email_ConstraintLayout"
+                app:srcCompat="@drawable/icon_up_down_arrows" />
+</android.support.constraint.ConstraintLayout>
+</ScrollView>

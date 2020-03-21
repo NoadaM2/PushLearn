@@ -145,7 +145,7 @@ public class UserProfileFragment extends Fragment {
                 numberOfPacksTextView.setText(value);
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });
@@ -159,7 +159,7 @@ public class UserProfileFragment extends Fragment {
                 ratingTextView.setText(value);
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });
@@ -186,7 +186,7 @@ public class UserProfileFragment extends Fragment {
                 }
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });
@@ -206,7 +206,7 @@ public class UserProfileFragment extends Fragment {
                 fillUserComPacksByNickNameResponse(nickName, hash);
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
             }
         });
     }
@@ -220,7 +220,7 @@ public class UserProfileFragment extends Fragment {
                 fillRecyclerView();
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });

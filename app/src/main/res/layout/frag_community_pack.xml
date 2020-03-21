@@ -170,6 +170,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:gravity="center"
+        android:text="@string/no_cards_in_com_pack"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"

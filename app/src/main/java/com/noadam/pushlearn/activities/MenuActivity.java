@@ -15,6 +15,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
@@ -31,6 +32,7 @@ import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 import com.noadam.pushlearn.push.MyReceiver;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -262,8 +264,14 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             }
 
             @Override
-            public void onError() {
-
+            public void onError(Throwable t) {
+                if (t instanceof IOException) {
+                    Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_LONG).show();
+                    // logging probably not necessary
+                }
+                else {
+                  //  Toast.makeText(getApplicationContext(), "conversion issue! big problems :(", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

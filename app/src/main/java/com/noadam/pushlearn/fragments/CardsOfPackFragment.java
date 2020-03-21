@@ -57,7 +57,6 @@ public class CardsOfPackFragment extends Fragment {
     private MenuItem createCardMenuItem;
     private MenuItem searchCardMenuItem;
     final int MENU_SELECT = 1;
-    final int MENU_SHARE = 2;
     final int MENU_EDIT = 3;
     final int MENU_DELETE = 4;
 
@@ -153,9 +152,16 @@ public class CardsOfPackFragment extends Fragment {
         dbHelper = new PushLearnDBHelper(context);
         View view = inflater.inflate(R.layout.frag_my_packs, null);
 
-        toolbar = view.findViewById(R.id.my_packs_toolbar);
+        toolbar = (Toolbar)view.findViewById(R.id.my_packs_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         toolbar.setTitle(packName);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+           loadFragment(new MyPacksFragment());
+            }
+        });
         recyclerView = view.findViewById(R.id.pack_list_recyclerview);
         registerForContextMenu(recyclerView);
         textViewNoCards = view.findViewById(R.id.no_items_textview);
@@ -218,6 +224,17 @@ public class CardsOfPackFragment extends Fragment {
         CreateCardDialogFragment dialogFrag = CreateCardDialogFragment.newInstance(card);
         dialogFrag.setTargetFragment(this, 2);
         dialogFrag.show(getFragmentManager().beginTransaction(), "");
+    }
+    private boolean loadFragment(Fragment fragment) {
+        //switching fragment
+        if (fragment != null) {
+            getFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .commit();
+            return true;
+        }
+        return false;
     }
 
     @Override

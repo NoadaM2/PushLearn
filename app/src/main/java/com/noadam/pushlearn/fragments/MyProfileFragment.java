@@ -20,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -74,6 +75,19 @@ public class MyProfileFragment extends Fragment {
         avatarImageView = view.findViewById(R.id.my_avatar_imageView);
         flagImageView = view.findViewById(R.id.my_flag_imageView);
         setValuesForViews();
+//--------------------------------------------------------------------------------------------------------------------------------------------------------
+        ImageButton sharePackToCommunity = view.findViewById(R.id.add_pack_image_button);
+        sharePackToCommunity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyPacksFragment nextFrag= new MyPacksFragment();
+                nextFrag.setType("share_pack");
+                getActivity().getFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, nextFrag, "findThisFragment")
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
         myComPacksRecyclerView = view.findViewById(R.id.my_com_packs_RecyclerView);
         registerForContextMenu(myComPacksRecyclerView);
@@ -150,7 +164,7 @@ public class MyProfileFragment extends Fragment {
                 }
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
             }
         });
     }
@@ -217,7 +231,7 @@ public class MyProfileFragment extends Fragment {
                 numberOfPacksTextView.setText(value);
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });
@@ -235,7 +249,7 @@ public class MyProfileFragment extends Fragment {
                 ratingTextView.setText(value);
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });
@@ -266,7 +280,7 @@ public class MyProfileFragment extends Fragment {
                 }
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });
@@ -288,7 +302,7 @@ public class MyProfileFragment extends Fragment {
                 editor.apply();
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });
@@ -305,7 +319,7 @@ public class MyProfileFragment extends Fragment {
                 fillRecyclerView();
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });

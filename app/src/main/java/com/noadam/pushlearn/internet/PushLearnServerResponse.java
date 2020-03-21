@@ -66,7 +66,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -96,7 +96,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -126,7 +126,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -156,7 +156,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -188,7 +188,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -219,7 +219,7 @@ public class PushLearnServerResponse {
                 }
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                     Log.v("SERVER  ERROR", t+"");
                 }
             });
@@ -249,7 +249,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -279,7 +279,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -308,7 +308,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -342,7 +342,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -374,7 +374,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -400,7 +400,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -430,7 +430,7 @@ public class PushLearnServerResponse {
                 }
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                     Log.v("SERVER  ERROR", t+"");
                 }
             });
@@ -460,7 +460,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -490,7 +490,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -520,7 +520,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -550,7 +550,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -579,7 +579,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -608,7 +608,7 @@ public class PushLearnServerResponse {
                 }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                 Log.v("SERVER  ERROR", t+"");
             }
         });
@@ -638,7 +638,7 @@ public class PushLearnServerResponse {
                 }
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                     Log.v("SERVER  ERROR", t+"");
                 }
             });
@@ -670,7 +670,7 @@ public class PushLearnServerResponse {
                 }
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
-                    callback.onError();
+                    callback.onError(t);
                     Log.v("SERVER  ERROR", t+"");
                 }
             });

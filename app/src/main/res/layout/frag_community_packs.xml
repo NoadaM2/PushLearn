@@ -1,23 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-    android:layout_height="match_parent">
+        android:layout_width="fill_parent" android:layout_height="fill_parent">
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-
-    <Spinner
-            android:id="@+id/spinner2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/spinner3"
-            app:layout_constraintTop_toTopOf="@+id/spinner3" />
-
-    <Spinner
-            android:id="@+id/spinner3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+    <android.support.constraint.ConstraintLayout
+            android:id="@+id/search_params_ConstraintLayout"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent">
+
+        <include
+                android:id="@+id/com_packs_toolbar"
+                layout="@layout/add_options_toolbar" />
+
+    <TextView
+            android:id="@+id/directory_label_compacks_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:textColor="@color/constant_white"
+            android:text="@string/category_double_dot"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/search_in_pack_description_checkBox" />
+
+
+        <TextView
+                android:id="@+id/subdirectory_label_compacks_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/subcategory_double_dot"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="@color/constant_white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/directory_label_compacks_textView" />
+
+    <Spinner
+            android:id="@+id/directory_compacks_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/constant_white"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/directory_label_compacks_textView"
+            app:layout_constraintTop_toBottomOf="@id/search_in_pack_description_checkBox" />
+
+    <Spinner
+            android:id="@+id/subdirectory_compacks_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/constant_white"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/subdirectory_label_compacks_textView"
+            app:layout_constraintTop_toBottomOf="@id/directory_label_compacks_textView" />
+
+        <EditText
+                android:id="@+id/pack_name_EditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:hint="@string/enter_packName"
+                android:textColorHint="@color/constant_white"
+                android:textColor="@color/constant_white"
+                app:layout_constraintEnd_toStartOf="@id/search_comPacks_imageButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/com_packs_toolbar" />
+
+        <ImageButton
+                android:id="@+id/search_comPacks_imageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:background="@null"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_search_white_24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/pack_name_EditText"
+                app:layout_constraintTop_toBottomOf="@id/com_packs_toolbar"/>
+
+        <CheckBox
+                android:id="@+id/search_in_pack_description_checkBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/search_in_pack_description"
+                android:textColor="@color/constant_white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pack_name_EditText" />
+
 </android.support.constraint.ConstraintLayout>
+
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/com_packs_RecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/search_params_ConstraintLayout" />
+
+        <TextView
+                android:id="@+id/no_packs_by_search_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="@string/no_packs_found"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/search_params_ConstraintLayout" />
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

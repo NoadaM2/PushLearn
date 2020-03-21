@@ -76,7 +76,7 @@
     <string name="this_email_is_busy">This email is busy</string>
     <string name="this_nickname_is_busy">This nickname is busy</string>
     <string name="something_is_wrong_try_another_email">Oops... Something is wrong. Try to use another email.</string>
-    <string name="something_is_wrong">Oops... Something is wrong. Log In to your account</string>
+    <string name="something_is_wrong">Oops... \n Log In to your account.</string>
     <string name="successful_registration">Welcome to PushLearn communtity!</string>
     <string name="password_should_be_longer">Password should be longer then 8 symbols</string>
     <string name="packs">packs</string>
@@ -100,10 +100,16 @@
     <string name="title_double_dot">Title:</string>
     <string name="enter_title">Enter Title</string>
     <string name="description_double_dot">Description:</string>
-    <string name="subdirectory_double_dot">Subdirectory:</string>
-    <string name="directory_double_dot">Directory:</string>
+    <string name="subcategory_double_dot">Subcategory:</string>
+    <string name="category_double_dot">Category:</string>
     <string name="enter_pack_description">Enter pack description</string>
     <string name="pack_publish">Publish pack</string>
     <string name="successful_pack_publication">Successful pack publication! \n Thank you for the contribution to our community!</string>
-
+    <string name="choose_pack_to_share">Choose pack to share</string>
+    <string name="no_internet">No Internet connection(</string>
+    <string name="search_in_pack_description">Search in pack description</string>
+    <string name="no_packs_found">No packs found</string>
+    <string name="pushlearn_community">PushLearn Community</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="welcome_back_to_PL_communtity">Welcome back to PushLearn communtity!</string>
 </resources>

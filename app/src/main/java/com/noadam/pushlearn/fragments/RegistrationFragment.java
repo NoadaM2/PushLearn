@@ -39,8 +39,6 @@ public class RegistrationFragment extends Fragment {
     private EditText NickNameEditText;
     private EditText EmailEditText;
     private EditText PasswordEditText;
-    private boolean  TermsOfUseCheck; //If TRUE then all is OK
-    private String busyNickName, busyEmail = "";
 
     @Nullable
     @Override
@@ -51,6 +49,10 @@ public class RegistrationFragment extends Fragment {
         toolbar = view.findViewById(R.id.my_profile_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
+        GoogleSignInImageButton = view.findViewById(R.id.log_in_using_google_imageButton);
+        VKSignInImageButton = view.findViewById(R.id.log_in_using_vk_imageButton);
+        InstagramSignInImageButton = view.findViewById(R.id.log_in_using_instagram_imageButton);
+        FacebookSignInImageButton = view.findViewById(R.id.log_in_using_facebook_imageButton);
 
         NickNameEditText = view.findViewById(R.id.nickName_editText);
         EmailEditText = view.findViewById(R.id.email_editText);
@@ -69,7 +71,7 @@ public class RegistrationFragment extends Fragment {
         LogInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TryToSignIn(String.valueOf(EmailEditText.getText()),String.valueOf(PasswordEditText.getText()));
+                loadFragment(new LogInFragment());
             }
         });
 
@@ -136,38 +138,16 @@ public class RegistrationFragment extends Fragment {
             }
 
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });
     }
 
-    private void TryToSignIn(String email, String password) {
-        PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendSignInResponse(email, password, new PushLearnServerCallBack() {
-            @Override
-            public void onResponse(String hash) {
-                if (hash.contains("sign_in")) {
-                    PasswordEditText.setError(getString(R.string.incorrect_password_or_email));
-                    EmailEditText.setError(getString(R.string.incorrect_password_or_email));
-                }  else {
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putString("account_hash", hash);
-                    editor.putString("login", email);
-                    editor.putString("password", password);
-                    editor.putInt("account_language", getLanguageId(getSystemLanguage()));
-                    editor.apply();
-                    loadFragment(new MyProfileFragment());
-                    Toast.makeText(context, getString(R.string.successful_sign_in), Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onError() {
-
-            }
-        });
+    private String getSystemLanguage() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return String.valueOf(context.getResources().getConfiguration().getLocales().get(0)); }
+        else { return String.valueOf(context.getResources().getConfiguration().locale); }
     }
 
     private int getLanguageId(String language) {
@@ -188,7 +168,7 @@ public class RegistrationFragment extends Fragment {
                 }
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });
@@ -205,7 +185,7 @@ public class RegistrationFragment extends Fragment {
                 editor.apply();
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });
@@ -223,16 +203,12 @@ public class RegistrationFragment extends Fragment {
                 }
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });
     }
 
-    private String getSystemLanguage() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return String.valueOf(context.getResources().getConfiguration().getLocales().get(0)); }
-            else { return String.valueOf(context.getResources().getConfiguration().locale); }
-    }
+
 
 }

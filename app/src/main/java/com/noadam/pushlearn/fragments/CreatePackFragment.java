@@ -43,7 +43,6 @@ public class CreatePackFragment extends Fragment {
     private EditText enterDescriptionEditText;
     private Spinner subdirectorySpinner;
     private Spinner directorySpinner;
-    private ImageButton createPackNextImageButton;
     private String packName;
     private Context context;
     PushLearnDBHelper dbHelper;
@@ -64,7 +63,13 @@ public class CreatePackFragment extends Fragment {
         Toolbar toolbar = view.findViewById(R.id.create_pack_toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         toolbar.setTitle(R.string.pack_publish);
-
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadFragment(new MyPacksFragment());
+            }
+        });
         enterTitleEditText = view.findViewById(R.id.enter_title_editText);
         enterTitleEditText.setText(packName);
         enterDescriptionEditText = view.findViewById(R.id.enter_description_editText);
@@ -75,7 +80,7 @@ public class CreatePackFragment extends Fragment {
 
         subdirectorySpinner = view.findViewById(R.id.subdirectory_spinner);
 
-        createPackNextImageButton = view.findViewById(R.id.create_pack_next_imageButton);
+        ImageButton createPackNextImageButton = view.findViewById(R.id.create_pack_next_imageButton);
         createPackNextImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,7 +115,7 @@ public class CreatePackFragment extends Fragment {
                 });
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });
@@ -140,7 +145,7 @@ public class CreatePackFragment extends Fragment {
             public void onResponse(String jsonResponse) {
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });
@@ -158,7 +163,7 @@ public class CreatePackFragment extends Fragment {
                 subdirectorySpinner.setAdapter(adapter);
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });
@@ -179,7 +184,7 @@ public class CreatePackFragment extends Fragment {
                 Toast.makeText(context, getString(R.string.successful_pack_publication), Toast.LENGTH_LONG).show();
             }
             @Override
-            public void onError() {
+            public void onError(Throwable t) {
 
             }
         });
