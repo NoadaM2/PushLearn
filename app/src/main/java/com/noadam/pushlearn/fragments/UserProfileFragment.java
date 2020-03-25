@@ -92,7 +92,6 @@ public class UserProfileFragment extends Fragment {
     }
 
     private void fillRecyclerView() {
-        userComPackList = dbHelper.getSavedMyComPacksList();
         sortComPackList();
         if (!userComPackList.isEmpty()) {
             noComPacksTextView.setVisibility(View.GONE);

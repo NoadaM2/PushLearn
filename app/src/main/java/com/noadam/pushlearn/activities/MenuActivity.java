@@ -14,9 +14,14 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
@@ -34,22 +39,11 @@ import com.noadam.pushlearn.push.MyReceiver;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
-import com.vk.sdk.api.VKApi;
-import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
-import com.vk.sdk.api.VKParameters;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
-import com.vk.sdk.api.model.VKApiUserFull;
-import com.vk.sdk.api.model.VKList;
-import com.vk.sdk.util.VKUtil;
+
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
-import java.util.Random;
 
 //implement the interface OnNavigationItemSelectedListener in your activity class
 public class MenuActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
@@ -58,6 +52,8 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
     SharedPreferences prefs;
     BottomNavigationView navigation;
     private PushLearnDBHelper dbHelper;
+
+    final int RC_SIGN_IN = 33;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -315,6 +311,29 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             }
         })) {
             super.onActivityResult(requestCode, resultCode, data);
+        }
+        if (requestCode == RC_SIGN_IN) {
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
+    }
+
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+           String nickname = account.getDisplayName();
+            String id = account.getId();
+            String idToken = account.getIdToken();
+            String photoUrl = String.valueOf(account.getPhotoUrl());
+            // Signed in successfully, show authenticated UI.
+         //   updateUI(account);
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.w("GoogleSignIn", "signInResult:failed code=" + e.getStatusCode());
+          //  updateUI(null);
         }
     }
 

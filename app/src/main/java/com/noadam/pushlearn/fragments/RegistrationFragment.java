@@ -23,6 +23,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.Scope;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
@@ -44,6 +50,9 @@ public class RegistrationFragment extends Fragment {
     private EditText NickNameEditText;
     private EditText EmailEditText;
     private EditText PasswordEditText;
+    private GoogleSignInClient mGoogleSignInClient;
+
+    final int RC_SIGN_IN = 33;
 
     @Nullable
     @Override
@@ -55,7 +64,16 @@ public class RegistrationFragment extends Fragment {
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
         GoogleSignInImageButton = view.findViewById(R.id.log_in_using_google_imageButton);
-
+        GoogleSignInImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
+                if (account == null) {
+                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                    startActivityForResult(signInIntent, RC_SIGN_IN);
+                }
+            }
+        });
         VKSignInImageButton = view.findViewById(R.id.log_in_using_vk_imageButton);
         VKSignInImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +88,8 @@ public class RegistrationFragment extends Fragment {
         NickNameEditText = view.findViewById(R.id.nickName_editText);
         EmailEditText = view.findViewById(R.id.email_editText);
         PasswordEditText = view.findViewById(R.id.password_editText);
+
+
 
         SingUpButton = view.findViewById(R.id.sing_up_button);
         SingUpButton.setOnClickListener(new View.OnClickListener() {
@@ -97,6 +117,17 @@ public class RegistrationFragment extends Fragment {
                 else { SingUpButton.setClickable(false); }
             }
         });
+
+        // Configure sign-in to request the user's ID, email address, and basic
+// profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            //    .requestProfile()
+                .requestEmail()
+              //  .requestIdToken("699493798150-4l3jatsk35sdovrninlelhj7163dhn21.apps.googleusercontent.com")
+                //.requestId()
+                .build();
+        // Build a GoogleSignInClient with the options specified by gso.
+         mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
 
         return view;
     }
