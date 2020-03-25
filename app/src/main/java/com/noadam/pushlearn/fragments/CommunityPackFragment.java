@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.CardsOfComPackAdapter;
+import com.noadam.pushlearn.data.ParserFromJSON;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.ComCard;
@@ -31,6 +32,8 @@ import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,6 +48,8 @@ public class CommunityPackFragment extends Fragment {
    private TextView noMyComCardsInComPackTextView;
    private TextView ratingOfComPackTextView;
    private TextView numberOfCardsInComPackTextView;
+   private TextView directoryTextView;
+   private TextView subdirectoryTextView;
    private TextView descriptionOfComPackTextView;
    private ImageView flagImageView;
    private ImageButton downloadComPack;
@@ -81,6 +86,9 @@ public class CommunityPackFragment extends Fragment {
             }
         });
         noMyComCardsInComPackTextView = view.findViewById(R.id.no_cards_of_com_pack_textView);
+        ratingOfComPackTextView = view.findViewById(R.id.ratingOfComPack_number_textView);
+        directoryTextView = view.findViewById(R.id.directory_value_textView);
+        subdirectoryTextView = view.findViewById(R.id.subdirectory_value_textView);
         ratingOfComPackTextView = view.findViewById(R.id.ratingOfComPack_number_textView);
         numberOfCardsInComPackTextView = view.findViewById(R.id.number_of_cards_textView);
         descriptionOfComPackTextView = view.findViewById(R.id.pack_description_textView);
@@ -159,7 +167,8 @@ public class CommunityPackFragment extends Fragment {
         response.sendGetCardsOfComPackByPackIDResponse(packID, hash, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String value) {
-               cardsOfComPackList = parseJsonComCardsArray(value);
+                ParserFromJSON parser = new ParserFromJSON();
+               cardsOfComPackList = parser.parseJsonComCardsArray(value);
                numberOfCardsInComPackTextView.setText(String.valueOf(cardsOfComPackList.size()));
                fillRecyclerView();
             }
@@ -171,12 +180,14 @@ public class CommunityPackFragment extends Fragment {
     }
 
     private void setValuesForViews() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String hash = prefs.getString("account_hash","");
          ratingOfComPackTextView.setText(String.valueOf(comPack.getComPackRating()));
          descriptionOfComPackTextView.setText(comPack.getComPackDescription());
          setNickNameByIDResponse(comPack.getComPackOwnerID());
-         compareUserIdAndHashResponse(comPack.getComPackOwnerID(), hash);
+         setDirectoryTextViewResponse(comPack.getComPackDirectoryId());
+         setSubDirectoryTextViewResponse(comPack.getComPackSubdirectoryId());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String nickname = prefs.getString("nickname","");
+        compareUserIdAndHashResponse(nickname);
     }
 
     private void setNickNameByIDResponse(int id) {
@@ -186,6 +197,7 @@ public class CommunityPackFragment extends Fragment {
             public void onResponse(String nickName) {
                 creatorTextView.setText(nickName);
                 setLanguageIDByNickName(nickName);
+
             }
             @Override
             public void onError(Throwable t) {
@@ -193,20 +205,52 @@ public class CommunityPackFragment extends Fragment {
         });
     }
 
-    private void compareUserIdAndHashResponse(int user_id, String hash) {
+    private void setDirectoryTextViewResponse(int id) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendCompareUSerIdAndHashResponse(user_id, hash, new PushLearnServerCallBack() {
+        response.sendGetDirectoryByIDResponse(id, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String response) {
-             if(response.equals("yes")) {
-                 downloadComPack.setClickable(false);
-                 downloadComPack.setImageResource(R.drawable.ic_key_72dp);
-             } else {
-                 setStarButtonResponse(comPack.getComPackID(), hash);
-             }
+                ParserFromJSON parser = new ParserFromJSON();
+                String directory = parser.parseJsonDirectory(response).getName();
+                directoryTextView.setText(directory);
             }
             @Override
             public void onError(Throwable t) {
+            }
+        });
+    }
+
+    private void setSubDirectoryTextViewResponse(int id) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendGetSubDirectoryByIDResponse(id, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String response) {
+                ParserFromJSON parser = new ParserFromJSON();
+                subdirectoryTextView.setText(parser.parseJsonSubDirectory(response).getName());
+            }
+            @Override
+            public void onError(Throwable t) {
+            }
+        });
+    }
+
+    private void compareUserIdAndHashResponse(String nickname) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendGetIdByNickNameResponse(nickname, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String value) {
+                if(Integer.valueOf(value) == comPack.getComPackOwnerID()) {
+                    downloadComPack.setClickable(false);
+                    downloadComPack.setImageResource(R.drawable.ic_key_72dp);
+                } else {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    String hash = prefs.getString("account_hash","");
+                    setStarButtonResponse(comPack.getComPackID(), hash);
+                }
+            }
+            @Override
+            public void onError(Throwable t) {
+
             }
         });
     }
@@ -286,24 +330,6 @@ public class CommunityPackFragment extends Fragment {
                 break;
         }
         return true;
-    }
-
-    private ArrayList<ComCard> parseJsonComCardsArray(String jsonResponse) {
-        ArrayList<ComCard> comCards = new ArrayList<ComCard>();
-        try {
-            JSONArray jsonarray = new JSONArray(jsonResponse);
-            for (int i = 0; i < jsonarray.length(); i++) {
-                JSONObject jsonObject = jsonarray.getJSONObject(i);
-                int card_id = jsonObject.getInt("card_id");
-                int pack_id = jsonObject.getInt("pack_id");
-                String question = jsonObject.getString("question");
-                String answer = jsonObject.getString("answer");
-                comCards.add(new ComCard(card_id,pack_id,question,answer));
-            }
-        } catch (JSONException err){
-            Log.d("JSON Error", err.toString());
-        }
-        return comCards;
     }
 
     private boolean loadFragment(Fragment fragment) {

@@ -1,18 +1,29 @@
 package com.noadam.pushlearn.fragments;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,22 +34,35 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.widget.Toast;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.MyComPacksAdapter;
+import com.noadam.pushlearn.data.ParserFromJSON;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
+import com.noadam.pushlearn.entities.Card;
+import com.noadam.pushlearn.entities.ComCard;
 import com.noadam.pushlearn.entities.ComPack;
+import com.noadam.pushlearn.entities.Pack;
+import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Random;
+
+import kotlin._Assertions;
 
 
 public class MyProfileFragment extends Fragment {
@@ -55,7 +79,12 @@ public class MyProfileFragment extends Fragment {
     private ArrayList<ComPack> myComPackList;
     private ComPack longClickedComPack;
 
-    final int MENU_DELETE = 1;
+    final int MENU_DELETE = 2;
+    final int MENU_DOWNLOAD = 1;
+    final int REQUEST_Permission = 66;
+    final String GALLERY_PERMISSION = "android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI";
+
+    final int PICK_IMAGE = 1;
 
     @Nullable
     @Override
@@ -73,9 +102,19 @@ public class MyProfileFragment extends Fragment {
         ratingTextView = view.findViewById(R.id.my_rating_number_textView);
         numberOfPacksTextView = view.findViewById(R.id.my_number_of_packs_textView);
         avatarImageView = view.findViewById(R.id.my_avatar_imageView);
+        avatarImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(checkPermission()) {
+                    SelectImageFromGallery();
+                }
+            }
+        });
+
         flagImageView = view.findViewById(R.id.my_flag_imageView);
         setValuesForViews();
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
+
         ImageButton sharePackToCommunity = view.findViewById(R.id.add_pack_image_button);
         sharePackToCommunity.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,12 +128,38 @@ public class MyProfileFragment extends Fragment {
             }
         });
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
+        ImageButton editNickName = view.findViewById(R.id.edit_nickname_imageButton);
+        editNickName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startChangeNickNameDialogFragment();
+            }
+        });
+//--------------------------------------------------------------------------------------------------------------------------------------------------------
+        ImageButton editAvatar = view.findViewById(R.id.edit_avatar_imageButton);
+        editAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(checkPermission()) {
+                    SelectImageFromGallery();
+                }
+            }
+        });
+//--------------------------------------------------------------------------------------------------------------------------------------------------------
         myComPacksRecyclerView = view.findViewById(R.id.my_com_packs_RecyclerView);
         registerForContextMenu(myComPacksRecyclerView);
 
         fillRecyclerView();
 
         return view;
+    }
+
+    private void startChangeNickNameDialogFragment(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String nickname = prefs.getString("nickname","");
+        CreatePackDialogFragment dialogFrag = CreatePackDialogFragment.newInstance(nickname);
+        dialogFrag.setTargetFragment(this, 3);
+        dialogFrag.show(getFragmentManager().beginTransaction(), "");
     }
 
     private void sortComPackList() {
@@ -141,7 +206,8 @@ public class MyProfileFragment extends Fragment {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(0, MENU_DELETE, 1, R.string.delete);
+        menu.add(0, MENU_DOWNLOAD, 1, R.string.download_to_my_packs);
+        menu.add(0, MENU_DELETE, 2, R.string.delete);
     }
 
     public boolean onContextItemSelected(MenuItem item) {
@@ -151,8 +217,36 @@ public class MyProfileFragment extends Fragment {
                 dialogFragDelete.setTargetFragment(this, 53);
                 dialogFragDelete.show(getFragmentManager().beginTransaction(), "packName");
                 break;
+            case MENU_DOWNLOAD:
+                if (!dbHelper.doesPackExistByPackName(longClickedComPack.getComPackName())) {
+                    dbHelper.addNewPack(new Pack(longClickedComPack.getComPackName(),"owned", longClickedComPack.getComPackID()));
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    String hash = prefs.getString("account_hash","");
+                    getCardsOfComPackResponse(longClickedComPack.getComPackID(),hash);
+                } else {
+                    Toast.makeText(context, getString(R.string.you_already_have_pack_with_such_name), Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
         return true;
+    }
+
+    private void getCardsOfComPackResponse(int packID, String hash) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendGetCardsOfComPackByPackIDResponse(packID, hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String value) {
+                ParserFromJSON parser = new ParserFromJSON();
+                ArrayList<ComCard> cardsOfComPackList = parser.parseJsonComCardsArray(value);
+                for(ComCard card : cardsOfComPackList) {
+                    dbHelper.addNewCard(new Card(longClickedComPack.getComPackName(), card.getQuestion(), card.getAnswer()));
+                }
+            }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
     }
 
     private void deletePackResponse(int id, String hash) {
@@ -172,6 +266,7 @@ public class MyProfileFragment extends Fragment {
     private void setValuesForViews() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String hash = prefs.getString("account_hash","");
+       // stressTestPacks(15,123);
         nickNameTextView.setText(prefs.getString("nickname",""));
         ratingTextView.setText(prefs.getString("account_rating",""));
         String a = prefs.getString("account_count_of_packs","");
@@ -254,8 +349,25 @@ public class MyProfileFragment extends Fragment {
             }
         });
     }
-    
-    private void setLanguageIDByNickName(String nickname) {
+
+    private void setAvatarByNickName(String nickname) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendGetIdByNickNameResponse(nickname, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String value) {
+                ImageLoader imageLoader = ImageLoader.getInstance();
+                ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).build();
+                imageLoader.init(config);
+                imageLoader.displayImage("http://pushlearn.hhos.ru.s68.hhos.ru/files/"+String.valueOf(value)+".jpg", avatarImageView);
+            }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
+    }
+
+    private void setFlagByNickName(String nickname) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
         response.sendGetLanguageIDByNickNameResponse(nickname, new PushLearnServerCallBack() {
             @Override
@@ -294,12 +406,33 @@ public class MyProfileFragment extends Fragment {
                 nickNameTextView.setText(nickName);
                 setNumberOfComPacksByNickName(nickName);
                 setRatingByNickName(nickName);
-                setLanguageIDByNickName(nickName);
-                saveMyComPacksByNickNameResponse(nickName,hash);
+                setFlagByNickName(nickName);
+                setAvatarByNickName(nickName);
+                saveMyComPacksByNickNameResponse(nickName, hash);
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("nickname", nickName);
                 editor.apply();
+            }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
+    }
+
+    private void setNickNameByHashResponse(String nickName,String hash) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendSetNickNameByHashResponse(nickName, hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String response) {
+                if(response.equals("ok")) {
+                    Toast.makeText(context, getString(R.string.successful_nickname_change), Toast.LENGTH_LONG).show();
+                    setValuesForViews();
+                } else {
+                    // TODO InApp purchase subscribe
+                    Toast.makeText(context, "Покупай подписку", Toast.LENGTH_LONG).show();
+                }
             }
             @Override
             public void onError(Throwable t) {
@@ -313,7 +446,8 @@ public class MyProfileFragment extends Fragment {
         response.sendGetPacksByNickNameResponse(nickname, hash, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
-                ArrayList<ComPack> comPacks = parseJsonComPacksArray(jsonResponse);
+                ParserFromJSON parser = new ParserFromJSON();
+                ArrayList<ComPack> comPacks = parser.parseJsonComPacksArray(jsonResponse);
                 dbHelper.saveMyComPacks(comPacks);
                 dbHelper.close();
                 fillRecyclerView();
@@ -323,28 +457,6 @@ public class MyProfileFragment extends Fragment {
 
             }
         });
-    }
-
-    private ArrayList<ComPack> parseJsonComPacksArray(String jsonResponse) {
-        ArrayList<ComPack> comPacks = new ArrayList<ComPack>();
-        try {
-            JSONArray jsonarray = new JSONArray(jsonResponse);
-            for (int i = 0; i < jsonarray.length(); i++) {
-                JSONObject jsonObject = jsonarray.getJSONObject(i);
-                int packID = jsonObject.getInt("pack_id");
-                int userID = jsonObject.getInt("user_id");
-                String packName = jsonObject.getString("name");
-                String packDescription = jsonObject.getString("description");
-                String packAccess = jsonObject.getString("access");
-                int packRating = jsonObject.getInt("rating");
-                int packDirectoryId = jsonObject.getInt("directory_id");
-                int packSubdirectoryID = jsonObject.getInt("subdirectory_id");
-                comPacks.add(new ComPack(packID,userID,packName,packRating,packDescription,packAccess,packDirectoryId,packSubdirectoryID));
-            }
-        } catch (JSONException err){
-            Log.d("JSON Error", err.toString());
-        }
-            return comPacks;
     }
 
     @Override
@@ -357,6 +469,150 @@ public class MyProfileFragment extends Fragment {
                     deletePackResponse(longClickedComPack.getComPackID(), hash);
                     setValuesForViews();
                 }
+                break;
+            case 3:
+                if (resultCode == Activity.RESULT_OK) {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("nickname", data.getStringExtra("nickName"));
+                    editor.apply();
+                    String hash = prefs.getString("account_hash","");
+                    setNickNameByHashResponse(data.getStringExtra("nickName"), hash);
+                }
+                break;
+            case PICK_IMAGE:
+                if(resultCode == Activity.RESULT_OK){
+                        //Получаем URI изображения, преобразуем его в Bitmap
+                        //объект и отображаем в элементе ImageView нашего интерфейса:
+                        final Uri imageUri = data.getData();
+                        avatarImageView.setImageURI(imageUri);
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    String hash = prefs.getString("account_hash","");
+                        uploadAvatarResponse(hash, new File(getRealPathFromUri(context,imageUri)), getRealPathFromUri(context,imageUri));
+                }
+                break;
+            case REQUEST_Permission:
+                if(resultCode == Activity.RESULT_OK){
+                  //  SelectImageFromGallery();
+                }
+                break;
         }
     }
+
+    private boolean checkPermission(){
+        int check=ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if(check!= PackageManager.PERMISSION_GRANTED){
+            if (Build.VERSION.SDK_INT >= 23) {
+                this.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},REQUEST_Permission);
+            }
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        // проверка по запрашиваемому коду
+        if (requestCode == REQUEST_Permission) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // разрешение успешно получено
+            } else {
+                // разрешение не получено
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    public static String getRealPathFromUri(Context context, Uri contentUri) { Cursor cursor = null; try { String[] proj = { MediaStore.Images.Media.DATA }; cursor = context.getContentResolver().query(contentUri, proj, null, null, null); int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA); cursor.moveToFirst(); return cursor.getString(column_index); } finally { if (cursor != null) { cursor.close(); } } }
+
+    public String generateRandomWords() {
+
+        int leftLimit = 97; // letter 'a'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = 10;
+        Random random = new Random();
+        StringBuilder buffer = new StringBuilder(targetStringLength);
+        for (int i = 0; i < targetStringLength; i++) {
+            int randomLimitedInt = leftLimit + (int)
+                    (random.nextFloat() * (rightLimit - leftLimit + 1));
+            buffer.append((char) randomLimitedInt);
+        }
+        String generatedString = buffer.toString();
+
+        return generatedString;
+    }
+
+    private void stressTestPacks(int number_of_packs, int number_of_cards) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String hash = prefs.getString("account_hash","");
+        PushLearnDBHelper dbHelper = new PushLearnDBHelper(context);
+        for (int i = 0; i< number_of_packs; i++) {
+            String packname = generateRandomWords();
+            dbHelper.addNewPack(new Pack(packname));
+            for (int j = 0; j < number_of_cards; j++) {
+                dbHelper.addNewCard(new Card(packname, generateRandomWords(), generateRandomWords()));
+            }
+            createPackResponse(packname, generateRandomWords(), 3,1,hash);
+        }
+    }
+
+    private void createPackResponse(String packName, String description, int directory_id, int subdirectory_id, String hash) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendCreatePackResponse(packName, description, directory_id, subdirectory_id, hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String jsonResponse) {
+                int pack_id = Integer.valueOf(jsonResponse);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                String hash = prefs.getString("account_hash","");
+                ArrayList<Card> cards = dbHelper.getCardListByPackName(packName,-1);
+                for(Card card : cards) {
+                    createCardResponse(pack_id, card.getQuestion(), card.getAnswer(), hash);
+                }
+                Toast.makeText(context, getString(R.string.successful_pack_publication), Toast.LENGTH_LONG).show();
+            }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
+    }
+
+    private void createCardResponse(int id_pack, String question, String answer, String hash) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendCreateCardResponse(id_pack, question, answer, hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String jsonResponse) {
+            }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
+    }
+
+    private void uploadAvatarResponse(String hash, File file, String filepath) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context,"avatar");
+        response.sendUpdateAvatarResponse(hash, file,filepath, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String jsonResponse) {
+
+            }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
+    }
+
+    private void SelectImageFromGallery() {
+        //Вызываем стандартную галерею для выбора изображения с помощью Intent.ACTION_PICK:
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        //Тип получаемых объектов - image:
+        photoPickerIntent.setType("image/*");
+        //Запускаем переход с ожиданием обратного результата в виде информации об изображении:
+        startActivityForResult(photoPickerIntent, PICK_IMAGE);
+    }
+
 }

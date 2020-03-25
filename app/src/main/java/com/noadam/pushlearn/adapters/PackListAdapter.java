@@ -67,6 +67,10 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
                 holder.pack_type_imageView.setImageResource(R.drawable.ic_star);
                 holder.pack_type_imageView.setVisibility(View.VISIBLE);
                 break;
+            case "owned":
+                holder.pack_type_imageView.setImageResource(R.drawable.ic_key_24dp);
+                holder.pack_type_imageView.setVisibility(View.VISIBLE);
+                break;
         }
         List<Card> cardList = dbHelper.getCardListByPackName(pack.getPackName(), 0);
         if (!cardList.isEmpty()) {

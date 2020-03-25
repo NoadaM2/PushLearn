@@ -31,12 +31,25 @@ import com.noadam.pushlearn.fragments.SettingsFragment;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 import com.noadam.pushlearn.push.MyReceiver;
+import com.vk.sdk.VKAccessToken;
+import com.vk.sdk.VKCallback;
+import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKApi;
+import com.vk.sdk.api.VKApiConst;
+import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKParameters;
+import com.vk.sdk.api.VKRequest;
+import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.model.VKApiUserFull;
+import com.vk.sdk.api.model.VKList;
+import com.vk.sdk.util.VKUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
 //implement the interface OnNavigationItemSelectedListener in your activity class
 public class MenuActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
@@ -71,6 +84,9 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                 case "settings":
                     fragment = new SettingsFragment();
                  //   navigation.setSelectedItemId(R.id.navigation_my_profile);
+                    break;
+                case "vk_sign_in":
+                    VKSdk.login(this);
                     break;
                 default:
                     fragment = new NowLearningFragment();
@@ -128,7 +144,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     public void sendNotify(int minutes, boolean priority) {
-        if ((!prefs.getBoolean("firstTime", false)) | priority) {
+       // if ((!prefs.getBoolean("firstTime", false)) | priority) {
             Intent alarmIntent = new Intent(this, MyReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
             AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -139,7 +155,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             calendar.set(Calendar.SECOND, 1);*/
             manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                     1000 * 60 * minutes, pendingIntent);
-        }
+      //  }
     }
 
     private boolean loadFragment(Fragment fragment) {
@@ -237,10 +253,12 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             editor.putInt("ShownCards", 0);
             editor.putInt("number_of_notifies_in_bar", 5);
             editor.putString("login", "");
-            editor.putString("nickname", "NickName");
+            editor.putString("nickname", "");
             editor.putString("account_hash", "");
             editor.putString("account_rating", "");
             editor.putString("password", "");
+            editor.putString("vk_access_token", "");
+            editor.putString("vk_user_id", "");
             editor.putInt("account_language", 0);
             editor.apply();
         }
@@ -252,7 +270,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             @Override
             public void onResponse(String hash) {
                 if (hash.equals("dont sign_in")) {
-                    loadFragment(new RegistrationFragment());
+                    logInUsingVK(prefs.getString("vk_access_token",""), prefs.getString("vk_user_id",""), prefs.getInt("account_language",0));
                 }  else {
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("account_hash", hash);
@@ -275,4 +293,70 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             }
         });
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
+            @Override
+            public void onResult(VKAccessToken res) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = prefs.edit();
+                int language_id = getLanguageId(getSystemLanguage());
+                editor.putInt("account_language", language_id);
+                editor.putString("vk_access_token", String.valueOf(res.accessToken));
+                editor.putString("vk_user_id", String.valueOf(res.userId));
+                editor.apply();
+                logInUsingVK(String.valueOf(res.accessToken), res.userId,language_id);
+// Пользователь успешно авторизовался
+            }
+            @Override
+            public void onError(VKError error) {
+// Произошла ошибка авторизации (например, пользователь запретил авторизацию)
+            }
+        })) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private String getSystemLanguage() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return String.valueOf(getApplicationContext().getResources().getConfiguration().getLocales().get(0)); }
+        else { return String.valueOf(getApplicationContext().getResources().getConfiguration().locale); }
+    }
+
+    private int getLanguageId(String language) {
+        if(language.contains("en_EN")) { return 1; }
+        if(language.contains("en_US")) { return 11; }
+        if(language.contains("ru_")) { return 2; }
+        return 1;
+    }
+
+    private void logInUsingVK(String token, String user_id, int lang_id) {
+        PushLearnServerResponse response = new PushLearnServerResponse(getApplicationContext());
+        response.sendLogInUsingVKResponse(token, user_id, lang_id, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String hash) {
+                if (hash.equals("not")) {
+                    loadFragment(new RegistrationFragment());
+                }  else {
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("account_hash", hash);
+                    editor.apply();
+                    loadFragment(new MyProfileFragment());
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                if (t instanceof IOException) {
+                    Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_LONG).show();
+                    // logging probably not necessary
+                }
+                else {
+                    //  Toast.makeText(getApplicationContext(), "conversion issue! big problems :(", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
 }

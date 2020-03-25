@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
 import com.noadam.pushlearn.R;
 
 public class CreatePackDialogFragment extends DialogFragment {
@@ -68,6 +70,28 @@ public class CreatePackDialogFragment extends DialogFragment {
                                         Intent intent = getActivity().getIntent();
                                         intent.putExtra("packName", String.valueOf(packNameEditText.getText()));
                                         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                                    }
+                                }
+                        )
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
+                            }
+                        });
+                break;
+            case 3:  // Edit pack name
+                builder.setView(view)
+                        .setTitle(R.string.edit_nickname)
+                        .setPositiveButton(R.string.ok,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        if(String.valueOf(packNameEditText.getText()).length() <= 15) {
+                                            Intent intent = getActivity().getIntent();
+                                            intent.putExtra("nickName", String.valueOf(packNameEditText.getText()));
+                                            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                                        } else {
+                                            Toast.makeText(getActivity(), getString(R.string.nickname_should_be_less_than_15), Toast.LENGTH_LONG).show();
+                                        }
                                     }
                                 }
                         )

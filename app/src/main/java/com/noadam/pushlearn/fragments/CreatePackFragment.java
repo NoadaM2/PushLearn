@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.noadam.pushlearn.R;
+import com.noadam.pushlearn.data.ParserFromJSON;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.ComPack;
@@ -77,7 +78,6 @@ public class CreatePackFragment extends Fragment {
         directorySpinner = view.findViewById(R.id.directory_spinner);
         getDirectoriesListResponse();
 
-
         subdirectorySpinner = view.findViewById(R.id.subdirectory_spinner);
 
         ImageButton createPackNextImageButton = view.findViewById(R.id.create_pack_next_imageButton);
@@ -96,7 +96,8 @@ public class CreatePackFragment extends Fragment {
         response.sendGetDirectoriesResponse(new PushLearnServerCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
-                directories = parseJsonDirectoriesArray(jsonResponse);
+                ParserFromJSON parser = new ParserFromJSON();
+                directories = parser.parseJsonDirectoriesArray(jsonResponse);
                 ArrayAdapter<Directory> adapter = new ArrayAdapter<Directory>(context,
                         R.layout.large_text_appereance_textview, directories);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -156,7 +157,8 @@ public class CreatePackFragment extends Fragment {
         response.sendGetSubDirectoriesByDirectoryIDResponse(directory_id, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
-                subDirectories = parseJsonSubDirectoriesArray(jsonResponse);
+                ParserFromJSON parser = new ParserFromJSON();
+                subDirectories = parser.parseJsonSubDirectoriesArray(jsonResponse);
                 ArrayAdapter<SubDirectory> adapter = new ArrayAdapter<SubDirectory>(context,
                         R.layout.large_text_appereance_textview, subDirectories);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -169,14 +171,12 @@ public class CreatePackFragment extends Fragment {
         });
     }
 
-    private void createPackResponse(String packName, String description, int directory_id, int subdirectory_id,String hash) {
+    private void createPackResponse(String packName, String description, int directory_id, int subdirectory_id, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
         response.sendCreatePackResponse(packName, description, directory_id, subdirectory_id, hash, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
                 int pack_id = Integer.valueOf(jsonResponse);
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                String hash = prefs.getString("account_hash","");
                 ArrayList<Card> cards = dbHelper.getCardListByPackName(packName,-1);
                 for(Card card : cards) {
                     createCardResponse(pack_id, card.getQuestion(), card.getAnswer(), hash);
@@ -202,36 +202,4 @@ public class CreatePackFragment extends Fragment {
         return false;
     }
 
-    private ArrayList<Directory> parseJsonDirectoriesArray(String jsonResponse) {
-        ArrayList<Directory> directories = new ArrayList<Directory>();
-        try {
-            JSONArray jsonarray = new JSONArray(jsonResponse);
-            for (int i = 0; i < jsonarray.length(); i++) {
-                JSONObject jsonObject = jsonarray.getJSONObject(i);
-                int dirID = jsonObject.getInt("directory_id");
-                String dirName = jsonObject.getString("directory");
-                directories.add(new Directory(dirID,dirName));
-            }
-        } catch (JSONException err){
-            Log.d("JSON Error", err.toString());
-        }
-        return directories;
-    }
-
-    private ArrayList<SubDirectory> parseJsonSubDirectoriesArray(String jsonResponse) {
-        ArrayList<SubDirectory> directories = new ArrayList<SubDirectory>();
-        try {
-            JSONArray jsonarray = new JSONArray(jsonResponse);
-            for (int i = 0; i < jsonarray.length(); i++) {
-                JSONObject jsonObject = jsonarray.getJSONObject(i);
-                int subDirID = jsonObject.getInt("subdirectory_id");
-                int dirID = jsonObject.getInt("directory_id");
-                String dirName = jsonObject.getString("subdirectory");
-                directories.add(new SubDirectory(subDirID, dirID, dirName));
-            }
-        } catch (JSONException err){
-            Log.d("JSON Error", err.toString());
-        }
-        return directories;
-    }
 }

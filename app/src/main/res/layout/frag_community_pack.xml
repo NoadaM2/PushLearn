@@ -44,7 +44,7 @@
                 android:layout_marginTop="8dp"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                 android:textColor="@color/white"
-                app:layout_constraintStart_toEndOf="@+id/creator_label_textView"
+                app:layout_constraintStart_toEndOf="@id/creator_label_textView"
                 app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -58,55 +58,55 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/ratingOfComPack_label_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/rating_double_dot"
-            android:textColor="@color/white"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/creator_label_textView" />
+                android:id="@+id/ratingOfComPack_label_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/rating_double_dot"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cards_textView" />
 
         <TextView
-            android:id="@+id/ratingOfComPack_number_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/yellow"
-            app:layout_constraintStart_toEndOf="@+id/ratingOfComPack_label_textView"
-            app:layout_constraintTop_toBottomOf="@+id/creator_label_textView" />
+                android:id="@+id/ratingOfComPack_number_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/yellow"
+                app:layout_constraintStart_toEndOf="@id/ratingOfComPack_label_textView"
+                app:layout_constraintTop_toBottomOf="@id/cards_textView" />
 
         <ImageView
-            android:id="@+id/star_imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            app:layout_constraintStart_toEndOf="@+id/ratingOfComPack_number_textView"
-            app:layout_constraintTop_toBottomOf="@+id/creator_label_textView"
-            app:srcCompat="@drawable/ic_star_outlined" />
+                android:id="@+id/star_imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                app:layout_constraintStart_toEndOf="@id/ratingOfComPack_number_textView"
+                app:layout_constraintTop_toBottomOf="@id/cards_textView"
+                app:srcCompat="@drawable/ic_star_outlined" />
 
         <TextView
-            android:id="@+id/number_of_cards_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/white"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ratingOfComPack_label_textView" />
+                android:id="@+id/number_of_cards_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/creator_label_textView" />
 
         <TextView
-            android:id="@+id/cards_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/cards"
-            android:textColor="@color/white"
-            app:layout_constraintStart_toEndOf="@id/number_of_cards_textView"
-            app:layout_constraintTop_toBottomOf="@+id/ratingOfComPack_label_textView" />
+                android:id="@+id/cards_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/cards"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toEndOf="@id/number_of_cards_textView"
+                app:layout_constraintTop_toBottomOf="@id/creator_label_textView" />
 
         <ImageButton
                 android:id="@+id/download_community_pack_button"
@@ -117,22 +117,21 @@
                 android:layout_marginBottom="8dp"
                 android:background="@null"
                 android:paddingStart="16dp"
-                app:layout_constraintBottom_toTopOf="@+id/pack_description_textView"
+                app:layout_constraintBottom_toTopOf="@id/pack_description_textView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
-
         <TextView
-            android:id="@+id/pack_description_label_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/white"
-            android:text="@string/description"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/number_of_cards_textView" />
+                android:id="@+id/pack_description_label_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/description"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/subdirectory_label_textView" />
 
         <TextView
                 android:id="@+id/pack_description_textView"
@@ -144,10 +143,52 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
                 android:paddingBottom="16dp"
-                android:textColor="@color/white"
+                android:textColor="@color/constant_white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pack_description_label_textView" />
+                app:layout_constraintTop_toBottomOf="@id/pack_description_label_textView" />
+
+        <TextView
+                android:id="@+id/directory_label_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:textColor="@color/constant_white"
+                android:layout_marginTop="4dp"
+                android:text="@string/category_double_dot"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ratingOfComPack_label_textView" />
+
+        <TextView
+                android:id="@+id/subdirectory_label_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/subcategory_double_dot"
+                android:textColor="@color/constant_white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/directory_label_textView" />
+
+        <TextView
+                android:id="@+id/directory_value_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:textColor="@color/constant_white"
+                android:layout_marginTop="4dp"
+                app:layout_constraintStart_toEndOf="@id/directory_label_textView"
+                app:layout_constraintTop_toBottomOf="@id/ratingOfComPack_label_textView" />
+
+        <TextView
+                android:id="@+id/subdirectory_value_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/constant_white"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintStart_toEndOf="@id/subdirectory_label_textView"
+                app:layout_constraintTop_toBottomOf="@id/directory_label_textView" />
 
     </android.support.constraint.ConstraintLayout>
     <android.support.v7.widget.RecyclerView

@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.PackListAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
+import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
@@ -123,11 +124,21 @@ public class MyPacksFragment extends Fragment{
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(0, MENU_SELECT, 1, R.string.select);
-        menu.add(0, MENU_SHARE, 2, R.string.share_to_community);
-        menu.add(0, MENU_EDIT, 3, R.string.rename);
-        menu.add(0, MENU_DELETE, 4, R.string.delete);
-        menu.add(0, MENU_LEARN, 5, R.string.learn);
+        switch (dbHelper.getPackTypeByName(packLongClicked)) {
+            case "created":
+                menu.add(0, MENU_SELECT, 1, R.string.select);
+                menu.add(0, MENU_SHARE, 2, R.string.share_to_community);
+                menu.add(0, MENU_EDIT, 3, R.string.rename);
+                menu.add(0, MENU_DELETE, 4, R.string.delete);
+                menu.add(0, MENU_LEARN, 5, R.string.learn);
+            break;
+            case "downloaded":
+            case "owned":
+                menu.add(0, MENU_EDIT, 3, R.string.rename);
+                menu.add(0, MENU_DELETE, 4, R.string.delete);
+                menu.add(0, MENU_LEARN, 5, R.string.learn);
+                break;
+        }
     }
 
     public boolean onContextItemSelected(MenuItem item) {
@@ -350,10 +361,11 @@ public class MyPacksFragment extends Fragment{
         response.sendSignInResponse(email, password, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String hash) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 if (hash.contains("sign_in")) {
-                    Toast.makeText(context, getString(R.string.something_is_wrong), Toast.LENGTH_LONG).show();
+                    logInUsingVKToUnStar(prefs.getString("vk_access_token",""), prefs.getString("vk_user_id",""), prefs.getInt("account_language",0));
                 }  else {
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                     prefs = PreferenceManager.getDefaultSharedPreferences(context);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("account_hash", hash);
                     editor.apply();
@@ -374,15 +386,45 @@ public class MyPacksFragment extends Fragment{
         });
     }
 
+    private void logInUsingVKToUnStar(String token, String user_id, int lang_id) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendLogInUsingVKResponse(token, user_id, lang_id, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String hash) {
+                if (hash.equals("not")) {
+                    Toast.makeText(context, getString(R.string.something_is_wrong), Toast.LENGTH_LONG).show();
+                    loadFragment(new RegistrationFragment());
+                }  else {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("account_hash", hash);
+                    editor.apply();
+                    unStarPackResponse(dbHelper.getPackComIDByName(packLongClicked), hash);
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                if (t instanceof IOException) {
+                    Toast.makeText(context, R.string.no_internet, Toast.LENGTH_LONG).show();
+                    // logging probably not necessary
+                }
+                else {
+                    //  Toast.makeText(getApplicationContext(), "conversion issue! big problems :(", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
     private void TryToSignInToSharePack(String email, String password, String packName) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
         response.sendSignInResponse(email, password, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String hash) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 if (hash.contains("sign_in")) {
-                    Toast.makeText(context, getString(R.string.something_is_wrong), Toast.LENGTH_SHORT).show();
-                } else {
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    logInUsingVKToSharePack(prefs.getString("vk_access_token",""), prefs.getString("vk_user_id",""), prefs.getInt("account_language",0), packName);
+                }  else {
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("account_hash", hash);
                     editor.apply();
@@ -404,6 +446,38 @@ public class MyPacksFragment extends Fragment{
             }
         });
     }
+
+    private void logInUsingVKToSharePack(String token, String user_id, int lang_id, String packName) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendLogInUsingVKResponse(token, user_id, lang_id, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String hash) {
+                if (hash.equals("not")) {
+                    loadFragment(new RegistrationFragment());
+                }  else {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("account_hash", hash);
+                    editor.apply();
+                    CreatePackFragment fragment = new CreatePackFragment();
+                    fragment.setBasePack(packName);
+                    loadFragment(fragment);
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                if (t instanceof IOException) {
+                    Toast.makeText(context, R.string.no_internet, Toast.LENGTH_LONG).show();
+                    // logging probably not necessary
+                }
+                else {
+                    //  Toast.makeText(getApplicationContext(), "conversion issue! big problems :(", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
 
     private boolean loadFragment(Fragment fragment) {
         //switching fragment

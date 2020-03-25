@@ -1,6 +1,7 @@
 package com.noadam.pushlearn.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +26,10 @@ import android.widget.Toast;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
+import com.vk.sdk.VKAccessToken;
+import com.vk.sdk.VKCallback;
+import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKError;
 
 public class RegistrationFragment extends Fragment {
     private Context context;
@@ -50,7 +55,15 @@ public class RegistrationFragment extends Fragment {
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
         GoogleSignInImageButton = view.findViewById(R.id.log_in_using_google_imageButton);
+
         VKSignInImageButton = view.findViewById(R.id.log_in_using_vk_imageButton);
+        VKSignInImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                VKSdk.login(getActivity());
+            }
+        });
+
         InstagramSignInImageButton = view.findViewById(R.id.log_in_using_instagram_imageButton);
         FacebookSignInImageButton = view.findViewById(R.id.log_in_using_facebook_imageButton);
 
@@ -133,7 +146,7 @@ public class RegistrationFragment extends Fragment {
                     editor.putInt("account_language", language_id);
                     editor.apply();
                     loadFragment(new MyProfileFragment());
-                    Toast.makeText(context, getString(R.string.successful_registration), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, getString(R.string.successful_registration), Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -208,7 +221,5 @@ public class RegistrationFragment extends Fragment {
             }
         });
     }
-
-
 
 }

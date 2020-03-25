@@ -5,12 +5,18 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,16 +24,41 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+import retrofit2.http.Multipart;
 
 
 public class PushLearnServerResponse {
 
-    static final String BASE_URL = "http://pushlearn.hhos.ru.s68.hhos.ru/index.php/";
+
     private Context context;
     private Retrofit mRetrofit;
     private PushLearnServer apiInterface;
 
     public PushLearnServerResponse(Context context) {
+        String BASE_URL = "http://pushlearn.hhos.ru.s68.hhos.ru/index.php/";
+        this.context = context;
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient.Builder client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS);
+        mRetrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client.build())
+                .build();
+        apiInterface = mRetrofit.create(PushLearnServer.class);
+
+    }
+
+    public PushLearnServerResponse(Context context, String mode) {
+        String BASE_URL = "";
+        if(mode == "avatar") {
+            BASE_URL = "http://pushlearn.hhos.ru.s68.hhos.ru/upload_file.php/";
+        }
         this.context = context;
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -166,7 +197,6 @@ public class PushLearnServerResponse {
         }
     }
 
-
     public void sendUnStarPackByHashAndPackIDResponse(int packID, String hash, PushLearnServerCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
@@ -259,16 +289,15 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendCompareUSerIdAndHashResponse(int user_id,String hash, PushLearnServerCallBack callback) {
+    public void sendGetSubDirectoriesByDirectoryIDResponse(int directory_id, PushLearnServerCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
-            childData.put("id_user",user_id);
-            childData.put("hash",hash);
+            childData.put("id_directory", directory_id);
             JSONObject finalObject = new JSONObject();
-            finalObject.put("type", "compare_user_id_and_hash");
+            finalObject.put("type", "get_subdirectories");
             finalObject.put("object", childData);
 
-            Call<String> userCall = apiInterface.compareUSerIdAndHash(finalObject.toString());
+            Call<String> userCall = apiInterface.getSubDirectoriesByDirectoryID(finalObject.toString());
             userCall.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
@@ -289,15 +318,103 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetSubDirectoriesByDirectoryIDResponse(int directory_id, PushLearnServerCallBack callback) {
+    public void sendGetSubDirectoryByIDResponse(int subdirectory_id, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("id_subdirectory", subdirectory_id);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "get_subdirectory_by_id");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.getSubDirectoryByID(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendGetDirectoryByIDResponse(int directory_id, PushLearnServerCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("id_directory", directory_id);
             JSONObject finalObject = new JSONObject();
-            finalObject.put("type", "get_subdirectories_by_directory_id");
+            finalObject.put("type", "get_directory_by_id");
             finalObject.put("object", childData);
 
-            Call<String> userCall = apiInterface.getSubDirectoriesByDirectoryID(finalObject.toString());
+            Call<String> userCall = apiInterface.getDirectoryByID(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendSetNickNameByHashResponse(String nickname, String hash, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("nickname", nickname);
+            childData.put("hash", hash);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "set_nickname_by_hash");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.setNickNameByHash(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendGetIdByNickNameResponse(String nickname, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("nickname", nickname);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "get_id_by_nickname");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.getIdByNickName(finalObject.toString());
             userCall.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
@@ -500,6 +617,98 @@ public class PushLearnServerResponse {
         }
     }
 
+    public void sendGetPacksByPackNameResponse(String packname, int page, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("string", packname);
+            childData.put("offset", page);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "get_packs_by_packname");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.getPacksByPackName(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendGetPacksByDirectoryIdAndPackNameResponse(String packname,int directory_id, int page, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("string", packname);
+            childData.put("id_directory", directory_id);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "get_packs_by_directory_id_and_packname");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.getPacksByDirectoryIdAndPackName(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendGetPacksByDirectoryIdAndSubDirectoryIdAndPackNameResponse(String packname, int directory_id,  int subdirectory_id, int page, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("string", packname);
+            childData.put("id_directory", directory_id);
+            childData.put("offset", page);
+            childData.put("id_subdirectory", subdirectory_id);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "get_packs_by_directory_id_and_subdirectory_id_and_packname");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.getPacksByDirectoryIdAndSubDirectoryIdAndPackName(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void sendBusyNickNameResponse(String nickname, PushLearnServerCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
@@ -678,5 +887,59 @@ public class PushLearnServerResponse {
         catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void sendLogInUsingVKResponse(String token, String vk_id, int lang_id, PushLearnServerCallBack callback) { // checked stable
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("token",token);
+            childData.put("vk_id",vk_id);
+            childData.put("id_language",lang_id);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "log_vk");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.logInUsingVK(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                    Log.v("SERVER  ERROR", t+"");
+                }
+            });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendUpdateAvatarResponse(String hash, File avatar,String filename, PushLearnServerCallBack callback) {
+        RequestBody rb =  RequestBody.create(MediaType.parse("multipart/form-data"), avatar);
+        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                .addFormDataPart("uploadfile",filename, rb)
+                .addFormDataPart("hash",hash)
+                .build();
+            Call<String> userCall = apiInterface.editAvatar(body);
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                    Log.v("SERVER  ERROR", t+"");
+                }
+            });
     }
 }

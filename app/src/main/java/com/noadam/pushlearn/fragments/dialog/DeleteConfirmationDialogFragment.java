@@ -57,6 +57,8 @@ public class DeleteConfirmationDialogFragment extends DialogFragment {
                                             SharedPreferences.Editor editor = prefs.edit();
                                             editor.putString("login", "");
                                             editor.putString("password", "");
+                                            editor.putString("vk_access_token", "");
+                                            editor.putString("vk_user_id", "");
                                             editor.apply();
                                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                             intent.putExtra("fragment","my_profile");

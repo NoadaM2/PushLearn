@@ -22,10 +22,13 @@ import android.widget.TextView;
 
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.MyComPacksAdapter;
+import com.noadam.pushlearn.data.ParserFromJSON;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -123,6 +126,10 @@ public class UserProfileFragment extends Fragment {
 
     private void setValuesForViews() {
         setNickNameByIDResponse(userID);
+        ImageLoader imageLoader = ImageLoader.getInstance();
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).build();
+        imageLoader.init(config);
+        imageLoader.displayImage("http://pushlearn.hhos.ru.s68.hhos.ru/files/"+String.valueOf(userID)+".jpg", avatarImageView);
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -216,7 +223,8 @@ public class UserProfileFragment extends Fragment {
         response.sendGetPacksByNickNameResponse(nickname, hash, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
-                userComPackList = parseJsonComPacksArray(jsonResponse);
+                ParserFromJSON parser = new ParserFromJSON();
+                userComPackList = parser.parseJsonComPacksArray(jsonResponse);
                 fillRecyclerView();
             }
             @Override
@@ -224,27 +232,5 @@ public class UserProfileFragment extends Fragment {
 
             }
         });
-    }
-
-    private ArrayList<ComPack> parseJsonComPacksArray(String jsonResponse) {
-        ArrayList<ComPack> comPacks = new ArrayList<ComPack>();
-        try {
-            JSONArray jsonarray = new JSONArray(jsonResponse);
-            for (int i = 0; i < jsonarray.length(); i++) {
-                JSONObject jsonObject = jsonarray.getJSONObject(i);
-                int packID = jsonObject.getInt("pack_id");
-                int userID = jsonObject.getInt("user_id");
-                String packName = jsonObject.getString("name");
-                String packDescription = jsonObject.getString("description");
-                String packAccess = jsonObject.getString("access");
-                int packRating = jsonObject.getInt("rating");
-                int packDirectoryId = jsonObject.getInt("directory_id");
-                int packSubdirectoryID = jsonObject.getInt("subdirectory_id");
-                comPacks.add(new ComPack(packID,userID,packName,packRating,packDescription,packAccess,packDirectoryId,packSubdirectoryID));
-            }
-        } catch (JSONException err){
-            Log.d("JSON Error", err.toString());
-        }
-        return comPacks;
     }
 }
