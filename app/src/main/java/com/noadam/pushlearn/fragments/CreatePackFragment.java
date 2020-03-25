@@ -45,6 +45,7 @@ public class CreatePackFragment extends Fragment {
     private Spinner subdirectorySpinner;
     private Spinner directorySpinner;
     private String packName;
+    private ComPack comPack;
     private Context context;
     PushLearnDBHelper dbHelper;
     private ArrayList<Directory> directories = new ArrayList<>();
@@ -52,6 +53,10 @@ public class CreatePackFragment extends Fragment {
 
     public void setBasePack(String packName) {
         this.packName = packName;
+    }
+
+    public void setBaseComPack(ComPack comPack) {
+        this.comPack = comPack;
     }
 
     @Nullable
@@ -72,13 +77,20 @@ public class CreatePackFragment extends Fragment {
             }
         });
         enterTitleEditText = view.findViewById(R.id.enter_title_editText);
-        enterTitleEditText.setText(packName);
+        if(packName != null) {
+            enterTitleEditText.setText(packName);
+        }
+        if(comPack != null) {
+            enterTitleEditText.setText(comPack.getComPackName());
+        }
         enterDescriptionEditText = view.findViewById(R.id.enter_description_editText);
-
+        if(comPack != null) {
+            enterDescriptionEditText.setText(comPack.getComPackDescription());
+        }
+        subdirectorySpinner = view.findViewById(R.id.subdirectory_spinner);
         directorySpinner = view.findViewById(R.id.directory_spinner);
         getDirectoriesListResponse();
 
-        subdirectorySpinner = view.findViewById(R.id.subdirectory_spinner);
 
         ImageButton createPackNextImageButton = view.findViewById(R.id.create_pack_next_imageButton);
         createPackNextImageButton.setOnClickListener(new View.OnClickListener() {
@@ -102,6 +114,13 @@ public class CreatePackFragment extends Fragment {
                         R.layout.large_text_appereance_textview, directories);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 directorySpinner.setAdapter(adapter);
+                if(comPack != null) {
+                    for (Directory subDir : directories) {
+                        if (subDir.getId() == comPack.getComPackDirectoryId()) {
+                            directorySpinner.setSelection(directories.indexOf(subDir));
+                        }
+                    }
+                }
                 directorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -131,8 +150,13 @@ public class CreatePackFragment extends Fragment {
         int subdirectory_id = subdirectory.getId();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String hash = prefs.getString("account_hash","");
-        createPackResponse(title, description,  directory_id, subdirectory_id, hash);
-        dbHelper.setPackTypeByName(packName,"owned");
+        if(packName != null) {
+            createPackResponse(title, description, directory_id, subdirectory_id, hash);
+            dbHelper.setPackTypeByName(packName, "owned");
+        }
+        if(comPack != null) {
+            updatePackResponse(comPack.getComPackID(),title, description, directory_id, subdirectory_id, hash);
+        }
         Intent intent =  getActivity().getIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("fragment","my_profile");
@@ -159,10 +183,16 @@ public class CreatePackFragment extends Fragment {
             public void onResponse(String jsonResponse) {
                 ParserFromJSON parser = new ParserFromJSON();
                 subDirectories = parser.parseJsonSubDirectoriesArray(jsonResponse);
-                ArrayAdapter<SubDirectory> adapter = new ArrayAdapter<SubDirectory>(context,
-                        R.layout.large_text_appereance_textview, subDirectories);
+                ArrayAdapter<SubDirectory> adapter = new ArrayAdapter<SubDirectory>(context, R.layout.large_text_appereance_textview, subDirectories);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 subdirectorySpinner.setAdapter(adapter);
+                if(comPack != null) {
+                    for (SubDirectory subDir : subDirectories) {
+                        if (subDir.getId() == comPack.getComPackSubdirectoryId()) {
+                            subdirectorySpinner.setSelection(subDirectories.indexOf(subDir));
+                        }
+                    }
+                }
             }
             @Override
             public void onError(Throwable t) {
@@ -183,6 +213,22 @@ public class CreatePackFragment extends Fragment {
                 }
                 Toast.makeText(context, getString(R.string.successful_pack_publication), Toast.LENGTH_LONG).show();
             }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
+    }
+
+    private void updatePackResponse(int pack_id,String packName, String description, int directory_id, int subdirectory_id, String hash) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendUpdatePackResponse(pack_id, packName, description, directory_id, subdirectory_id, hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String response) {
+               if(response.equals("ok")) {
+                   Toast.makeText(context, getString(R.string.successful_pack_update), Toast.LENGTH_LONG).show();
+               }
+               }
             @Override
             public void onError(Throwable t) {
 

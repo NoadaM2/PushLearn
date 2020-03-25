@@ -469,6 +469,41 @@ public class PushLearnServerResponse {
         }
     }
 
+    public void sendUpdatePackResponse(int packID, String packName,String description, int directory_id, int subdirectory_id,String hash, PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("id_pack", packID);
+            childData.put("name", packName);
+            childData.put("description", description);
+            childData.put("access", "public"); // TODO Access here
+            childData.put("directory_id", directory_id);
+            childData.put("subdirectory_id", subdirectory_id);
+            childData.put("hash", hash);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "set_pack");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.updatePackByPackID(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void sendCreateCardResponse(int id_pack,String question,String answer, String hash, PushLearnServerCallBack callback) {
         try {
             JSONObject childData = new JSONObject();

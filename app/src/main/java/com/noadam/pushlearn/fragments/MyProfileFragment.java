@@ -62,8 +62,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Random;
 
-import kotlin._Assertions;
-
 
 public class MyProfileFragment extends Fragment {
     private Context context;
@@ -79,10 +77,10 @@ public class MyProfileFragment extends Fragment {
     private ArrayList<ComPack> myComPackList;
     private ComPack longClickedComPack;
 
-    final int MENU_DELETE = 2;
+    final int MENU_DELETE = 3;
     final int MENU_DOWNLOAD = 1;
+    final int MENU_EDIT = 2;
     final int REQUEST_Permission = 66;
-    final String GALLERY_PERMISSION = "android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI";
 
     final int PICK_IMAGE = 1;
 
@@ -207,7 +205,8 @@ public class MyProfileFragment extends Fragment {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.add(0, MENU_DOWNLOAD, 1, R.string.download_to_my_packs);
-        menu.add(0, MENU_DELETE, 2, R.string.delete);
+        menu.add(0, MENU_EDIT, 2, R.string.edit);
+        menu.add(0, MENU_DELETE, 3, R.string.delete);
     }
 
     public boolean onContextItemSelected(MenuItem item) {
@@ -226,6 +225,11 @@ public class MyProfileFragment extends Fragment {
                 } else {
                     Toast.makeText(context, getString(R.string.you_already_have_pack_with_such_name), Toast.LENGTH_SHORT).show();
                 }
+                break;
+            case MENU_EDIT:
+                CreatePackFragment frag = new CreatePackFragment();
+                frag.setBaseComPack(longClickedComPack);
+                loadFragment(frag);
                 break;
         }
         return true;

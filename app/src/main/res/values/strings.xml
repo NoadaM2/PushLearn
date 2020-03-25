@@ -117,4 +117,5 @@
     <string name="successful_nickname_change">You have changed your nickname successfully!</string>
     <string name="nickname_should_be_less_than_15">The length of nickname should be less than 15 symbols</string>
     <string name="download_to_my_packs">Save in \"My packs\"</string>
+    <string name="successful_pack_update">You edited pack successfully!</string>
 </resources>

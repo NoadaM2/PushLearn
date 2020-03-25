@@ -130,13 +130,15 @@ public interface PushLearnServer {
     @POST("/upload_file.php/{hash}")
     Call<String> editAvatar(@Body RequestBody body);
 
-
     @Headers("Content-Type: application/json")
     @POST("get_subdirectories_by_directory_id")
     Call<String> getDirectoryByID(@Body String body);
 
-
     @Headers("Content-Type: application/json")
     @POST("get_subdirectories_by_directory_id")
     Call<String> getSubDirectoryByID(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("set_pack")
+    Call<String> updatePackByPackID(@Body String body);
 }
