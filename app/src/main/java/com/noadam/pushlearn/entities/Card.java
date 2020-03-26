@@ -8,6 +8,7 @@ public class Card {
     private String answer;
     private int iterating_times;
     private boolean shown;
+    private boolean isChecked;
 
     public Card(String packName, String question, String answer) {
         this.packName = packName;
@@ -85,5 +86,13 @@ public class Card {
 
     public void setShown(boolean i) {
         this.shown = i;
+    }
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
     }
 }

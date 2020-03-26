@@ -59,6 +59,11 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
         Card card = cardList.get(i);
         holder.question_textView.setText(card.getQuestion());
         holder.answer_textView.setText(card.getAnswer());
+        if(card.isChecked()) {
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
+        } else {
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.white_gray));
+        }
         int iteratingTimes = card.getIteratingTimes();
         holder.iterating_times_textView.setText(Integer.toString(iteratingTimes));
         if (iteratingTimes > 4) {

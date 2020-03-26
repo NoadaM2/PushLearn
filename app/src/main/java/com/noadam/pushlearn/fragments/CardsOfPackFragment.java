@@ -26,6 +26,7 @@ import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.CardsOfPackAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
+import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.fragments.dialog.CreateCardDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
 
@@ -50,7 +51,6 @@ public class CardsOfPackFragment extends Fragment {
     private Toolbar toolbar;
     private TextView textViewNoCards;
     private Card cardLongClicked;
-    private ArrayList<Card> selectedCards = new ArrayList<>();
     private String mode;
     private View longPressedView;
     private MenuItem deleteSelectedItemsMenuItem;
@@ -70,7 +70,6 @@ public class CardsOfPackFragment extends Fragment {
     }
 
     private void fillRecyclerView() {
-        cardList = dbHelper.getCardListByPackName(packName,-1);
         if (!cardList.isEmpty()) {
             textViewNoCards.setVisibility(View.GONE);
         }
@@ -84,19 +83,22 @@ public class CardsOfPackFragment extends Fragment {
                 @Override
                 public void onClick(Card card, View v) {
                     if (mode == "selection") {
-                        if (!selectedCards.contains(card)) {
+                        if (!card.isChecked()) {
                             // view selected
-                            selectedCards.add(card);
                             v.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
+                            card.setChecked(true);
                         } else {
                             // view reselected
-                            selectedCards.remove(card);
                             v.setBackgroundColor(ContextCompat.getColor(context, R.color.white_gray));
+                            card.setChecked(false);
                         }
-                        if(selectedCards.isEmpty()) {
-                            mode = "";
-                            refactorToolBarForSelection(false);
+                        for (Card card_ : cardList) {
+                            if (card_.isChecked()) {
+                                return;
+                            }
                         }
+                        mode = "";
+                        refactorToolBarForSelection(false);
                     }
                     else {
                         openCardEditDialog(card);
@@ -109,7 +111,6 @@ public class CardsOfPackFragment extends Fragment {
                     longPressedView = v;
                 }
             });
-            sortCardList();
             cardListAdapter.setCardList(cardList, context);
             recyclerView.setAdapter(cardListAdapter);
             recyclerView.getAdapter().notifyDataSetChanged();
@@ -126,7 +127,7 @@ public class CardsOfPackFragment extends Fragment {
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case MENU_SELECT:
-                selectedCards.add(cardLongClicked);
+                cardLongClicked.setChecked(true);
                 mode = "selection";
                 refactorToolBarForSelection(true);
                 longPressedView.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
@@ -165,6 +166,9 @@ public class CardsOfPackFragment extends Fragment {
         recyclerView = view.findViewById(R.id.pack_list_recyclerview);
         registerForContextMenu(recyclerView);
         textViewNoCards = view.findViewById(R.id.no_items_textview);
+
+        cardList = dbHelper.getCardListByPackName(packName,-1);
+        sortCardList();
         fillRecyclerView();
         return view;
     }
@@ -298,12 +302,14 @@ public class CardsOfPackFragment extends Fragment {
             case 42:
                 if (resultCode == Activity.RESULT_OK) {
                     // After Ok code.
-                    for (Card card : selectedCards) {
-                        dbHelper.deleteCardById(card.get_id());
+                    for (Card card : cardList) {
+                        if (card.isChecked()) {
+                            dbHelper.deleteCardById(card.get_id());
+                            cardList.remove(card);
+                        }
                     }
                     mode = "";
                     refactorToolBarForSelection(false);
-                    selectedCards.clear();
                     fillRecyclerView();
                 }
                 break;

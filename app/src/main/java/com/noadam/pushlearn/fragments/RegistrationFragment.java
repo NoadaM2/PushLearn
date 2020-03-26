@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,23 +21,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.Scope;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
-import com.vk.sdk.VKAccessToken;
-import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
-import com.vk.sdk.api.VKError;
+
+import java.util.regex.Pattern;
 
 public class RegistrationFragment extends Fragment {
     private Context context;
@@ -47,12 +45,23 @@ public class RegistrationFragment extends Fragment {
     private ImageButton InstagramSignInImageButton;
     private ImageButton FacebookSignInImageButton;
     private CheckBox TermsOfUseCheckBox;
-    private EditText NickNameEditText;
-    private EditText EmailEditText;
-    private EditText PasswordEditText;
+    private TextInputLayout NickNameTextInputLayout;
+    private TextInputLayout EmailTextInputLayout;
+    private TextInputLayout PasswordTextInputLayout;
     private GoogleSignInClient mGoogleSignInClient;
 
     final int RC_SIGN_IN = 33;
+
+    private static final Pattern PASSWORD_PATTERN =
+            Pattern.compile("^" +
+                    "(?=.*[0-9])" +         //at least 1 digit
+                    "(?=.*[a-z])" +         //at least 1 lower case letter
+                    "(?=.*[A-Z])" +         //at least 1 upper case letter
+                  //  "(?=.*[a-zA-Z])" +      //any letter
+                   // "(?=.*[@#$%^&+=])" +    //at least 1 special character
+                    "(?=\\S+$)" +           //no white spaces
+                    ".{8,}" +               //at least 4 characters
+                    "$");
 
     @Nullable
     @Override
@@ -85,9 +94,9 @@ public class RegistrationFragment extends Fragment {
         InstagramSignInImageButton = view.findViewById(R.id.log_in_using_instagram_imageButton);
         FacebookSignInImageButton = view.findViewById(R.id.log_in_using_facebook_imageButton);
 
-        NickNameEditText = view.findViewById(R.id.nickName_editText);
-        EmailEditText = view.findViewById(R.id.email_editText);
-        PasswordEditText = view.findViewById(R.id.password_editText);
+        NickNameTextInputLayout = view.findViewById(R.id.nick_input_layout);
+        EmailTextInputLayout = view.findViewById(R.id.email_input_layout);
+        PasswordTextInputLayout = view.findViewById(R.id.password_input_layout);
 
 
 
@@ -95,7 +104,7 @@ public class RegistrationFragment extends Fragment {
         SingUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ifBusyEmail(String.valueOf(EmailEditText.getText()));
+                ifBusyEmail(EmailTextInputLayout.getEditText().getText().toString());
             }
         });
 
@@ -159,8 +168,57 @@ public class RegistrationFragment extends Fragment {
         return false;
     }
 
+
+    private boolean validateEmail() {
+        String emailInput = EmailTextInputLayout.getEditText().getText().toString().trim();
+
+        if (emailInput.isEmpty()) {
+            EmailTextInputLayout.setError(getString(R.string.empty_field));
+            return false;
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(emailInput).matches()) {
+            EmailTextInputLayout.setError(getString(R.string.please_enter_valid_email));
+            return false;
+        } else {
+            EmailTextInputLayout.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validateUsername() {
+        String usernameInput = NickNameTextInputLayout.getEditText().getText().toString().trim();
+
+        if (usernameInput.isEmpty()) {
+            NickNameTextInputLayout.setError(getString(R.string.empty_field));
+            return false;
+        } else if (usernameInput.length() > 15) {
+            NickNameTextInputLayout.setError(getString(R.string.username_too_long));
+            return false;
+        } else {
+            NickNameTextInputLayout.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validatePassword() {
+        String passwordInput = PasswordTextInputLayout.getEditText().getText().toString().trim();
+
+        if (passwordInput.isEmpty()) {
+            PasswordTextInputLayout.setError(getString(R.string.empty_field));
+            return false;
+        } else if (!PASSWORD_PATTERN.matcher(passwordInput).matches()) {
+            PasswordTextInputLayout.setError(getString(R.string.password_should_be_longer));
+            return false;
+        } else {
+            PasswordTextInputLayout.setError(null);
+            return true;
+        }
+    }
+
+
     private void TryToSignUp(String email, String password, String nickname, int language_id) {
-        if(password.length() < 8) { PasswordEditText.setError(getString(R.string.password_should_be_longer)); return; }
+        if (!validateEmail() | !validateUsername() | !validatePassword()) {
+            return;
+        }
         PushLearnServerResponse response = new PushLearnServerResponse(context);
         response.sendSignUpResponse(email, password,nickname, language_id, new PushLearnServerCallBack() {
             @Override
@@ -206,9 +264,9 @@ public class RegistrationFragment extends Fragment {
         response.sendBusyEmailResponse(email, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String value) {
-                if(value.equals("ok")) { ifBusyNickName(String.valueOf(NickNameEditText.getText()),email);
+                if(value.equals("ok")) { ifBusyNickName(NickNameTextInputLayout.getEditText().getText().toString(),email);
                 } else {
-                    EmailEditText.setError(getString(R.string.this_email_is_busy));
+                    EmailTextInputLayout.setError(getString(R.string.this_email_is_busy));
                 }
             }
             @Override
@@ -241,9 +299,9 @@ public class RegistrationFragment extends Fragment {
             @Override
             public void onResponse(String value) {
                 int language_id = getLanguageId(getSystemLanguage());
-                if(value.equals("ok")) { TryToSignUp(email, String.valueOf(PasswordEditText.getText()), nickname, language_id);
+                if(value.equals("ok")) { TryToSignUp(email, PasswordTextInputLayout.getEditText().getText().toString(), nickname, language_id);
                 } else {
-                    NickNameEditText.setError(getString(R.string.this_nickname_is_busy));
+                    NickNameTextInputLayout.setError(getString(R.string.this_nickname_is_busy));
                 }
             }
             @Override

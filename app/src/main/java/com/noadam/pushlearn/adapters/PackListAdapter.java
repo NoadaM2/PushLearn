@@ -1,7 +1,9 @@
 package com.noadam.pushlearn.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,11 +32,11 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
     private Context context;
 
     public interface OnRecyclerViewItemClickListener {
-        void onClick(String packName, View v);
+        void onClick(Pack pack, View v);
     }
 
     public interface OnRecyclerViewItemLongClickListener {
-        void onLongClick(String packName, View v);
+        void onLongClick(Pack pack, View v);
     }
 
     public PackListAdapter(OnRecyclerViewItemClickListener clickListener, OnRecyclerViewItemLongClickListener onLongClickListner) {
@@ -62,6 +64,11 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
         Pack pack = packList.get(i);
         String packName = pack.getPackName();
         holder.pack_name_textView.setText(packName);
+        if(pack.isChecked()) {
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
+        } else {
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.white_gray));
+        }
         switch (pack.getType()) {
             case "downloaded":
                 holder.pack_type_imageView.setImageResource(R.drawable.ic_star);
@@ -104,9 +111,8 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
                 @Override
                 public void onClick(View v) {
                     Pack pack = packList.get(getAdapterPosition());
-                    String packName = pack.getPackName();
                     if (mClickListener != null) {
-                        mClickListener.onClick(packName, v);
+                        mClickListener.onClick(pack, v);
                     }
                 }
             });
@@ -114,9 +120,8 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
                 @Override
                 public boolean onLongClick(View v) {
                     Pack pack = packList.get(getAdapterPosition());
-                    String packName = pack.getPackName();
                     if (mLongClickListener != null) {
-                        mLongClickListener.onLongClick(packName, v);
+                        mLongClickListener.onLongClick(pack, v);
                     }
                     return false;
                 }

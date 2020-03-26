@@ -2,6 +2,7 @@ package com.noadam.pushlearn.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -77,6 +78,7 @@ public class CommunityPackFragment extends Fragment {
         toolbar.setTitle(comPack.getComPackName());
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
         creatorTextView = view.findViewById(R.id.creator_nickname_textView);
+        creatorTextView.setPaintFlags(creatorTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         creatorTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

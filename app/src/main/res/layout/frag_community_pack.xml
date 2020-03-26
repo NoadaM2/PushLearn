@@ -43,7 +43,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="8dp"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                android:textColor="@color/white"
+                android:textColor="@color/colorAccent"
                 app:layout_constraintStart_toEndOf="@id/creator_label_textView"
                 app:layout_constraintTop_toTopOf="parent" />
 

@@ -78,7 +78,7 @@
     <string name="something_is_wrong_try_another_email">Oops... Something is wrong. Try to use another email.</string>
     <string name="something_is_wrong">Oops... \n Log In to your account.</string>
     <string name="successful_registration">Welcome to PushLearn communtity!</string>
-    <string name="password_should_be_longer">Password should be longer then 8 symbols</string>
+    <string name="password_should_be_longer">Password must be longer than 8 characters and contain at least \n 1 uppercase letter, \n 1 lowercase letter, \n 1 digit</string>
     <string name="packs">packs</string>
     <string name="rating_double_dot">Rating:</string>
     <string name="incorrect_password_or_email">Incorrect password or email</string>
@@ -118,4 +118,8 @@
     <string name="nickname_should_be_less_than_15">The length of nickname should be less than 15 symbols</string>
     <string name="download_to_my_packs">Save in \"My packs\"</string>
     <string name="successful_pack_update">You edited pack successfully!</string>
+    <string name="please_enter_valid_email">Please enter a valid email address</string>
+    <string name="empty_field">Field can\'t be empty</string>
+    <string name="username_too_long">Username too long</string>
+    <string name="password_too_weak">Password too weak</string>
 </resources>

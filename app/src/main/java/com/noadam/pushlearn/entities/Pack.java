@@ -9,6 +9,8 @@ public class Pack {
     private int idComPack;
     private String packName;
     private String type;
+    private boolean isChecked;
+
 
     public Pack(String packName, String type, int idComPack) {
         this.type = type;
@@ -41,5 +43,13 @@ public class Pack {
 
     public void setIdComPack(int idComPack) {
         this.idComPack = idComPack;
+    }
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
     }
 }

@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.PackListAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
+import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
@@ -37,6 +38,8 @@ import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -47,14 +50,14 @@ public class MyPacksFragment extends Fragment{
     private PushLearnDBHelper dbHelper;
     private Context context;
     private TextView textViewNoPacks;
-    private String packLongClicked;
-    private ArrayList<String> selectedPacks = new ArrayList<>();
+    private Pack packLongClicked;
     private String mode;
     private String type = "";
     private View longPressedView;
     private MenuItem deleteSelectedItemsMenuItem;
     private MenuItem createPackMenuItem;
     private MenuItem searchPackMenuItem;
+    private List<Pack> packList;
 
     final int MENU_SELECT = 1;
     final int MENU_SHARE = 2;
@@ -66,8 +69,16 @@ public class MyPacksFragment extends Fragment{
         this.type = type;
     }
 
+    private void sortPackList() {
+        Collections.sort(packList, new Comparator<Pack>() { // sorting
+            @Override
+            public int compare(Pack lhs, Pack rhs) {
+                return String.valueOf(rhs.getType()).compareTo(String.valueOf(lhs.getType()));
+            }
+        });
+    }
+
     private void fillRecyclerView() {
-        List<Pack> packList = dbHelper.getPackList();
         if (!packList.isEmpty()) {
             textViewNoPacks.setVisibility(View.GONE);
         }
@@ -79,40 +90,43 @@ public class MyPacksFragment extends Fragment{
         packListRecyclerView.setLayoutManager(layoutManager);
         packListAdapter = new PackListAdapter(new PackListAdapter.OnRecyclerViewItemClickListener() {
             @Override
-            public void onClick(String packName, View v) {
+            public void onClick(Pack pack, View v) {
                 if(!type.equals("share_pack")) {
                     if (mode == "selection") {
-                        if (!selectedPacks.contains(packName)) {
+                        if(pack.getType().equals("created")){
+                        if (!pack.isChecked()) {
                             // view selected
-                            selectedPacks.add(packName);
                             v.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
+                            pack.setChecked(true);
                         } else {
                             // view reselected
-                            selectedPacks.remove(packName);
                             v.setBackgroundColor(ContextCompat.getColor(context, R.color.white_gray));
+                            pack.setChecked(false);
                         }
-                        if (selectedPacks.isEmpty()) {
-                            mode = "";
-                            refactorToolBarForSelection(false);
+                            fillRecyclerView();
+                        for (Pack pack_ : packList) {
+                            if (pack_.isChecked()) {
+                                return;
+                            }
                         }
-                        // we do not notify that an item has been selected
-                        // because that work is done here.  we instead send
-                        // notifications for items to be deselected
+                        mode = "";
+                        refactorToolBarForSelection(false);
+                    }
                     } else {
-                        onRecyclerViewItemClick(packName);
+                        onRecyclerViewItemClick(pack.getPackName());
                     }
                 } else {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                     String email = prefs.getString("login", "");
                     String password = prefs.getString("password", "");
-                    TryToSignInToSharePack(email, password, packName);
+                    TryToSignInToSharePack(email, password, pack.getPackName());
                 }
             }
         }, new PackListAdapter.OnRecyclerViewItemLongClickListener() {
             @Override
-            public void onLongClick(String packName, View v) {
-                if(!type.equals("share_pack")) {
-                    packLongClicked = packName;
+            public void onLongClick(Pack pack, View v) {
+                if(!pack.getType().equals("share_pack")) {
+                    packLongClicked = pack;
                     longPressedView = v;
                 }
             }
@@ -124,7 +138,7 @@ public class MyPacksFragment extends Fragment{
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        switch (dbHelper.getPackTypeByName(packLongClicked)) {
+        switch (packLongClicked.getType()) {
             case "created":
                 menu.add(0, MENU_SELECT, 1, R.string.select);
                 menu.add(0, MENU_SHARE, 2, R.string.share_to_community);
@@ -144,7 +158,7 @@ public class MyPacksFragment extends Fragment{
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case MENU_SELECT:
-                selectedPacks.add(packLongClicked);
+                packLongClicked.setChecked(true);
                 mode = "selection";
                 refactorToolBarForSelection(true);
                 longPressedView.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
@@ -153,10 +167,10 @@ public class MyPacksFragment extends Fragment{
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 String email = prefs.getString("login", "");
                 String password = prefs.getString("password", "");
-                TryToSignInToSharePack(email, password, packLongClicked);
+                TryToSignInToSharePack(email, password, packLongClicked.getPackName());
                 break;
             case MENU_EDIT:
-                CreatePackDialogFragment dialogFrag = CreatePackDialogFragment.newInstance(packLongClicked);
+                CreatePackDialogFragment dialogFrag = CreatePackDialogFragment.newInstance(packLongClicked.getPackName());
                 dialogFrag.setTargetFragment(this, 2);
                 dialogFrag.show(getFragmentManager().beginTransaction(), "");
                 break;
@@ -194,6 +208,8 @@ public class MyPacksFragment extends Fragment{
         textViewNoPacks = view.findViewById(R.id.no_items_textview);
         packListRecyclerView = view.findViewById(R.id.pack_list_recyclerview);
         registerForContextMenu(packListRecyclerView);
+        packList = dbHelper.getPackList();
+        sortPackList();
         fillRecyclerView();
         return view;
     }
@@ -260,7 +276,6 @@ public class MyPacksFragment extends Fragment{
     public void onActivityResult(int requestCode, int resultCode, Intent data) { // добавление пакета
         switch(requestCode) {
             case 1:
-
                 if (resultCode == Activity.RESULT_OK) {
                     // After Ok code.
                     String packName = data.getStringExtra("packName");
@@ -288,8 +303,8 @@ public class MyPacksFragment extends Fragment{
                     String packName = data.getStringExtra("packName");
                     if (!dbHelper.doesPackExistByPackName(packName)) {
                         if (packName.trim().length() > 0) {
-                            int id = dbHelper.getPackIdByName(packLongClicked);
-                            dbHelper.setPackNameById(id, packLongClicked, packName);
+                            int id = dbHelper.getPackIdByName(packLongClicked.getPackName());
+                            dbHelper.setPackNameById(id, packLongClicked.getPackName(), packName);
                             fillRecyclerView();
                         }
                         else {
@@ -307,46 +322,49 @@ public class MyPacksFragment extends Fragment{
             case 51:
                 if (resultCode == Activity.RESULT_OK) {
                     // After Ok code.
-                    if (dbHelper.getPackTypeByName(packLongClicked).equals("downloaded")) {
-                        if (packLongClicked != "") {
+                    if (dbHelper.getPackTypeByName(packLongClicked.getPackName()).equals("downloaded")) {
+                        if (packLongClicked.getPackName() != "") {
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                             String email = prefs.getString("login", "");
                             String password = prefs.getString("password", "");
                             TryToSignInToUnStar(email, password);
                         }
                     } else {
-                        dbHelper.deletePackByPackName(packLongClicked);
+                        dbHelper.deletePackByPackName(packLongClicked.getPackName());
                         fillRecyclerView();
                     }
                 }
                 break;
-            case 52:
+            case 52: // DELETE LIST OF PACK
                 if (resultCode == Activity.RESULT_OK) {
                     // After Ok code.
-                    for (String packName : selectedPacks) {
-                        dbHelper.deletePackByPackName(packName);
+                    for (Pack pack : packList) {
+                        if (pack.isChecked()) {
+                            dbHelper.deletePackByPackName(pack.getPackName());
+                            packList.remove(pack);
+                        }
                     }
                     mode = "";
                     refactorToolBarForSelection(false);
                     fillRecyclerView();
-                    selectedPacks.clear();
                 }
                 break;
             case 99: // Learn Pack
                 if (resultCode == Activity.RESULT_OK) {
-                    dbHelper.setCardsOfPackIterationTimes(packLongClicked, data.getIntExtra("iteration_times", 5));
+                    dbHelper.setCardsOfPackIterationTimes(packLongClicked.getPackName(), data.getIntExtra("iteration_times", 5));
                 }
                 fillRecyclerView();
                 break;
         }
     }
+
     private void unStarPackResponse(int id, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
         response.sendUnStarPackByHashAndPackIDResponse(id, hash, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String answer) {
                 if(answer.equals("ok")) {
-                    dbHelper.deletePackByPackName(packLongClicked);
+                    dbHelper.deletePackByPackName(packLongClicked.getPackName());
                     fillRecyclerView();
                 }
             }
@@ -369,7 +387,7 @@ public class MyPacksFragment extends Fragment{
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("account_hash", hash);
                     editor.apply();
-                    unStarPackResponse(dbHelper.getPackComIDByName(packLongClicked), hash);
+                    unStarPackResponse(packLongClicked.getIdComPack(), hash);
                 }
             }
 
@@ -399,7 +417,7 @@ public class MyPacksFragment extends Fragment{
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("account_hash", hash);
                     editor.apply();
-                    unStarPackResponse(dbHelper.getPackComIDByName(packLongClicked), hash);
+                    unStarPackResponse(packLongClicked.getIdComPack(), hash);
                 }
             }
 
@@ -477,7 +495,6 @@ public class MyPacksFragment extends Fragment{
             }
         });
     }
-
 
     private boolean loadFragment(Fragment fragment) {
         //switching fragment
