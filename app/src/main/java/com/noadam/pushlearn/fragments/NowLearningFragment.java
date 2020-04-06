@@ -1,19 +1,22 @@
 package com.noadam.pushlearn.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
-import android.view.ContextMenu;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,8 +31,6 @@ import com.noadam.pushlearn.activities.LearnPackActivity;
 import com.noadam.pushlearn.adapters.CardsOfNowLearningAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
-import com.noadam.pushlearn.fragments.dialog.CreateCardDialogFragment;
-import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.SetIterationTimesDialogFragment;
 
 import java.util.ArrayList;
@@ -80,7 +81,7 @@ public class NowLearningFragment extends Fragment {
             textViewNoCards.setVisibility(View.GONE);
         }
         else {
-            textViewNoCards.setText(R.string.no_learning_card);
+            textViewNoCards.setText(getString(R.string.no_learning_card));
             textViewNoCards.setVisibility(View.VISIBLE);
         }
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());

@@ -1,10 +1,13 @@
 package com.noadam.pushlearn.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.res.Resources;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,10 +67,14 @@ public class PackListAdapter extends RecyclerView.Adapter<PackListAdapter.ViewHo
         Pack pack = packList.get(i);
         String packName = pack.getPackName();
         holder.pack_name_textView.setText(packName);
+        TypedValue tV = new TypedValue();
+        Resources.Theme theme = context.getTheme();
         if(pack.isChecked()) {
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
+            theme.resolveAttribute(R.attr.selectedItemColor, tV, true);
+            holder.itemView.setBackgroundColor(tV.data);
         } else {
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.white_gray));
+            theme.resolveAttribute(R.attr.backgroundcolor, tV, true);
+            holder.itemView.setBackgroundColor(tV.data);
         }
         switch (pack.getType()) {
             case "downloaded":

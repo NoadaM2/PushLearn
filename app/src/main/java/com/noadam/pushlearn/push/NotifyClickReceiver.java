@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
@@ -76,21 +76,35 @@ public class NotifyClickReceiver extends BroadcastReceiver {
                    break;
 
                case "i_know":
-                   builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                           .setSmallIcon(R.drawable.ic_check_white_24dp)
-                           .setContentTitle(context.getResources().getString(R.string.well_done))
-                           .setContentText(context.getResources().getString(R.string.we_hope_you_honest))
-                           .setPriority(NotificationCompat.PRIORITY_HIGH)
-                           .setOnlyAlertOnce(true);
-                   notificationManager = NotificationManagerCompat.from(context);
-                   notificationManager.notify(cardID, builder.build());
-
+                   Card pushCard = dbHelper.getCardByID(cardID);
+                   dbHelper.editCardById(pushCard.get_id(), pushCard.getQuestion(), pushCard.getAnswer(), pushCard.getIteratingTimes() - 1,false);
+                   if(pushCard.getIteratingTimes() - 1 == 0) {
+                       builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                               .setSmallIcon(R.drawable.ic_star)
+                               .setContentTitle(context.getResources().getString(R.string.well_done))
+                               .setContentText(context.getResources().getString(R.string.you_learnt_card))
+                               .setPriority(NotificationCompat.PRIORITY_HIGH)
+                               .setOnlyAlertOnce(true);
+                       notificationManager = NotificationManagerCompat.from(context);
+                       notificationManager.notify(cardID, builder.build());
+                       SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                       SharedPreferences.Editor editor = prefs.edit();
+                       editor.putInt("LearntCards",  prefs.getInt("LearntCards",0) + 1);
+                       editor.apply();
+                   } else {
+                       builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                               .setSmallIcon(R.drawable.ic_check_white_24dp)
+                               .setContentTitle(context.getResources().getString(R.string.well_done))
+                               .setContentText(context.getResources().getString(R.string.we_hope_you_honest))
+                               .setPriority(NotificationCompat.PRIORITY_HIGH)
+                               .setOnlyAlertOnce(true);
+                       notificationManager = NotificationManagerCompat.from(context);
+                       notificationManager.notify(cardID, builder.build());
+                   }
                    new Thread(new Runnable() {
                        @Override
                        public void run() {
                            try {
-                               Card pushCard = dbHelper.getCardByID(cardID);
-                               dbHelper.editCardById(pushCard.get_id(), pushCard.getQuestion(), pushCard.getAnswer(), pushCard.getIteratingTimes() - 1,false);
                                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                                int shownCards = prefs.getInt("ShownCards",0);
                                SharedPreferences.Editor editor = prefs.edit();

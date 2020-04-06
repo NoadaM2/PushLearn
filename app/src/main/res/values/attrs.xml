@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="main" >
+        <attr name="backgroundcolor" format="color" />
+        <attr name="tintcolor" format="color" />
+        <attr name="whitecolor" format="color" />
+        <attr name="blackcolor" format="color" />
+        <attr name="focusColor" format="color" />
+        <attr name="actionColor" format="color" />
+        <attr name="actionColorDark" format="color" />
+        <attr name="redcolor" format="color" />
+        <attr name="selectedItemColor" format="color" />
+    </declare-styleable>
+</resources>

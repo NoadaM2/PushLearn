@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="?attr/backgroundcolor"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="fill_parent" android:layout_height="fill_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:background="?attr/backgroundcolor"
+            android:layout_height="match_parent">
+
+        <include
+                android:id="@+id/subscribe_activity_toolbar"
+                layout="@layout/add_options_toolbar" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/title_subscribe_constraintLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/subscribe_activity_toolbar">
+
+            <TextView
+                    android:id="@+id/pushlearn_premium_header_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/discover_new_opportunities_with_pushlearn_premium"
+                    android:textColor="@color/white"
+                    android:paddingBottom="24dp"
+                    android:paddingTop="24dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/features_checkBox_ConstraintLayout"
+                android:layout_width="match_parent"
+                android:background="?attr/backgroundcolor"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/title_subscribe_constraintLayout">
+
+            <CheckBox
+                    android:id="@+id/first_feature_checkBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:textColor="?attr/blackcolor"
+                    android:buttonTint="?attr/actionColorDark"
+                    android:checked="true"
+                    android:text="@string/first_feature_for_premium"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/features_checkBox_ConstraintLayout" />
+
+            <CheckBox
+                    android:id="@+id/second_feature_checkBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="?attr/blackcolor"
+                    android:buttonTint="?attr/actionColorDark"
+                    android:layout_marginTop="4dp"
+                    android:checked="true"
+                    android:text="@string/second_feature_for_premium"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/first_feature_checkBox" />
+
+            <CheckBox
+                    android:id="@+id/third_feature_checkBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="?attr/blackcolor"
+                    android:buttonTint="?attr/actionColorDark"
+                    android:layout_marginTop="4dp"
+                    android:checked="true"
+                    android:text="@string/third_feature_for_premium"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/second_feature_checkBox" />
+
+            <CheckBox
+                    android:id="@+id/fourth_feature_checkBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="?attr/blackcolor"
+                    android:buttonTint="?attr/actionColorDark"
+                    android:layout_marginTop="4dp"
+                    android:checked="true"
+                    android:text="@string/fourth_feature_for_premium"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/third_feature_checkBox" />
+
+            <CheckBox
+                    android:id="@+id/fifth_feature_checkBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="?attr/blackcolor"
+                    android:buttonTint="?attr/actionColorDark"
+                    android:layout_marginTop="4dp"
+                    android:checked="true"
+                    android:text="@string/fifth_feature_for_premium"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fourth_feature_checkBox" />
+
+            <CheckBox
+                    android:id="@+id/sixth_feature_checkBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="?attr/blackcolor"
+                    android:buttonTint="?attr/actionColorDark"
+                    android:layout_marginTop="4dp"
+                    android:checked="true"
+                    android:text="@string/sixth_feature_for_premium"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fifth_feature_checkBox" />
+
+            <CheckBox
+                    android:id="@+id/seventh_feature_checkBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="?attr/blackcolor"
+                    android:buttonTint="?attr/actionColorDark"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="16dp"
+                    android:checked="true"
+                    android:text="@string/seventh_feature_for_premium"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/sixth_feature_checkBox" />
+
+            <CheckBox
+                    android:id="@+id/eighth_feature_checkBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="?attr/blackcolor"
+                    android:buttonTint="?attr/actionColorDark"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="16dp"
+                    android:checked="true"
+                    android:text="@string/eighth_feature_for_premium"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/seventh_feature_checkBox" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/subscribe_buttons_ConstraintLayout"
+            android:layout_width="match_parent"
+            android:background="?attr/colorPrimary"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/features_checkBox_ConstraintLayout">
+
+        <Button
+                android:id="@+id/subscribe_1_month_button"
+                style="@android:style/Widget.Button"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:paddingBottom="8dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="8dp"
+                android:background="?attr/colorPrimaryDark"
+                android:text="@string/pay_monthly_5"
+                android:textColor="@color/constant_white"
+                app:layout_constraintBottom_toTopOf="@+id/textView"
+                app:layout_constraintEnd_toStartOf="@+id/subscribe_3_months_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+                android:id="@+id/subscribe_3_months_button"
+                style="@android:style/Widget.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:paddingBottom="8dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="8dp"
+                android:textColor="@color/constant_white"
+                android:text="@string/pay_once_three_months_12"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/colorPrimaryDark"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/subscribe_1_month_button"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="36dp"
+                android:gravity="center"
+                android:text="@string/auto_renew_plans_cancel_anytime"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/subscribe_3_months_button" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/subscribe_using_rating_ConstraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/subscribe_buttons_ConstraintLayout">
+
+        <Button
+                android:id="@+id/get_it_for_free_button"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/get_pushlearn_premium_for_free"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="@color/colorPrimaryDark"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"
+                android:text="@string/visit_our_top_of_users_and_look_through_rewards_for_places_in_the_top"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:textColor="@color/gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/get_it_for_free_button" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+          <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/floatingActionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                  app:backgroundTint="?attr/colorPrimaryDark"
+                android:clickable="false"
+                app:layout_constraintBottom_toTopOf="@id/subscribe_using_rating_ConstraintLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/subscribe_using_rating_ConstraintLayout"
+                app:srcCompat="@drawable/icon_up_down_arrows" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

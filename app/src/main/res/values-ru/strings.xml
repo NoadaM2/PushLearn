@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">PushLearn</string>
 
     <string name="title_nowLearning">В изучении</string>
     <string name="title_myPacks">Мои сборники</string>

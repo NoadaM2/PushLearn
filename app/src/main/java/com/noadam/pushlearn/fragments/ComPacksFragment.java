@@ -1,18 +1,19 @@
 package com.noadam.pushlearn.fragments;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -25,20 +26,19 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.noadam.pushlearn.R;
+import com.noadam.pushlearn.activities.CommunityPackActivity;
+import com.noadam.pushlearn.activities.LearnPackActivity;
+import com.noadam.pushlearn.activities.TopOfUsersActivity;
 import com.noadam.pushlearn.adapters.ComPacksAdapter;
-import com.noadam.pushlearn.adapters.MyComPacksAdapter;
 import com.noadam.pushlearn.data.ParserFromJSON;
-import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Directory;
 import com.noadam.pushlearn.entities.EndLessRecyclerView;
 import com.noadam.pushlearn.entities.SubDirectory;
+import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
+import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -91,7 +91,7 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
 
         directorySpinner = view.findViewById(R.id.directory_compacks_spinner);
         subdirectorySpinner = view.findViewById(R.id.subdirectory_compacks_spinner);
-        getDirectoriesListResponse();
+        getDirectoriesListResponse(getLanguageId(getSystemLanguage()));
         searchInDescriptionCheckBox = view.findViewById(R.id.search_in_pack_description_checkBox);
         noComPacksFoundTextView = view.findViewById(R.id.no_packs_by_search_textView);
 
@@ -138,6 +138,19 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
         return view;
     }
 
+    private String getSystemLanguage() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return String.valueOf(context.getResources().getConfiguration().getLocales().get(0)); }
+        else { return String.valueOf(context.getResources().getConfiguration().locale); }
+    }
+
+    private int getLanguageId(String language) {
+        if(language.contains("en_EN")) { return 1; }
+        if(language.contains("en_US")) { return 11; }
+        if(language.contains("ru_")) { return 2; }
+        return 1;
+    }
+
     private void add25Packs() {
         if(enableDirectorySearch.isChecked()) {
             Directory directory = (Directory) directorySpinner.getSelectedItem();
@@ -161,27 +174,22 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
         comPacksAdapter = new ComPacksAdapter(context, new ComPacksAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onClick(ComPack myComPack, View v) {
-                CommunityPackFragment nextFrag= new CommunityPackFragment();
-                nextFrag.setComPack(myComPack);
-                getActivity().getFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, nextFrag, "findThisFragment")
-                        .addToBackStack(null)
-                        .commit();
+                context.startActivity(new CommunityPackActivity().createIntent(context, myComPack));
             }
         });
         searchedPacksRecyclerView.setAdapter(comPacksAdapter);
     }
 
-    private void getDirectoriesListResponse() {
+    private void getDirectoriesListResponse(int language_id) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetDirectoriesResponse(new PushLearnServerCallBack() {
+        response.sendGetDirectoriesResponse(language_id, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
                 ParserFromJSON parser = new ParserFromJSON();
                ArrayList<Directory> directories = parser.parseJsonDirectoriesArray(jsonResponse);
                 ArrayAdapter<Directory> adapter = new ArrayAdapter<Directory>(context,
                         R.layout.large_white_text_appereance_textview, directories);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                adapter.setDropDownViewResource(R.layout.simple_spinner_my_item);
                 directorySpinner.setAdapter(adapter);
                 directorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
@@ -213,7 +221,7 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
                 ArrayList<SubDirectory> subDirectories = parser.parseJsonSubDirectoriesArray(jsonResponse);
                 ArrayAdapter<SubDirectory> adapter = new ArrayAdapter<SubDirectory>(context,
                         R.layout.large_white_text_appereance_textview, subDirectories);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                adapter.setDropDownViewResource(R.layout.simple_spinner_my_item);
                 subdirectorySpinner.setAdapter(adapter);
                 subdirectorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
@@ -266,6 +274,21 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
 
             }
         });
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.toolbar_for_community_packs, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.toolbar_for_com_packs_trophy:
+                context.startActivity(new TopOfUsersActivity().createIntent(context));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void getPacksByDirectoryIdAndSubDirectoryIdAndPackName(int directory_id, int subdirectory_id, String packName) { // TODO Test here

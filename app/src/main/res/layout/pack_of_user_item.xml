@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+        android:background="?attr/backgroundcolor"
     android:layout_width="match_parent"
      android:layout_height="wrap_content">
 
@@ -10,6 +11,7 @@
             android:id="@+id/myComPackName_text_view"
             style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="0dp"
+            android:textColor="?attr/blackcolor"
             android:layout_height="wrap_content"
             android:layout_gravity="start|top"
             android:fontFamily="@font/open_sans_bold"
@@ -49,4 +51,4 @@
         app:srcCompat="@drawable/ic_star" />
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

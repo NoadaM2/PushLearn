@@ -6,10 +6,16 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.app.DialogFragment;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -56,8 +62,13 @@ public class CreateCardDialogFragment extends DialogFragment {
 
         switch (getTargetRequestCode()) {
             case 1:
+                TypedValue tV = new TypedValue();
+                Resources.Theme theme = getActivity().getTheme();
+                theme.resolveAttribute(R.attr.blackcolor, tV, true);
+                SpannableString s = new SpannableString(getString(R.string.new_card));
+                s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
                 builder.setView(view)
-                        .setTitle(R.string.new_card)
+                        .setTitle(s)
                         .setPositiveButton(R.string.ok,
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -77,8 +88,13 @@ public class CreateCardDialogFragment extends DialogFragment {
                 break;
 
             case 2:
+                tV = new TypedValue();
+                theme = getActivity().getTheme();
+                theme.resolveAttribute(R.attr.blackcolor, tV, true);
+                s = new SpannableString(getString(R.string.edit_card));
+                s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
                 builder.setView(view)
-                        .setTitle(R.string.edit_card)
+                        .setTitle(s)
                         .setPositiveButton(R.string.ok,
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -99,11 +115,17 @@ public class CreateCardDialogFragment extends DialogFragment {
                 break;
         }
         AlertDialog alert = builder.create();
+        TypedValue tV = new TypedValue();
+        Resources.Theme theme = getActivity().getTheme();
+        theme.resolveAttribute(R.attr.focusColor, tV, true);
+        alert.getWindow().setBackgroundDrawable(new ColorDrawable(tV.data));
+        theme.resolveAttribute(R.attr.actionColorDark, tV, true);
+        alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         alert.show();
         Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
-        nbutton.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        nbutton.setTextColor(tV.data);
         Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
-        pbutton.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        pbutton.setTextColor(tV.data);
         return alert;
         }
 

@@ -1,5 +1,7 @@
 package com.noadam.pushlearn.entities;
 
+import com.google.gson.Gson;
+
 public class ComPack {
 
     private int comPackID;
@@ -31,6 +33,17 @@ public class ComPack {
         this.comPackAccess = access;
         this.comPackDirectoryId = directory_id;
         this.comPackSubdirectoryId = subdirectory_id;
+    }
+
+    // You can add those functions as LiveTemplate !
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
+
+    public static ComPack fromJson(String json) {
+        Gson gson = new Gson();
+        return gson.fromJson(json, ComPack.class);
     }
 
     public int getComPackID() {

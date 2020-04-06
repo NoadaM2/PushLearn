@@ -3,15 +3,20 @@ package com.noadam.pushlearn.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,7 +31,6 @@ import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.CardsOfPackAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
-import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.fragments.dialog.CreateCardDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
 
@@ -119,9 +123,18 @@ public class CardsOfPackFragment extends Fragment {
 
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(0, MENU_SELECT, 1, R.string.select);
-        menu.add(0, MENU_EDIT, 3, R.string.edit);
-        menu.add(0, MENU_DELETE, 4, R.string.delete);
+        TypedValue tV = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(R.attr.blackcolor, tV, true);
+        SpannableString s = new SpannableString(getString(R.string.select));
+        s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+        menu.add(0, MENU_SELECT, 1, s);
+        s = new SpannableString(getString(R.string.edit));
+        s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+        menu.add(0, MENU_EDIT, 3, s);
+        s = new SpannableString(getString(R.string.delete));
+        s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+        menu.add(0, MENU_DELETE, 4,s);
     }
 
     public boolean onContextItemSelected(MenuItem item) {

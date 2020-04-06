@@ -14,6 +14,8 @@
 	<color name="yellowGreen">#bbe05c</color>
 	<color name="tomato">#ff5c5c</color>
 	<color name="blue">#2196F3</color>
-	<color name="white_gray">#EEEEEE</color>
+	<color name="white_gray">#FAFAFA</color>
 	<color name="light_gray">#BBBBBB</color>
+    <color name="brown">#784D2B</color>
+	<color name="silver">#D6D7DC</color>
 </resources>

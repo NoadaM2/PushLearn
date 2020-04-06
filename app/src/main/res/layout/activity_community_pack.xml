@@ -3,25 +3,27 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="fill_parent"
+        android:background="?attr/backgroundcolor"
         android:layout_height="fill_parent"
         xmlns:tools="http://schemas.android.com/tools">
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
+        android:background="?attr/backgroundcolor"
     android:layout_height="match_parent">
 
     <include
-        android:id="@+id/only_options_toolbar"
+        android:id="@+id/com_pack_toolbar"
         layout="@layout/add_options_toolbar" />
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/packInfo_constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="?attr/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/only_options_toolbar">
+        app:layout_constraintTop_toBottomOf="@id/com_pack_toolbar">
 
 
         <TextView
@@ -54,7 +56,7 @@
                 android:layout_gravity="start"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="12dp"
-                app:layout_constraintStart_toEndOf="@+id/creator_nickname_textView"
+                app:layout_constraintStart_toEndOf="@id/creator_nickname_textView"
                 app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -190,8 +192,8 @@
                 app:layout_constraintStart_toEndOf="@id/subdirectory_label_textView"
                 app:layout_constraintTop_toBottomOf="@id/directory_label_textView" />
 
-    </android.support.constraint.ConstraintLayout>
-    <android.support.v7.widget.RecyclerView
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cards_of_com_pack_RecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -204,6 +206,7 @@
         android:id="@+id/no_cards_of_com_pack_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+            android:textColor="?attr/blackcolor"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginBottom="8dp"
@@ -220,5 +223,5 @@
         app:layout_constraintTop_toBottomOf="@id/packInfo_constraintLayout" />
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

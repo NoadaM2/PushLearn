@@ -1,6 +1,7 @@
 package com.noadam.pushlearn.internet;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -536,12 +537,15 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetDirectoriesResponse(PushLearnServerCallBack callback) {
+    public void sendGetDirectoriesResponse(int language_id, PushLearnServerCallBack callback) {
         try {
+            JSONObject childData = new JSONObject();
+            childData.put("language_id", language_id);
             JSONObject finalObject = new JSONObject();
-            finalObject.put("type", "get_directories");
+            finalObject.put("type", "get_directories_by_language_id");
+            finalObject.put("object", childData);
 
-            Call<String> userCall = apiInterface.getDirectories(finalObject.toString());
+            Call<String> userCall = apiInterface.getDirectoriesByLanguageID(finalObject.toString());
             userCall.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
@@ -550,12 +554,123 @@ public class PushLearnServerResponse {
                         callback.onResponse(a);
                     }
                 }
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
                     callback.onError(t);
-                Log.v("SERVER  ERROR", t+"");
-            }
-        });
+                    Log.v("SERVER  ERROR", t+"");
+                }
+            });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendGetTopUsersResponse(PushLearnServerCallBack callback) {
+        try {
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "get_top_users");
+
+            Call<String> userCall = apiInterface.getTopUsers(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                    Log.v("SERVER  ERROR", t+"");
+                }
+            });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendGetPreviousTopUsersResponse(PushLearnServerCallBack callback) {
+        try {
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "get_previous_top");
+
+            Call<String> userCall = apiInterface.getPreviousTopUsers(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                    Log.v("SERVER  ERROR", t+"");
+                }
+            });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendEmailVerificationCodeResponse(String email,PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("email",email);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "confirm_email");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.sendEmailVerificationCode(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                    Log.v("SERVER  ERROR", t+"");
+                }
+            });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void checkEmailVerificationCodeResponse(String email,String code,PushLearnServerCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("email",email);
+            childData.put("code",code);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "check_code");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.checkEmailVerificationCode(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                    Log.v("SERVER  ERROR", t+"");
+                }
+            });
         }
         catch (JSONException e) {
             e.printStackTrace();
@@ -935,6 +1050,39 @@ public class PushLearnServerResponse {
             finalObject.put("object", childData);
 
             Call<String> userCall = apiInterface.logInUsingVK(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                    Log.v("SERVER  ERROR", t+"");
+                }
+            });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendLogInUsingGoogleResponse(String token, String nickname, String email, int lang_id, String photoUrl, PushLearnServerCallBack callback) { // checked stable
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("id_token",token);
+            childData.put("nickname",nickname);
+            childData.put("email",email);
+            childData.put("language_id",lang_id);
+            childData.put("photo",photoUrl);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "log_google");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.logInUsingGoogle(finalObject.toString());
             userCall.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {

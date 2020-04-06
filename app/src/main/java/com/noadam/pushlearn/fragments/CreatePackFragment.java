@@ -4,22 +4,21 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.noadam.pushlearn.R;
@@ -28,14 +27,9 @@ import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Directory;
-import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.entities.SubDirectory;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -89,7 +83,7 @@ public class CreatePackFragment extends Fragment {
         }
         subdirectorySpinner = view.findViewById(R.id.subdirectory_spinner);
         directorySpinner = view.findViewById(R.id.directory_spinner);
-        getDirectoriesListResponse();
+        getDirectoriesListResponse(getLanguageId(getSystemLanguage()));
 
 
         ImageButton createPackNextImageButton = view.findViewById(R.id.create_pack_next_imageButton);
@@ -103,16 +97,30 @@ public class CreatePackFragment extends Fragment {
         return view;
     }
 
-    private void getDirectoriesListResponse() {
+    private String getSystemLanguage() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return String.valueOf(context.getResources().getConfiguration().getLocales().get(0)); }
+        else { return String.valueOf(context.getResources().getConfiguration().locale); }
+    }
+
+    private int getLanguageId(String language) {
+        if(language.contains("en_EN")) { return 1; }
+        if(language.contains("en_US")) { return 11; }
+        if(language.contains("ru_")) { return 2; }
+        return 1;
+    }
+
+
+    private void getDirectoriesListResponse(int language_id) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetDirectoriesResponse(new PushLearnServerCallBack() {
+        response.sendGetDirectoriesResponse(language_id,new PushLearnServerCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
                 ParserFromJSON parser = new ParserFromJSON();
                 directories = parser.parseJsonDirectoriesArray(jsonResponse);
                 ArrayAdapter<Directory> adapter = new ArrayAdapter<Directory>(context,
                         R.layout.large_text_appereance_textview, directories);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                adapter.setDropDownViewResource(R.layout.simple_spinner_my_item);
                 directorySpinner.setAdapter(adapter);
                 if(comPack != null) {
                     for (Directory subDir : directories) {
@@ -184,7 +192,7 @@ public class CreatePackFragment extends Fragment {
                 ParserFromJSON parser = new ParserFromJSON();
                 subDirectories = parser.parseJsonSubDirectoriesArray(jsonResponse);
                 ArrayAdapter<SubDirectory> adapter = new ArrayAdapter<SubDirectory>(context, R.layout.large_text_appereance_textview, subDirectories);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                adapter.setDropDownViewResource(R.layout.simple_spinner_my_item);
                 subdirectorySpinner.setAdapter(adapter);
                 if(comPack != null) {
                     for (SubDirectory subDir : subDirectories) {

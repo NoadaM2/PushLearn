@@ -7,10 +7,16 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
@@ -67,10 +73,14 @@ public class SetIterationTimesDialogFragment extends DialogFragment {
                 seekBar.refreshDrawableState();
             }
         }
-
+        TypedValue tV = new TypedValue();
+        Resources.Theme theme = getActivity().getTheme();
+        theme.resolveAttribute(R.attr.blackcolor, tV, true);
+        SpannableString s = new SpannableString(getString(R.string.iterating_times_double_dot));
+        s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
         builder
                 .setView(view)
-                .setTitle(R.string.iterating_times_double_dot)
+                .setTitle(s)
                 .setPositiveButton(R.string.ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -95,11 +105,15 @@ public class SetIterationTimesDialogFragment extends DialogFragment {
                 });
 
         AlertDialog alert = builder.create();
+        theme.resolveAttribute(R.attr.focusColor, tV, true);
+        alert.getWindow().setBackgroundDrawable(new ColorDrawable(tV.data));
+        theme.resolveAttribute(R.attr.actionColorDark, tV, true);
+        alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         alert.show();
         Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
-        nbutton.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        nbutton.setTextColor(tV.data);
         Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
-        pbutton.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        pbutton.setTextColor(tV.data);
         return alert;
     }
 }

@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="?attr/backgroundcolor"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="fill_parent" android:layout_height="fill_parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:background="?attr/backgroundcolor"
+            android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/rewards_list_ConstraintLayout"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+            <include
+                    android:id="@+id/top_users_toolbar"
+                    layout="@layout/add_options_toolbar" />
+
+            <TextView
+                    android:id="@+id/rewards_label_textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/rewards"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:textColor="@color/constant_white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/top_users_toolbar" />
+
+            <ImageView
+                    android:id="@+id/golden_crown_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_crown_gold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rewards_label_textView" />
+
+            <TextView
+                    android:id="@+id/first_place_reward_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/first_place_reward"
+                    android:textColor="@color/constant_white"
+                    app:layout_constraintStart_toEndOf="@id/golden_crown_imageView"
+                    app:layout_constraintTop_toBottomOf="@id/rewards_label_textView" />
+
+            <ImageView
+                    android:id="@+id/silver_crown_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_crown_silver"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/golden_crown_imageView" />
+
+            <TextView
+                    android:id="@+id/second_place_reward_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="13dp"
+                    android:text="@string/second_place_reward"
+                    android:textColor="@color/constant_white"
+                    app:layout_constraintStart_toEndOf="@id/silver_crown_imageView"
+                    app:layout_constraintTop_toBottomOf="@id/first_place_reward_textView" />
+
+            <ImageView
+                    android:id="@+id/bronze_crown_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_crown_bronze"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/silver_crown_imageView" />
+
+            <TextView
+                    android:id="@+id/third_place_reward_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/third_place_reward"
+                    android:textColor="@color/constant_white"
+                    app:layout_constraintStart_toEndOf="@id/silver_crown_imageView"
+                    app:layout_constraintTop_toBottomOf="@id/silver_crown_imageView" />
+
+            <TextView
+                    android:id="@+id/others_reward_textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/other_place_reward"
+                    android:textColor="@color/constant_white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/bronze_crown_imageView" />
+
+            <View
+                    android:id="@+id/just_line_in_top_of_users"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/constant_white"
+                    app:layout_constraintTop_toBottomOf="@id/time_before_reset_textView" />
+
+            <TextView
+                    android:id="@+id/time_before_reset_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="14 days 2:28:31"
+                    android:textColor="@color/constant_white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/others_reward_textView" />
+
+            <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:gravity="start"
+                    android:text="@string/before_reset"
+                    android:textColor="@color/constant_white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/time_before_reset_textView"
+                    app:layout_constraintTop_toBottomOf="@+id/others_reward_textView" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/previous_top_3_ConstraintLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/rewards_list_ConstraintLayout"
+                android:background="?attr/colorPrimaryDark">
+
+            <TextView
+                    android:id="@+id/previous_third_place_Rating_number_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:text="@string/rating_double_dot"
+                    android:textColor="@color/yellow"
+                    android:textSize="24sp"
+                    app:layout_constraintEnd_toStartOf="@id/star_imageView"
+                    app:layout_constraintTop_toBottomOf="@id/previous_second_place_Rating_number_text_view" />
+
+            <ImageView
+                    android:id="@+id/star_imageView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="12dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/star_imageView2"
+                    app:srcCompat="@drawable/ic_star" />
+
+            <TextView
+                    android:id="@+id/previous_second_place_Rating_number_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:text="@string/rating_double_dot"
+                    android:textColor="@color/yellow"
+                    android:textSize="24sp"
+                    app:layout_constraintEnd_toStartOf="@id/star_imageView"
+                    app:layout_constraintTop_toBottomOf="@id/previous_first_place_Rating_number_text_view" />
+
+            <ImageView
+                    android:id="@+id/star_imageView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="12dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/star_imageView"
+                    app:srcCompat="@drawable/ic_star" />
+
+            <ImageView
+                    android:id="@+id/previous_third_place_flag_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_flag_russia"
+                    app:layout_constraintStart_toEndOf="@id/previous_third_place_nickname_textView"
+                    app:layout_constraintTop_toBottomOf="@id/previous_second_place_flag_imageView" />
+
+            <ImageView
+                    android:id="@+id/previous_second_place_flag_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_flag_russia"
+                    app:layout_constraintStart_toEndOf="@id/previous_second_place_nickname_textView"
+                    app:layout_constraintTop_toBottomOf="@id/previous_first_place_flag_imageView" />
+
+            <ImageView
+                    android:id="@+id/previous_first_place_flag_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_flag_russia"
+                    app:layout_constraintStart_toEndOf="@+id/previous_first_place_nickname_textView"
+                    app:layout_constraintTop_toBottomOf="@+id/previous_month_top_3_label_textView" />
+
+            <TextView
+                    android:id="@+id/previous_month_top_3_label_textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:text="Previous Month Top 3:"
+                    android:textColor="@color/constant_white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                    android:id="@+id/previous_golden_crown_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_crown_gold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/previous_month_top_3_label_textView" />
+
+            <TextView
+                    android:id="@+id/previous_first_place_nickname_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="10dp"
+                    android:text="nickname1"
+                    android:textColor="@color/constant_white"
+                    app:layout_constraintStart_toEndOf="@id/previous_golden_crown_imageView"
+                    app:layout_constraintTop_toBottomOf="@id/previous_month_top_3_label_textView" />
+
+            <ImageView
+                    android:id="@+id/previous_silver_crown_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_crown_silver"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/previous_golden_crown_imageView" />
+
+            <TextView
+                    android:id="@+id/previous_second_place_nickname_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="13dp"
+                    android:text="nickname2"
+                    android:textColor="@color/constant_white"
+                    app:layout_constraintStart_toEndOf="@id/previous_silver_crown_imageView"
+                    app:layout_constraintTop_toBottomOf="@id/previous_first_place_nickname_textView" />
+
+            <ImageView
+                    android:id="@+id/previous_bronze_crown_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_crown_bronze"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/previous_silver_crown_imageView" />
+
+            <TextView
+                    android:id="@+id/previous_third_place_nickname_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="nickname3"
+                    android:textColor="@color/constant_white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/previous_silver_crown_imageView"
+                    app:layout_constraintTop_toBottomOf="@id/previous_silver_crown_imageView" />
+
+            <TextView
+                    android:id="@+id/previous_first_place_Rating_number_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="4dp"
+                    android:text="@string/rating_double_dot"
+                    android:textColor="@color/yellow"
+                    android:textSize="24sp"
+                    app:layout_constraintEnd_toStartOf="@id/star_imageView"
+                    app:layout_constraintTop_toBottomOf="@+id/previous_month_top_3_label_textView" />
+
+            <ImageView
+                    android:id="@+id/star_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="12dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/previous_month_top_3_label_textView"
+                    app:srcCompat="@drawable/ic_star" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+                android:id="@+id/just_line_in_top_of_users1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="0dp"
+                android:background="@color/constant_white"
+                app:layout_constraintTop_toBottomOf="@id/previous_top_3_ConstraintLayout" />
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/top_users_RecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/just_line_in_top_of_users1" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

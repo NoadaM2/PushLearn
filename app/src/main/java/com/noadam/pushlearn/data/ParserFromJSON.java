@@ -6,6 +6,7 @@ import com.noadam.pushlearn.entities.ComCard;
 import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Directory;
 import com.noadam.pushlearn.entities.SubDirectory;
+import com.noadam.pushlearn.entities.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -121,5 +122,41 @@ public class ParserFromJSON {
             return null;
         }
         return new SubDirectory(subDirID, dirID, dirName);
+    }
+
+    public ArrayList<User> parseJsonUsersArray(String jsonResponse) {
+        ArrayList<User> users = new ArrayList<User>();
+        try {
+            JSONArray jsonarray = new JSONArray(jsonResponse);
+            for (int i = 0; i < jsonarray.length(); i++) {
+                JSONObject jsonObject = jsonarray.getJSONObject(i);
+                int id = jsonObject.getInt("user_id");
+                String nickname = jsonObject.getString("nickname");
+                int rating = jsonObject.getInt("rating");
+                int language_id = jsonObject.getInt("language_id");
+                int premium = jsonObject.getInt("premium");
+                users.add(new User(id, nickname, rating, language_id, premium));
+            }
+        } catch (JSONException err){
+            Log.d("JSON Error", err.toString());
+        }
+        return users;
+    }
+
+    public ArrayList<User> parseJsonPreviousUsersArray(String jsonResponse) {
+        ArrayList<User> users = new ArrayList<User>();
+        try {
+            JSONArray jsonarray = new JSONArray(jsonResponse);
+            for (int i = 0; i < jsonarray.length(); i++) {
+                JSONObject jsonObject = jsonarray.getJSONObject(i);
+                String nickname = jsonObject.getString("nickname");
+                int rating = jsonObject.getInt("rating");
+                int language_id = jsonObject.getInt("language_id");
+                users.add(new User(nickname, rating, language_id));
+            }
+        } catch (JSONException err){
+            Log.d("JSON Error", err.toString());
+        }
+        return users;
     }
 }

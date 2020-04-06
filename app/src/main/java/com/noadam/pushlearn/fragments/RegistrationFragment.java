@@ -3,14 +3,18 @@ package com.noadam.pushlearn.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.app.Fragment;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.material.textfield.TextInputLayout;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,6 +33,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.noadam.pushlearn.R;
+import com.noadam.pushlearn.activities.SettingsActivity;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 import com.vk.sdk.VKSdk;
@@ -80,6 +85,11 @@ public class RegistrationFragment extends Fragment {
                 if (account == null) {
                     Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                     startActivityForResult(signInIntent, RC_SIGN_IN);
+                } else {
+                 //   String serverAuthCode = account.getServerAuthCode();
+                    String token = account.getIdToken();
+                    String photo = account.getPhotoUrl().toString().replaceAll("\\\\","");
+                    googleSignIn(token, account.getDisplayName(), account.getEmail(), getLanguageId(getSystemLanguage()), photo);
                 }
             }
         });
@@ -126,17 +136,15 @@ public class RegistrationFragment extends Fragment {
                 else { SingUpButton.setClickable(false); }
             }
         });
-
-        // Configure sign-in to request the user's ID, email address, and basic
-// profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+// Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            //    .requestProfile()
+                .requestIdToken(getString(R.string.server_clerntid_google))
+                .requestServerAuthCode(getString(R.string.server_clerntid_google))
                 .requestEmail()
-              //  .requestIdToken("699493798150-4l3jatsk35sdovrninlelhj7163dhn21.apps.googleusercontent.com")
-                //.requestId()
                 .build();
-        // Build a GoogleSignInClient with the options specified by gso.
-         mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+
 
         return view;
     }
@@ -149,8 +157,7 @@ public class RegistrationFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.my_profile_toolbar_settings:
-                Fragment fragment = new SettingsFragment();
-                loadFragment(fragment);
+                startActivity(new SettingsActivity().createIntent(context));
                 break;
         }
         return true;
@@ -167,7 +174,6 @@ public class RegistrationFragment extends Fragment {
         }
         return false;
     }
-
 
     private boolean validateEmail() {
         String emailInput = EmailTextInputLayout.getEditText().getText().toString().trim();
@@ -214,30 +220,20 @@ public class RegistrationFragment extends Fragment {
         }
     }
 
-
-    private void TryToSignUp(String email, String password, String nickname, int language_id) {
-        if (!validateEmail() | !validateUsername() | !validatePassword()) {
-            return;
-        }
+    private void googleSignIn(String token, String nickname, String email, int lang_id, String photoUrl) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendSignUpResponse(email, password,nickname, language_id, new PushLearnServerCallBack() {
+        response.sendLogInUsingGoogleResponse(token, nickname, email, lang_id, photoUrl, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String value) {
-                if (value.contains("email_busy")) {
-                    Toast.makeText(context, getString(R.string.something_is_wrong_try_another_email), Toast.LENGTH_SHORT).show();
-                }  else {
                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("account_hash", value);
-                    editor.putString("login", email);
-                    editor.putString("password", password);
                     editor.putString("nickname", nickname);
-                    editor.putInt("account_language", language_id);
+                    editor.putInt("account_language", lang_id);
                     editor.apply();
                     loadFragment(new MyProfileFragment());
-                    Toast.makeText(context, getString(R.string.successful_registration), Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, getString(R.string.successful_sign_in), Toast.LENGTH_LONG).show();
                 }
-            }
 
             @Override
             public void onError(Throwable t) {
@@ -299,7 +295,19 @@ public class RegistrationFragment extends Fragment {
             @Override
             public void onResponse(String value) {
                 int language_id = getLanguageId(getSystemLanguage());
-                if(value.equals("ok")) { TryToSignUp(email, PasswordTextInputLayout.getEditText().getText().toString(), nickname, language_id);
+                if(value.equals("ok")) {
+                    if (!validateEmail() | !validateUsername() | !validatePassword()) {
+                        return;
+                    }
+                    if(TermsOfUseCheckBox.isChecked()) {
+                        ConfirmEmailFragment frag = new ConfirmEmailFragment();
+                        frag.setValues(email, PasswordTextInputLayout.getEditText().getText().toString(), nickname, language_id);
+                        getActivity().getFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, frag, "findThisFragment")
+                                .addToBackStack(null)
+                                .commit();
+                        sendEmailVerificationCode(email);
+                    }
                 } else {
                     NickNameTextInputLayout.setError(getString(R.string.this_nickname_is_busy));
                 }
@@ -311,4 +319,16 @@ public class RegistrationFragment extends Fragment {
         });
     }
 
+    private void sendEmailVerificationCode(String email) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendEmailVerificationCodeResponse(email, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String value) {
+            }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
+    }
 }

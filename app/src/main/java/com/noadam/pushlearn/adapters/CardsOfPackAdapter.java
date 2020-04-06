@@ -1,9 +1,12 @@
 package com.noadam.pushlearn.adapters;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.res.Resources;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,10 +62,14 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
         Card card = cardList.get(i);
         holder.question_textView.setText(card.getQuestion());
         holder.answer_textView.setText(card.getAnswer());
+        TypedValue tV = new TypedValue();
+        Resources.Theme theme = context.getTheme();
         if(card.isChecked()) {
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
+            theme.resolveAttribute(R.attr.selectedItemColor, tV, true);
+            holder.itemView.setBackgroundColor(tV.data);
         } else {
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.white_gray));
+            theme.resolveAttribute(R.attr.backgroundcolor, tV, true);
+            holder.itemView.setBackgroundColor(tV.data);
         }
         int iteratingTimes = card.getIteratingTimes();
         holder.iterating_times_textView.setText(Integer.toString(iteratingTimes));
@@ -89,8 +96,9 @@ public class CardsOfPackAdapter extends RecyclerView.Adapter<CardsOfPackAdapter.
                     holder.notification_imageView.setColorFilter(ContextCompat.getColor(context, R.color.red));
                     break;
                 case (0):
-                    holder.iterating_times_textView.setTextColor(ContextCompat.getColor(context, R.color.black));
-                    holder.notification_imageView.setColorFilter(ContextCompat.getColor(context, R.color.black));
+                    theme.resolveAttribute(R.attr.blackcolor, tV, true);
+                    holder.iterating_times_textView.setTextColor(tV.data);
+                    holder.notification_imageView.setColorFilter(tV.data);
                     break;
             }
         }

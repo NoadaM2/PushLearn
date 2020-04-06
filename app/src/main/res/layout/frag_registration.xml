@@ -3,21 +3,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
+        android:background="?attr/colorPrimary"
     android:layout_height="fill_parent"
     xmlns:tools="http://schemas.android.com/tools">
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
+        android:background="?attr/colorPrimary"
     android:layout_height="match_parent">
 
     <include
         android:id="@+id/my_profile_toolbar"
         layout="@layout/add_options_toolbar" />
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/log_in_using_social_networks_constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+            android:background="?attr/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/my_profile_toolbar">
@@ -46,7 +48,7 @@
                 android:paddingBottom="48dp"
             app:layout_constraintEnd_toStartOf="@+id/log_in_using_vk_imageButton"
             app:layout_constraintStart_toStartOf="parent"
-            android:background="@color/colorPrimary"
+                android:background="?attr/colorPrimary"
             app:layout_constraintTop_toBottomOf="@+id/log_in_using_social_networks_textView"
             app:srcCompat="@drawable/icon_google" />
 
@@ -59,7 +61,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/log_in_using_google_imageButton"
             app:layout_constraintTop_toBottomOf="@+id/log_in_using_social_networks_textView"
-            android:background="@color/colorPrimary"
+            android:background="?attr/colorPrimary"
             app:srcCompat="@drawable/icon_vk" />
 
         <ImageButton
@@ -70,7 +72,7 @@
             app:layout_constraintEnd_toStartOf="@+id/log_in_using_facebook_imageButton"
             app:layout_constraintStart_toEndOf="@+id/log_in_using_vk_imageButton"
             app:layout_constraintTop_toBottomOf="@+id/log_in_using_social_networks_textView"
-            android:background="@color/colorPrimary"
+                android:background="?attr/colorPrimary"
             app:srcCompat="@drawable/icon_instagram"/>
 
         <ImageButton
@@ -82,50 +84,61 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/log_in_using_instagram_imageButton"
             app:layout_constraintTop_toBottomOf="@+id/log_in_using_social_networks_textView"
-            android:background="@color/colorPrimary"
+                android:background="?attr/colorPrimary"
             app:srcCompat="@drawable/icon_facebook" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
+            android:background="?attr/backgroundcolor"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/log_in_using_social_networks_constraintLayout">
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/nick_input_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?attr/backgroundcolor"
+                android:textColor="?attr/blackcolor"
+                android:textColorHint="@color/gray"
                 android:layout_marginTop="24dp"
                 app:counterEnabled="true"
+                app:counterTextAppearance="@style/CounterTextLabel"
                 app:counterMaxLength="15"
                 app:errorEnabled="true"
                 app:layout_constraintTop_toTopOf="parent">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/nickName_editText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
+                    app:counterTextAppearance="@color/colorAccent"
+                    android:textColor="?attr/blackcolor"
                     android:ems="15"
                     android:hint="@string/create_a_nickname"
                     android:inputType="text" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/email_input_layout"
             android:layout_width="match_parent"
+                android:background="?attr/backgroundcolor"
+                android:textColor="?attr/blackcolor"
             android:layout_height="wrap_content"
+                android:textColorHint="@color/gray"
             app:layout_constraintTop_toBottomOf="@id/nick_input_layout"
             app:errorEnabled="true">
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/email_editText"
                     android:layout_width="match_parent"
+                        android:textColor="?attr/blackcolor"
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="@string/enter_your_email"
@@ -133,30 +146,36 @@
                     android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/password_input_layout"
             android:layout_width="match_parent"
+                android:background="?attr/backgroundcolor"
+                android:textColor="?attr/blackcolor"
+                android:textColorHint="@color/gray"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/email_input_layout"
             app:errorEnabled="true">
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/password_editText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                        android:textColor="?attr/blackcolor"
                     android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:hint="@string/create_a_password"
                     android:inputType="textPassword"
                     app:layout_constraintTop_toBottomOf="@+id/email_input_layout" />
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <CheckBox
             android:id="@+id/terms_and_conditions_checkBox"
             android:layout_width="match_parent"
+                android:buttonTint="?attr/blackcolor"
             android:layout_height="wrap_content"
+                android:textColor="?attr/blackcolor"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:text="@string/i_accept_the_terms_and_conditions"
@@ -170,7 +189,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
-            android:background="@color/colorPrimary"
+            android:background="?attr/colorPrimary"
             android:text="@string/sign_up"
             android:textColor="@color/white"
             android:clickable="false"
@@ -182,6 +201,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+                android:textColor="?attr/blackcolor"
             android:layout_marginTop="24dp"
             android:text="@string/already_have_an_account"
             app:layout_constraintEnd_toStartOf="@+id/log_in_button"
@@ -202,11 +222,13 @@
             app:layout_constraintTop_toBottomOf="@id/sing_up_button" />
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
+            android:backgroundTint="@color/black"
+            app:backgroundTint="@color/black"
         android:layout_height="wrap_content"
         android:clickable="false"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
@@ -216,4 +238,4 @@
         app:srcCompat="@drawable/icon_up_down_arrows" />
 
 
-</android.support.constraint.ConstraintLayout></ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout></ScrollView>

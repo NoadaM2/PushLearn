@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PushLearn</string>
+    <string name="app_name" translatable="false">PushLearn</string>
 
     <string name="title_nowLearning">Now Learning</string>
     <string name="title_myPacks">My Packs</string>
@@ -112,7 +112,7 @@
     <string name="pushlearn_community">PushLearn Community</string>
     <string name="enter_your_password">Enter your password</string>
     <string name="welcome_back_to_PL_communtity">Welcome back to PushLearn communtity!</string>
-    <string name="edit_nickname">You can change your nickname only once for free!</string>
+    <string name="edit_nickname">Premium users can change their nickname more then one time</string>
     <integer name="com_vk_sdk_AppId">7369006</integer>
     <string name="successful_nickname_change">You have changed your nickname successfully!</string>
     <string name="nickname_should_be_less_than_15">The length of nickname should be less than 15 symbols</string>
@@ -122,4 +122,41 @@
     <string name="empty_field">Field can\'t be empty</string>
     <string name="username_too_long">Username too long</string>
     <string name="password_too_weak">Password too weak</string>
+    <string name="you_learnt_card">You have learnt this card!</string>
+    <string name="disable_advertisement">Disable advertisement</string>
+    <string name="pushlearn_premium">PushLearn Premium</string>
+    <string name="discover_new_opportunities_with">Discover new opportunities with\n</string>
+    <string name="pay_monthly">Pay monthly\n</string>
+    <string name="price_for_1_month">4.99$</string>
+    <string name="price_for_3_months">11.99$\n</string>
+    <string name="pay_once_three_months">Pay once three months\n</string>
+    <string name="price_for_1_month_3_months_subscribe">(3.99$/month)</string>
+    <string name="first_feature_for_premium">Access to the premium packs</string>
+    <string name="second_feature_for_premium">Add more then 3 packs from community</string>
+    <string name="third_feature_for_premium">Create more then 5 packs</string>
+    <string name="fourth_feature_for_premium">Add categories and subcategories without verification</string>
+    <string name="fifth_feature_for_premium">Look through statistics about your learning progress</string>
+    <string name="sixth_feature_for_premium">Change nickname when you want</string>
+    <string name="seventh_feature_for_premium">Set number of notifications in your notification bar</string>
+    <string name="eighth_feature_for_premium">Disable all advertisement</string>
+    <string name="auto_renew_plans_cancel_anytime">Auto renew plans. Cancel anytime</string>
+    <string name="get_pushlearn_premium_for_free">GET PUSHLEARN PREMIUM FOR FREE</string>
+    <string name="visit_our_top_of_users_and_look_through_rewards_for_places_in_the_top">Visit our top of users and look through rewards for places in the top</string>
+    <string name="server_clerntid_google">699493798150-4l3jatsk35sdovrninlelhj7163dhn21.apps.googleusercontent.com</string>
+    <string name="rewards">Rewards:</string>
+    <string name="first_place_reward">Free 3 months of PushLearn Premium</string>
+    <string name="second_place_reward">Free 2 months of PushLearn Premium</string>
+    <string name="third_place_reward">Free 1 month of PushLearn Premium</string>
+    <string name="other_place_reward">4-50 Free week of PushLearn Premium</string>
+    <string name="every_month_ratings_reset">Every month ratings reset</string>
+    <string name="before_reset">before reset</string>
+    <string name="top_of_pushlearn_community">Top of PushLearn Community</string>
+    <string name="confirm_your_email">Confirm your email</string>
+    <string name="enter_code_from_your_email">Enter code from your email</string>
+    <string name="the_code_is_incorrect">The code is incorrect</string>
+    <string name="discover_new_opportunities_with_pushlearn_premium">Discover new opportunities with\nPushLearn Premium</string>
+    <string name="pay_monthly_5">Pay monthly\n4.99$/month</string>
+    <string name="pay_once_three_months_12">Pay once three months\n11.99$/3 months\n(3.99$/month)</string>
+    <string name="change_nickname">Change nickname</string>
+    <string name="pushlearn_settings">PushLearn Settings</string>
 </resources>

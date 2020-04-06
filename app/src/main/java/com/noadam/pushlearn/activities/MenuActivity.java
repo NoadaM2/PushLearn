@@ -7,13 +7,20 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -25,14 +32,12 @@ import com.google.android.gms.tasks.Task;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
-import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.fragments.ComPacksFragment;
 import com.noadam.pushlearn.fragments.MyPacksFragment;
 import com.noadam.pushlearn.fragments.MyProfileFragment;
 import com.noadam.pushlearn.fragments.NowLearningFragment;
 import com.noadam.pushlearn.fragments.RegistrationFragment;
-import com.noadam.pushlearn.fragments.SettingsFragment;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 import com.noadam.pushlearn.push.MyReceiver;
@@ -57,8 +62,10 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.DarkTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Fragment fragment = new NowLearningFragment();
         //getting bottom navigation view and attaching the listener
@@ -74,12 +81,8 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                     navigation.setSelectedItemId(R.id.navigation_myPacks);
                     break;
                 case "my_profile":
-                    TryToSignIn(prefs.getString("login",""), prefs.getString("password","")); // if log pass true then my profile else registration
+                //    TryToSignIn(prefs.getString("login",""), prefs.getString("password",""), "my_profile"); // if log pass true then my profile else registration
                     navigation.setSelectedItemId(R.id.navigation_my_profile);
-                    break;
-                case "settings":
-                    fragment = new SettingsFragment();
-                 //   navigation.setSelectedItemId(R.id.navigation_my_profile);
                     break;
                 case "vk_sign_in":
                     VKSdk.login(this);
@@ -95,7 +98,11 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
 //        addSocialScience();
 //        addTop50EnglishWords();
         createNotificationChannel();
-        sendNotify(1, false);
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
     }
 
     private void createNotificationChannel() {
@@ -120,6 +127,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
         switch (item.getItemId()) {
             case R.id.navigation_now_learning:
                 fragment = new NowLearningFragment();
+                sendNotify(true);
                 break;
 
             case R.id.navigation_myPacks:
@@ -127,11 +135,11 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                 break;
 
             case R.id.navigation_communityPacks:
-                fragment = new ComPacksFragment();
+                TryToSignIn(prefs.getString("login",""), prefs.getString("password",""),"com_packs");
                 break;
 
             case R.id.navigation_my_profile:
-                TryToSignIn(prefs.getString("login",""), prefs.getString("password","")); // if log pass true then my profile else registration
+                TryToSignIn(prefs.getString("login",""), prefs.getString("password",""),"my_profile"); // if log pass true then my profile else registration
                // navigation.setSelectedItemId(R.id.navigation_my_profile);
                 break;
         }
@@ -139,8 +147,8 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
         return loadFragment(fragment);
     }
 
-    public void sendNotify(int minutes, boolean priority) {
-       // if ((!prefs.getBoolean("firstTime", false)) | priority) {
+    public void sendNotify(boolean priority) {
+        if ((!prefs.getBoolean("firstTime", false)) | priority) {
             Intent alarmIntent = new Intent(this, MyReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
             AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -149,9 +157,11 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             /*calendar.set(Calendar.HOUR_OF_DAY, 7);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 1);*/
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        int mins = prefs.getInt("minutesBetweenNotifies",1);
             manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                    1000 * 60 * minutes, pendingIntent);
-      //  }
+                    1000 * 60 * mins, pendingIntent);
+        }
     }
 
     private boolean loadFragment(Fragment fragment) {
@@ -256,24 +266,33 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             editor.putString("vk_access_token", "");
             editor.putString("vk_user_id", "");
             editor.putInt("account_language", 0);
+            editor.putInt("LearntCards", 0);
             editor.apply();
         }
     }
 
-    private void TryToSignIn(String login, String password) {
+    private void TryToSignIn(String login, String password, String fragment) {
         PushLearnServerResponse response = new PushLearnServerResponse(getApplicationContext());
         response.sendSignInResponse(login, password, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String hash) {
                 if (hash.equals("dont sign_in")) {
-                    logInUsingVK(prefs.getString("vk_access_token",""), prefs.getString("vk_user_id",""), prefs.getInt("account_language",0));
+                    logInUsingVK(prefs.getString("vk_access_token",""), prefs.getString("vk_user_id",""), prefs.getInt("account_language",0), fragment);
                 }  else {
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("account_hash", hash);
                     editor.apply();
                    // String extractedIDsOfSavedMyComPacks = extractIDsOfSavedMyComPacks(dbHelper.getSavedMyComPacksList());
                    // updateMyComPackList(extractedIDsOfSavedMyComPacks, hash);
-                    loadFragment(new MyProfileFragment());
+                    switch (fragment) {
+                        case "my_profile":
+                            loadFragment(new MyProfileFragment());
+                            break;
+                        case "com_packs":
+                            loadFragment(new ComPacksFragment());
+                            break;
+                    }
+
                 }
             }
 
@@ -302,7 +321,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                 editor.putString("vk_access_token", String.valueOf(res.accessToken));
                 editor.putString("vk_user_id", String.valueOf(res.userId));
                 editor.apply();
-                logInUsingVK(String.valueOf(res.accessToken), res.userId,language_id);
+                logInUsingVK(String.valueOf(res.accessToken), res.userId,language_id, "com_packs");
 // Пользователь успешно авторизовался
             }
             @Override
@@ -350,7 +369,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
         return 1;
     }
 
-    private void logInUsingVK(String token, String user_id, int lang_id) {
+    private void logInUsingVK(String token, String user_id, int lang_id, String fragment) {
         PushLearnServerResponse response = new PushLearnServerResponse(getApplicationContext());
         response.sendLogInUsingVKResponse(token, user_id, lang_id, new PushLearnServerCallBack() {
             @Override
@@ -361,7 +380,14 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("account_hash", hash);
                     editor.apply();
-                    loadFragment(new MyProfileFragment());
+                    switch (fragment) {
+                        case "my_profile":
+                            loadFragment(new MyProfileFragment());
+                            break;
+                        case "com_packs":
+                            loadFragment(new ComPacksFragment());
+                            break;
+                    }
                 }
             }
 

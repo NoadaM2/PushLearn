@@ -1,17 +1,14 @@
-package com.noadam.pushlearn.fragments;
+package com.noadam.pushlearn.activities;
 
+import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +20,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.gson.Gson;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.CardsOfComPackAdapter;
 import com.noadam.pushlearn.data.ParserFromJSON;
@@ -33,69 +37,76 @@ import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class CommunityPackFragment extends Fragment {
+public class CommunityPackActivity extends AppCompatActivity  {
+    private static final String PACK_NAME = "packName";
     private Context context;
     private PushLearnDBHelper dbHelper;
-   private TextView creatorTextView;
-   private TextView noMyComCardsInComPackTextView;
-   private TextView ratingOfComPackTextView;
-   private TextView numberOfCardsInComPackTextView;
-   private TextView directoryTextView;
-   private TextView subdirectoryTextView;
-   private TextView descriptionOfComPackTextView;
-   private ImageView flagImageView;
-   private ImageButton downloadComPack;
+    private TextView creatorTextView;
+    private TextView noMyComCardsInComPackTextView;
+    private TextView ratingOfComPackTextView;
+    private TextView numberOfCardsInComPackTextView;
+    private TextView directoryTextView;
+    private TextView subdirectoryTextView;
+    private TextView descriptionOfComPackTextView;
+    private ImageView flagImageView;
+    private ImageButton downloadComPack;
     private RecyclerView cardsOfComPackRecyclerView;
     private ComPack comPack;
     private ArrayList<ComCard> cardsOfComPackList;
     boolean comPackStarred = false;
 
-    public void setComPack(ComPack comPack) {
-        this.comPack = comPack;
-    }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
-        View view = inflater.inflate(R.layout.frag_community_pack, null);
-        context = getActivity();
+    protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.DarkTheme);
+        //------------------------------------LAYOUT INITIALIZATION----------------------------------------
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_community_pack);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        context = getApplicationContext();
         dbHelper = new PushLearnDBHelper(context);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String hash = prefs.getString("account_hash","");
+        //-----------------------------------INTENT UNPACKING----------------------------------------------------
+        Intent intent = getIntent();
+        comPack = ComPack.fromJson(intent.getStringExtra(PACK_NAME));
+        dbHelper = new PushLearnDBHelper(this);
+        //------------------------------------ACTION BAR----------------------------------------------------
+        Toolbar mActionBarToolbar = (Toolbar) findViewById(R.id.com_pack_toolbar);
+        setSupportActionBar(mActionBarToolbar);
+        if(!comPack.getComPackName().equals("")) {
+            getSupportActionBar().setTitle(comPack.getComPackName());
+        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        mActionBarToolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
+        mActionBarToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
-        Toolbar toolbar = view.findViewById(R.id.only_options_toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-        toolbar.setTitle(comPack.getComPackName());
-//--------------------------------------------------------------------------------------------------------------------------------------------------------
-        creatorTextView = view.findViewById(R.id.creator_nickname_textView);
+        creatorTextView = findViewById(R.id.creator_nickname_textView);
         creatorTextView.setPaintFlags(creatorTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         creatorTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UserProfileFragment fragment = new UserProfileFragment();
-                fragment.setUserID(comPack.getComPackOwnerID());
-                loadFragment(fragment);
+                startActivity(new UserProfileActivity().createIntent(context, comPack.getComPackOwnerID()));
             }
         });
-        noMyComCardsInComPackTextView = view.findViewById(R.id.no_cards_of_com_pack_textView);
-        ratingOfComPackTextView = view.findViewById(R.id.ratingOfComPack_number_textView);
-        directoryTextView = view.findViewById(R.id.directory_value_textView);
-        subdirectoryTextView = view.findViewById(R.id.subdirectory_value_textView);
-        ratingOfComPackTextView = view.findViewById(R.id.ratingOfComPack_number_textView);
-        numberOfCardsInComPackTextView = view.findViewById(R.id.number_of_cards_textView);
-        descriptionOfComPackTextView = view.findViewById(R.id.pack_description_textView);
-        flagImageView = view.findViewById(R.id.flagOfCreator_imageView);
-        downloadComPack = view.findViewById(R.id.download_community_pack_button);
+        noMyComCardsInComPackTextView = findViewById(R.id.no_cards_of_com_pack_textView);
+        ratingOfComPackTextView = findViewById(R.id.ratingOfComPack_number_textView);
+        directoryTextView = findViewById(R.id.directory_value_textView);
+        subdirectoryTextView = findViewById(R.id.subdirectory_value_textView);
+        ratingOfComPackTextView = findViewById(R.id.ratingOfComPack_number_textView);
+        numberOfCardsInComPackTextView = findViewById(R.id.number_of_cards_textView);
+        descriptionOfComPackTextView = findViewById(R.id.pack_description_textView);
+        flagImageView = findViewById(R.id.flagOfCreator_imageView);
+        downloadComPack = findViewById(R.id.download_community_pack_button);
         downloadComPack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,9 +124,8 @@ public class CommunityPackFragment extends Fragment {
         });
         setValuesForViews();
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
-        cardsOfComPackRecyclerView = view.findViewById(R.id.cards_of_com_pack_RecyclerView);
+        cardsOfComPackRecyclerView = findViewById(R.id.cards_of_com_pack_RecyclerView);
         fillCardsOfComPackListAndRecyclerView(comPack.getComPackID(), hash);
-        return view;
     }
 
     private void fillRecyclerView() {
@@ -126,7 +136,7 @@ public class CommunityPackFragment extends Fragment {
             noMyComCardsInComPackTextView.setText(R.string.no_cards_in_com_pack);
             noMyComCardsInComPackTextView.setVisibility(View.VISIBLE);
         }
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
         cardsOfComPackRecyclerView.setLayoutManager(layoutManager);
         CardsOfComPackAdapter cardsOfComPackAdapter = new CardsOfComPackAdapter(new CardsOfComPackAdapter.OnRecyclerViewItemClickListener() {
             @Override
@@ -170,9 +180,9 @@ public class CommunityPackFragment extends Fragment {
             @Override
             public void onResponse(String value) {
                 ParserFromJSON parser = new ParserFromJSON();
-               cardsOfComPackList = parser.parseJsonComCardsArray(value);
-               numberOfCardsInComPackTextView.setText(String.valueOf(cardsOfComPackList.size()));
-               fillRecyclerView();
+                cardsOfComPackList = parser.parseJsonComCardsArray(value);
+                numberOfCardsInComPackTextView.setText(String.valueOf(cardsOfComPackList.size()));
+                fillRecyclerView();
             }
             @Override
             public void onError(Throwable t) {
@@ -182,11 +192,11 @@ public class CommunityPackFragment extends Fragment {
     }
 
     private void setValuesForViews() {
-         ratingOfComPackTextView.setText(String.valueOf(comPack.getComPackRating()));
-         descriptionOfComPackTextView.setText(comPack.getComPackDescription());
-         setNickNameByIDResponse(comPack.getComPackOwnerID());
-         setDirectoryTextViewResponse(comPack.getComPackDirectoryId());
-         setSubDirectoryTextViewResponse(comPack.getComPackSubdirectoryId());
+        ratingOfComPackTextView.setText(String.valueOf(comPack.getComPackRating()));
+        descriptionOfComPackTextView.setText(comPack.getComPackDescription());
+        setNickNameByIDResponse(comPack.getComPackOwnerID());
+        setDirectoryTextViewResponse(comPack.getComPackDirectoryId());
+        setSubDirectoryTextViewResponse(comPack.getComPackSubdirectoryId());
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String nickname = prefs.getString("nickname","");
         compareUserIdAndHashResponse(nickname);
@@ -320,10 +330,10 @@ public class CommunityPackFragment extends Fragment {
         });
     }
 
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    /*public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.toolbar_only_options, menu);
         super.onCreateOptionsMenu(menu, inflater);
-    }
+    }*/
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -344,6 +354,11 @@ public class CommunityPackFragment extends Fragment {
             return true;
         }
         return false;
+    }
+
+    public Intent createIntent(Context context, ComPack comPack) {
+        return new Intent(context, CommunityPackActivity.class)
+                .putExtra(PACK_NAME, comPack.toJson());
     }
 
 }

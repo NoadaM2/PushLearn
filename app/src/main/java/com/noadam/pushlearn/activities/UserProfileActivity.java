@@ -1,16 +1,11 @@
-package com.noadam.pushlearn.fragments;
+package com.noadam.pushlearn.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.MyComPacksAdapter;
@@ -30,16 +31,11 @@ import com.noadam.pushlearn.internet.PushLearnServerResponse;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-
-public class UserProfileFragment extends Fragment {
+public class UserProfileActivity extends AppCompatActivity {
     private Context context;
     private PushLearnDBHelper dbHelper;
     private TextView nickNameTextView;
@@ -53,33 +49,48 @@ public class UserProfileFragment extends Fragment {
     private ArrayList<ComPack> userComPackList;
     private int userID;
 
-    public void setUserID(int id) {
-        userID = id;
-    }
-
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
-        View view = inflater.inflate(R.layout.frag_user_profile, null);
-        context = getActivity();
+    protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.DarkTheme);
+        //------------------------------------LAYOUT INITIALIZATION----------------------------------------
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_user_profile);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        context = getApplicationContext();
         dbHelper = new PushLearnDBHelper(context);
+//-----------------------------------INTENT UNPACKING----------------------------------------------------
+        Intent intent = getIntent();
+        userID = intent.getIntExtra("id",1);
+        dbHelper = new PushLearnDBHelper(this);
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
-        Toolbar toolbar = view.findViewById(R.id.user_profile_toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-//--------------------------------------------------------------------------------------------------------------------------------------------------------
-        nickNameTextView = view.findViewById(R.id.user_nickname_textView);
-        noComPacksTextView = view.findViewById(R.id.no_user_com_packs_textView);
-        ratingTextView = view.findViewById(R.id.user_rating_number_textView);
-        numberOfPacksTextView = view.findViewById(R.id.user_number_of_packs_textView);
-        avatarImageView = view.findViewById(R.id.user_avatar_imageView);
-        flagImageView = view.findViewById(R.id.user_flag_imageView);
+        nickNameTextView = findViewById(R.id.user_nickname_textView);
+        noComPacksTextView = findViewById(R.id.no_user_com_packs_textView);
+        ratingTextView = findViewById(R.id.user_rating_number_textView);
+        numberOfPacksTextView = findViewById(R.id.user_number_of_packs_textView);
+        avatarImageView = findViewById(R.id.user_avatar_imageView);
+        flagImageView = findViewById(R.id.user_flag_imageView);
         setValuesForViews();
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
-        userComPacksRecyclerView = view.findViewById(R.id.user_com_packs_RecyclerView);
+        userComPacksRecyclerView = findViewById(R.id.user_com_packs_RecyclerView);
         registerForContextMenu(userComPacksRecyclerView);
 
-        return view;
+    }
+    
+    private void configureToolBar(String nickname){
+        Toolbar mActionBarToolbar = (Toolbar) findViewById(R.id.user_profile_toolbar);
+        setSupportActionBar(mActionBarToolbar);
+        if(!nickname.equals("")) {
+            getSupportActionBar().setTitle(nickname);
+        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        mActionBarToolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
+        mActionBarToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     private void sortComPackList() {
@@ -100,17 +111,12 @@ public class UserProfileFragment extends Fragment {
             noComPacksTextView.setText(R.string.you_published_no_packs);
             noComPacksTextView.setVisibility(View.VISIBLE);
         }
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
         userComPacksRecyclerView.setLayoutManager(layoutManager);
         userComPacksAdapter = new MyComPacksAdapter(new MyComPacksAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onClick(ComPack myComPack, View v) {
-                CommunityPackFragment nextFrag= new CommunityPackFragment();
-                nextFrag.setComPack(myComPack);
-                getActivity().getFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, nextFrag, "findThisFragment")
-                        .addToBackStack(null)
-                        .commit();
+                startActivity(new CommunityPackActivity().createIntent(context, myComPack));
             }
         }, new MyComPacksAdapter.OnRecyclerViewItemLongClickListener() {
             @Override
@@ -130,12 +136,7 @@ public class UserProfileFragment extends Fragment {
         imageLoader.init(config);
         imageLoader.displayImage("http://pushlearn.hhos.ru.s68.hhos.ru/files/"+String.valueOf(userID)+".jpg", avatarImageView);
     }
-
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.toolbar_only_options, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
+    
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
@@ -207,6 +208,7 @@ public class UserProfileFragment extends Fragment {
                 setLanguageIDByNickName(nickName);
                 setRatingByNickName(nickName);
                 setNumberOfComPacksByNickName(nickName);
+                configureToolBar(nickName);
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 String hash = prefs.getString("account_hash","");
                 fillUserComPacksByNickNameResponse(nickName, hash);
@@ -215,6 +217,11 @@ public class UserProfileFragment extends Fragment {
             public void onError(Throwable t) {
             }
         });
+    }
+
+    public Intent createIntent(Context context,int userID) {
+        return new Intent(context, UserProfileActivity.class)
+                .putExtra("id", userID);
     }
 
     private void fillUserComPacksByNickNameResponse(String nickname, String hash) {

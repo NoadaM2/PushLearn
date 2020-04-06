@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+        android:background="?attr/focusColor"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
@@ -10,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/enter_question"
+            android:textColor="?attr/blackcolor"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="16dp"
@@ -22,7 +24,9 @@
         android:inputType="text|textCapSentences|textAutoCorrect"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+            android:textColor="?attr/blackcolor"
         android:hint="@string/question"
+            android:textColorHint="@color/gray"
         android:lines="1"
         android:textCursorDrawable="@null"
         android:backgroundTint="@color/colorPrimary"
@@ -39,6 +43,7 @@
         android:id="@+id/dialog_card_answer_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+            android:textColor="?attr/blackcolor"
         android:text="@string/enter_answer"
         app:layout_constraintTop_toBottomOf="@id/dialog_card_question_edit_text"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,7 +57,9 @@
         android:inputType="text|textCapSentences|textAutoCorrect"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+            android:textColor="?attr/blackcolor"
         android:hint="@string/answer"
+            android:textColorHint="@color/gray"
         android:textCursorDrawable="@null"
         android:backgroundTint="@color/colorPrimary"
         android:lines="1"
@@ -71,6 +78,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:progressTint="@color/colorPrimary"
+        android:progressBackgroundTint="@color/gray"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="12sp"
         android:max="10"
@@ -86,4 +94,4 @@
         android:layout_marginBottom="8dp" />
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

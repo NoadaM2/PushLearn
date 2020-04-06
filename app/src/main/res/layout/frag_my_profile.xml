@@ -1,32 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
+        android:background="?attr/backgroundcolor"
         android:layout_height="match_parent">
 
 <ScrollView
        app:layout_constraintTop_toTopOf="parent"
+        android:background="?attr/backgroundcolor"
        app:layout_constraintBottom_toBottomOf="parent"
        app:layout_constraintStart_toStartOf="parent"
        app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
+        android:background="?attr/backgroundcolor"
     android:layout_height="wrap_content">
 
     <include
         android:id="@+id/my_profile_toolbar"
         layout="@layout/add_options_toolbar" />
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/myInfo_constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@color/colorPrimary"
+        android:background="?attr/colorPrimary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/my_profile_toolbar">
 
@@ -140,12 +143,13 @@
                 app:layout_constraintBottom_toBottomOf="@+id/my_avatar_imageView"
                 app:layout_constraintEnd_toEndOf="@+id/my_avatar_imageView"
                 app:srcCompat="@drawable/ic_edit_white_24dp" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/my_com_packs_RecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="?attr/backgroundcolor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -156,6 +160,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:textColor="?attr/blackcolor"
             android:layout_centerVertical="true"
             android:layout_marginTop="8dp"
             android:gravity="center"
@@ -167,7 +172,7 @@
             app:layout_constraintTop_toBottomOf="@id/myInfo_constraintLayout" />
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </ScrollView>
@@ -182,4 +187,4 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,14 +9,21 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.NumberPicker;
 
 import com.noadam.pushlearn.R;
+import com.noadam.pushlearn.activities.SettingsActivity;
 import com.noadam.pushlearn.push.MyReceiver;
 
 import java.util.Calendar;
@@ -44,7 +51,7 @@ public class SetTimePeriodDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_time_picker, null);
         timePickerMinutes = view.findViewById(R.id.minutes_NumberPicker);
-        timePickerMinutes.setMaxValue(60);
+        timePickerMinutes.setMaxValue(59);
         timePickerMinutes.setMinValue(1);
         timePickerMinutes.setWrapSelectorWheel(false);
         timePickerHours = view.findViewById(R.id.hours_NumberPicker);
@@ -57,8 +64,13 @@ public class SetTimePeriodDialogFragment extends DialogFragment {
             timePickerHours.setValue(Math.round(minutes / 60));
             timePickerMinutes.setValue(minutes % 60);
         }
+        TypedValue tV = new TypedValue();
+        Resources.Theme theme = getActivity().getTheme();
+        theme.resolveAttribute(R.attr.blackcolor, tV, true);
+        SpannableString s = new SpannableString(getString(R.string.pref_time_period_between_notifies));
+        s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
         builder.setView(view)
-                .setTitle(R.string.pref_time_period_between_notifies)
+                .setTitle(s)
                 .setPositiveButton(R.string.ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -69,10 +81,8 @@ public class SetTimePeriodDialogFragment extends DialogFragment {
                                 int minutes = timePickerMinutes.getValue();
                                 editor.putInt("minutesBetweenNotifies", hours * 60 + minutes);
                                 editor.apply();
-                                sendNotify(hours * 60 + minutes);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.putExtra("fragment","settings");
-                                startActivity(intent);
+                                startActivityForResult(new SettingsActivity().createIntent(getActivity()), SettingsActivity.TIME_BETWEEN_NOTIFIES_DIALOG_RESULT);
+                                getActivity().finish();
                             }
                         }
                 )
@@ -81,27 +91,17 @@ public class SetTimePeriodDialogFragment extends DialogFragment {
 
                     }
                 });
-
         AlertDialog alert = builder.create();
+        theme.resolveAttribute(R.attr.focusColor, tV, true);
+        alert.getWindow().setBackgroundDrawable(new ColorDrawable(tV.data));
+        theme.resolveAttribute(R.attr.actionColorDark, tV, true);
+        alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         alert.show();
         Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
-        nbutton.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        nbutton.setTextColor(tV.data);
         Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
-        pbutton.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        pbutton.setTextColor(tV.data);
         return alert;
-    }
-    private void sendNotify(int minutes) {
-            Intent alarmIntent = new Intent(getActivity(), MyReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent, 0);
-            AlarmManager manager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            /*calendar.set(Calendar.HOUR_OF_DAY, 7);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 1);*/
-            manager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                    1000 * 60 * minutes , pendingIntent);
-
     }
 }
 

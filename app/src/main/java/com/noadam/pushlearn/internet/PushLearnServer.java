@@ -87,8 +87,8 @@ public interface PushLearnServer {
     Call<String> getSubDirectoriesByDirectoryID(@Body String body);
 
     @Headers("Content-Type: application/json")
-    @POST("get_directories")
-    Call<String> getDirectories(@Body String body);
+    @POST("get_directories_by_language_id ")
+    Call<String> getDirectoriesByLanguageID(@Body String body);
 
     @Headers("Content-Type: application/json")
     @POST("create_pack")
@@ -97,10 +97,6 @@ public interface PushLearnServer {
     @Headers("Content-Type: application/json")
     @POST("create_card")
     Call<String> createCard(@Body String body);
-
-    @Headers("Content-Type: application/json")
-    @POST("compare_user_id_and_hash")
-    Call<String> compareUSerIdAndHash(@Body String body);
 
     @Headers("Content-Type: application/json")
     @POST("set_nickname_by_hash")
@@ -141,4 +137,24 @@ public interface PushLearnServer {
     @Headers("Content-Type: application/json")
     @POST("set_pack")
     Call<String> updatePackByPackID(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("log_google")
+    Call<String> logInUsingGoogle(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("get_top_users")
+    Call<String> getTopUsers(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("get_previous_top")
+    Call<String> getPreviousTopUsers(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("confirm_email")
+    Call<String> sendEmailVerificationCode(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("check_code")
+    Call<String> checkEmailVerificationCode(@Body String body);
 }

@@ -7,23 +7,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.app.Fragment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,9 +31,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import com.noadam.pushlearn.R;
+import com.noadam.pushlearn.activities.CommunityPackActivity;
+import com.noadam.pushlearn.activities.SettingsActivity;
 import com.noadam.pushlearn.adapters.MyComPacksAdapter;
 import com.noadam.pushlearn.data.ParserFromJSON;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
@@ -49,14 +45,9 @@ import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -73,7 +64,6 @@ public class MyProfileFragment extends Fragment {
     private ImageView avatarImageView;
     private ImageView flagImageView;
     private RecyclerView myComPacksRecyclerView;
-    private MyComPacksAdapter myComPacksAdapter;
     private ArrayList<ComPack> myComPackList;
     private ComPack longClickedComPack;
 
@@ -112,7 +102,6 @@ public class MyProfileFragment extends Fragment {
         flagImageView = view.findViewById(R.id.my_flag_imageView);
         setValuesForViews();
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
-
         ImageButton sharePackToCommunity = view.findViewById(R.id.add_pack_image_button);
         sharePackToCommunity.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,15 +170,10 @@ public class MyProfileFragment extends Fragment {
         }
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         myComPacksRecyclerView.setLayoutManager(layoutManager);
-        myComPacksAdapter = new MyComPacksAdapter(new MyComPacksAdapter.OnRecyclerViewItemClickListener() {
+        MyComPacksAdapter myComPacksAdapter = new MyComPacksAdapter(new MyComPacksAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onClick(ComPack myComPack, View v) {
-                CommunityPackFragment nextFrag= new CommunityPackFragment();
-                nextFrag.setComPack(myComPack);
-                getActivity().getFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, nextFrag, "findThisFragment")
-                        .addToBackStack(null)
-                        .commit();
+                context.startActivity(new CommunityPackActivity().createIntent(context, myComPack));
             }
         }, new MyComPacksAdapter.OnRecyclerViewItemLongClickListener() {
             @Override
@@ -299,8 +283,7 @@ public class MyProfileFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.my_profile_toolbar_settings:
-                Fragment fragment = new SettingsFragment();
-                loadFragment(fragment);
+                startActivity(new SettingsActivity().createIntent(context));
                 break;
         }
         return true;

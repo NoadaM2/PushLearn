@@ -4,16 +4,22 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,8 +33,6 @@ import android.widget.Toast;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.PackListAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
-import com.noadam.pushlearn.entities.Card;
-import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
@@ -37,7 +41,6 @@ import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -83,7 +86,12 @@ public class MyPacksFragment extends Fragment{
             textViewNoPacks.setVisibility(View.GONE);
         }
         else {
-            textViewNoPacks.setText(R.string.no_packs);
+            TypedValue tV = new TypedValue();
+            Resources.Theme theme = getActivity().getTheme();
+            theme.resolveAttribute(R.attr.blackcolor, tV, true);
+            SpannableString s = new SpannableString(getString(R.string.no_packs));
+            s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+            textViewNoPacks.setText(s);
             textViewNoPacks.setVisibility(View.VISIBLE);
         }
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -94,13 +102,16 @@ public class MyPacksFragment extends Fragment{
                 if(!type.equals("share_pack")) {
                     if (mode == "selection") {
                         if(pack.getType().equals("created")){
+                            TypedValue tV = new TypedValue();
+                            Resources.Theme theme = context.getTheme();
+
                         if (!pack.isChecked()) {
-                            // view selected
-                            v.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
+                            theme.resolveAttribute(R.attr.selectedItemColor, tV, true);
+                            v.setBackgroundColor(tV.data);
                             pack.setChecked(true);
                         } else {
-                            // view reselected
-                            v.setBackgroundColor(ContextCompat.getColor(context, R.color.white_gray));
+                            theme.resolveAttribute(R.attr.backgroundcolor, tV, true);
+                            v.setBackgroundColor(tV.data);
                             pack.setChecked(false);
                         }
                             fillRecyclerView();
@@ -138,19 +149,39 @@ public class MyPacksFragment extends Fragment{
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        TypedValue tV = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(R.attr.blackcolor, tV, true);
+
         switch (packLongClicked.getType()) {
             case "created":
-                menu.add(0, MENU_SELECT, 1, R.string.select);
-                menu.add(0, MENU_SHARE, 2, R.string.share_to_community);
-                menu.add(0, MENU_EDIT, 3, R.string.rename);
-                menu.add(0, MENU_DELETE, 4, R.string.delete);
-                menu.add(0, MENU_LEARN, 5, R.string.learn);
+                SpannableString s = new SpannableString(getString(R.string.select));
+                s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+                menu.add(0, MENU_SELECT, 1, s);
+                s = new SpannableString(getString(R.string.share_to_community));
+                s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+                menu.add(0, MENU_SHARE, 2, s);
+                s = new SpannableString(getString(R.string.rename));
+                s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+                menu.add(0, MENU_EDIT, 3, s);
+                s = new SpannableString(getString(R.string.delete));
+                s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+                menu.add(0, MENU_DELETE, 4,s);
+                s = new SpannableString(getString(R.string.learn));
+                s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+                menu.add(0, MENU_LEARN, 5, s);
             break;
             case "downloaded":
             case "owned":
-                menu.add(0, MENU_EDIT, 3, R.string.rename);
-                menu.add(0, MENU_DELETE, 4, R.string.delete);
-                menu.add(0, MENU_LEARN, 5, R.string.learn);
+                s = new SpannableString(getString(R.string.rename));
+                s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+                menu.add(0, MENU_EDIT, 3, s);
+                s = new SpannableString(getString(R.string.delete));
+                s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+                menu.add(0, MENU_DELETE, 4,s);
+                s = new SpannableString(getString(R.string.learn));
+                s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+                menu.add(0, MENU_LEARN, 5, s);
                 break;
         }
     }
@@ -161,7 +192,10 @@ public class MyPacksFragment extends Fragment{
                 packLongClicked.setChecked(true);
                 mode = "selection";
                 refactorToolBarForSelection(true);
-                longPressedView.setBackgroundColor(ContextCompat.getColor(context, R.color.light_gray));
+                TypedValue tV = new TypedValue();
+                Resources.Theme theme = context.getTheme();
+                theme.resolveAttribute(R.attr.selectedItemColor, tV, true);
+                longPressedView.setBackgroundColor(tV.data);
                 break;
             case MENU_SHARE:
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -270,8 +304,6 @@ public class MyPacksFragment extends Fragment{
                 .commit();
     }
 
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) { // добавление пакета
         switch(requestCode) {
@@ -282,6 +314,7 @@ public class MyPacksFragment extends Fragment{
                     if (!dbHelper.doesPackExistByPackName(packName)) {
                         if (packName.trim().length() > 0) {
                             dbHelper.addNewPack(new Pack(packName));
+                            packList.add(new Pack(packName));
                             fillRecyclerView();
                         }
                         else {
@@ -331,6 +364,7 @@ public class MyPacksFragment extends Fragment{
                         }
                     } else {
                         dbHelper.deletePackByPackName(packLongClicked.getPackName());
+                        packList.remove(packLongClicked);
                         fillRecyclerView();
                     }
                 }
@@ -365,6 +399,7 @@ public class MyPacksFragment extends Fragment{
             public void onResponse(String answer) {
                 if(answer.equals("ok")) {
                     dbHelper.deletePackByPackName(packLongClicked.getPackName());
+                    packList.remove(packLongClicked);
                     fillRecyclerView();
                 }
             }

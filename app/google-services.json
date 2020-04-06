@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "699493798150",
+    "firebase_url": "https://pushlearn-1585159445668.firebaseio.com",
+    "project_id": "pushlearn-1585159445668",
+    "storage_bucket": "pushlearn-1585159445668.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:699493798150:android:d2bd36c6dbb3c8c6cace87",
+        "android_client_info": {
+          "package_name": "com.noadam.pushlearn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "699493798150-kg4vu0ie1qrublcp5cm3vfk1kmc52r10.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.noadam.pushlearn",
+            "certificate_hash": "eff98be8665b3b4acfdd5f9d125658289904e0f3"
+          }
+        },
+        {
+          "client_id": "699493798150-2m4mcmcbodhf8tj7os9b6sc5k9jjerm6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxZ7ExT8-uDHSMMwbLYowpdofCXxvf8Ag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "699493798150-2m4mcmcbodhf8tj7os9b6sc5k9jjerm6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
