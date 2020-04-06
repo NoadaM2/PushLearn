@@ -84,6 +84,7 @@ public class MyPacksFragment extends Fragment{
     private void fillRecyclerView() {
         if (!packList.isEmpty()) {
             textViewNoPacks.setVisibility(View.GONE);
+            packListRecyclerView.setVisibility(View.VISIBLE);
         }
         else {
             TypedValue tV = new TypedValue();
@@ -315,7 +316,8 @@ public class MyPacksFragment extends Fragment{
                     if (!dbHelper.doesPackExistByPackName(packName)) {
                         if (packName.trim().length() > 0) {
                             dbHelper.addNewPack(new Pack(packName));
-                            packList.add(new Pack(packName));
+                            packList = dbHelper.getPackList();
+                            packListAdapter.notifyItemInserted(packList.size());
                             fillRecyclerView();
                         }
                         else {
@@ -376,9 +378,9 @@ public class MyPacksFragment extends Fragment{
                     for (Pack pack : packList) {
                         if (pack.isChecked()) {
                             dbHelper.deletePackByPackName(pack.getPackName());
-                            packList.remove(pack);
                         }
                     }
+                    packList = dbHelper.getPackList();
                     mode = "";
                     refactorToolBarForSelection(false);
                     fillRecyclerView();

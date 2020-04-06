@@ -19,6 +19,9 @@ public class DeviceBootReceiver extends BroadcastReceiver {
             // on device boot compelete, reset the alarm
             MenuActivity menuActivity = new MenuActivity();
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putInt("ShownCards", 0);
+            editor.apply();
             menuActivity.sendNotify(true);
         }
     }

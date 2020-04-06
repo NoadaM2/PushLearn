@@ -79,6 +79,7 @@ public class NowLearningFragment extends Fragment {
         cardList = dbHelper.getNowLearningCardList(0);
         if (!cardList.isEmpty()) {
             textViewNoCards.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
         }
         else {
             recyclerView.setVisibility(View.GONE);

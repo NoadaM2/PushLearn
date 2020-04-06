@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -20,6 +21,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
+
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -191,9 +196,18 @@ public class MyProfileFragment extends Fragment {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(0, MENU_DOWNLOAD, 1, R.string.download_to_my_packs);
-        menu.add(0, MENU_EDIT, 2, R.string.edit);
-        menu.add(0, MENU_DELETE, 3, R.string.delete);
+        TypedValue tV = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(R.attr.blackcolor, tV, true);
+        SpannableString s = new SpannableString(getString(R.string.download_to_my_packs));
+        s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+        menu.add(0, MENU_DOWNLOAD, 1, s);
+        s = new SpannableString(getString(R.string.edit));
+        s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+        menu.add(0, MENU_EDIT, 2, s);
+        s = new SpannableString(getString(R.string.delete));
+        s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+        menu.add(0, MENU_DELETE, 3, s);
     }
 
     public boolean onContextItemSelected(MenuItem item) {

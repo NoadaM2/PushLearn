@@ -76,10 +76,12 @@ public class CardsOfPackFragment extends Fragment {
     private void fillRecyclerView() {
         if (!cardList.isEmpty()) {
             textViewNoCards.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
         }
         else {
             textViewNoCards.setText(R.string.no_cards_in_pack);
             textViewNoCards.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
         }
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
             recyclerView.setLayoutManager(layoutManager);
@@ -266,6 +268,7 @@ public class CardsOfPackFragment extends Fragment {
                            if (answer.trim().length() > 0) {
                                 Card card = new Card(packName, question, answer, data.getIntExtra("iteratingTimes", 5));
                                 dbHelper.addNewCard(card);
+                                cardList.add(card);
                                 fillRecyclerView();
                            } else {
                                Toast.makeText(context, R.string.enter_correct_answer, Toast.LENGTH_SHORT).show();
@@ -307,6 +310,7 @@ public class CardsOfPackFragment extends Fragment {
                 if (resultCode == Activity.RESULT_OK) {
                     if (cardLongClicked != null) {
                         dbHelper.deleteCardById(cardLongClicked.get_id());
+                        cardList.remove(cardLongClicked);
                         fillRecyclerView();
                     }
                 }
@@ -318,9 +322,9 @@ public class CardsOfPackFragment extends Fragment {
                     for (Card card : cardList) {
                         if (card.isChecked()) {
                             dbHelper.deleteCardById(card.get_id());
-                            cardList.remove(card);
                         }
                     }
+                    cardList = dbHelper.getCardListByPackName(packName,-1);
                     mode = "";
                     refactorToolBarForSelection(false);
                     fillRecyclerView();
