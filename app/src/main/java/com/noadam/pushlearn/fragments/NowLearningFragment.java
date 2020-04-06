@@ -81,6 +81,7 @@ public class NowLearningFragment extends Fragment {
             textViewNoCards.setVisibility(View.GONE);
         }
         else {
+            recyclerView.setVisibility(View.GONE);
             textViewNoCards.setText(getString(R.string.no_learning_card));
             textViewNoCards.setVisibility(View.VISIBLE);
         }

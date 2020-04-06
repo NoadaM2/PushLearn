@@ -173,7 +173,7 @@
         <CheckBox
             android:id="@+id/terms_and_conditions_checkBox"
             android:layout_width="match_parent"
-                android:buttonTint="?attr/blackcolor"
+                android:buttonTint="?attr/actionColorDark"
             android:layout_height="wrap_content"
                 android:textColor="?attr/blackcolor"
             android:layout_marginStart="16dp"
@@ -227,8 +227,8 @@
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
-            android:backgroundTint="@color/black"
-            app:backgroundTint="@color/black"
+            android:backgroundTint="?attr/colorPrimaryDark"
+            app:backgroundTint="?attr/colorPrimaryDark"
         android:layout_height="wrap_content"
         android:clickable="false"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"

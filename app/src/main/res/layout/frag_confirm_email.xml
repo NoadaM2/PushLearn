@@ -23,6 +23,8 @@
                 android:id="@+id/enter_code_from_your_email_editText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColorHint="@color/gray"
+                android:textColor="?attr/blackcolor"
                 android:hint="@string/enter_code_from_your_email"
                 android:inputType="number"
                 app:layout_constraintEnd_toEndOf="parent"

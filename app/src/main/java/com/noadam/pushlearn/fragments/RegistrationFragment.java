@@ -33,12 +33,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.noadam.pushlearn.R;
+import com.noadam.pushlearn.activities.LearnPackActivity;
+import com.noadam.pushlearn.activities.MenuActivity;
 import com.noadam.pushlearn.activities.SettingsActivity;
 import com.noadam.pushlearn.internet.PushLearnServerCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 import com.vk.sdk.VKSdk;
 
 import java.util.regex.Pattern;
+
+import static android.app.Activity.RESULT_OK;
 
 public class RegistrationFragment extends Fragment {
     private Context context;
@@ -56,6 +60,7 @@ public class RegistrationFragment extends Fragment {
     private GoogleSignInClient mGoogleSignInClient;
 
     final int RC_SIGN_IN = 33;
+    public static final int CLOSE_ACTIVITY = 65;
 
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
@@ -157,7 +162,7 @@ public class RegistrationFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.my_profile_toolbar_settings:
-                startActivity(new SettingsActivity().createIntent(context));
+                startActivityForResult(new SettingsActivity().createIntent(context), CLOSE_ACTIVITY);
                 break;
         }
         return true;
@@ -330,5 +335,19 @@ public class RegistrationFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CLOSE_ACTIVITY) {
+            if (resultCode == RESULT_OK) {
+                getActivity().finish();
+                Intent intent = new Intent(getActivity(), MenuActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("fragment","my_profile");
+                getActivity().finish();
+                startActivity(intent);
+            }
+        }
     }
 }

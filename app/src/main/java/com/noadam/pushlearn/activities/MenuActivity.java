@@ -62,13 +62,25 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.DarkTheme);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if(prefs.getString("theme","Light").equals("Light")) {
+            setTheme(R.style.AppTheme);
+        } else {
+            setTheme(R.style.DarkTheme);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Fragment fragment = new NowLearningFragment();
         //getting bottom navigation view and attaching the listener
+        setInitialSharedPreferences();
+        createNotificationChannel();
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
         dbHelper = new PushLearnDBHelper(getApplicationContext());
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
@@ -77,7 +89,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
         if (intent.hasExtra("fragment")) {
             switch (intent.getStringExtra("fragment")) {
                 case "my_packs":
-                    fragment = new MyPacksFragment();
+                  //  fragment = new MyPacksFragment();
                     navigation.setSelectedItemId(R.id.navigation_myPacks);
                     break;
                 case "my_profile":
@@ -88,21 +100,13 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                     VKSdk.login(this);
                     break;
                 default:
-                    fragment = new NowLearningFragment();
+               //     fragment = new NowLearningFragment();
                     navigation.setSelectedItemId(R.id.navigation_now_learning);
                     break;
             }
+        } else {
+            navigation.setSelectedItemId(R.id.navigation_now_learning);
         }
-        setInitialSharedPreferences();
-        loadFragment(fragment);
-//        addSocialScience();
-//        addTop50EnglishWords();
-        createNotificationChannel();
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-            }
-        });
     }
 
     private void createNotificationChannel() {
@@ -264,6 +268,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             editor.putString("account_rating", "");
             editor.putString("password", "");
             editor.putString("vk_access_token", "");
+            editor.putString("theme", "Light");
             editor.putString("vk_user_id", "");
             editor.putInt("account_language", 0);
             editor.putInt("LearntCards", 0);

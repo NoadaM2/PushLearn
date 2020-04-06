@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.activities.CommunityPackActivity;
+import com.noadam.pushlearn.activities.MenuActivity;
 import com.noadam.pushlearn.activities.SettingsActivity;
 import com.noadam.pushlearn.adapters.MyComPacksAdapter;
 import com.noadam.pushlearn.data.ParserFromJSON;
@@ -52,6 +53,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Random;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class MyProfileFragment extends Fragment {
@@ -283,7 +286,7 @@ public class MyProfileFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.my_profile_toolbar_settings:
-                startActivity(new SettingsActivity().createIntent(context));
+                startActivityForResult(new SettingsActivity().createIntent(context), RegistrationFragment.CLOSE_ACTIVITY);
                 break;
         }
         return true;
@@ -480,7 +483,17 @@ public class MyProfileFragment extends Fragment {
                 break;
             case REQUEST_Permission:
                 if(resultCode == Activity.RESULT_OK){
-                  //  SelectImageFromGallery();
+                    SelectImageFromGallery();
+                }
+                break;
+            case RegistrationFragment.CLOSE_ACTIVITY:
+                if (resultCode == RESULT_OK) {
+                    getActivity().finish();
+                    Intent intent = new Intent(getActivity(), MenuActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("fragment","my_profile");
+                    getActivity().finish();
+                    startActivity(intent);
                 }
                 break;
         }

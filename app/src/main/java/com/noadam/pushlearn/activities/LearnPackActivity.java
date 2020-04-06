@@ -53,7 +53,12 @@ public class LearnPackActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.DarkTheme);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if(prefs.getString("theme","Light").equals("Light")) {
+            setTheme(R.style.AppTheme);
+        } else {
+            setTheme(R.style.DarkTheme);
+        }
         //------------------------------------LAYOUT INITIALIZATION----------------------------------------
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {

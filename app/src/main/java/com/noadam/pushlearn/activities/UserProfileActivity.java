@@ -51,7 +51,12 @@ public class UserProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.DarkTheme);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if(prefs.getString("theme","Light").equals("Light")) {
+            setTheme(R.style.AppTheme);
+        } else {
+            setTheme(R.style.DarkTheme);
+        }
         //------------------------------------LAYOUT INITIALIZATION----------------------------------------
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
@@ -108,7 +113,7 @@ public class UserProfileActivity extends AppCompatActivity {
             noComPacksTextView.setVisibility(View.GONE);
         }
         else {
-            noComPacksTextView.setText(R.string.you_published_no_packs);
+            noComPacksTextView.setText(R.string.user_published_no_packs);
             noComPacksTextView.setVisibility(View.VISIBLE);
         }
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);

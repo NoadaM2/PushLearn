@@ -15,6 +15,8 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -37,7 +39,12 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        setTheme(R.style.DarkTheme);
+        SharedPreferences.Editor editor = prefs.edit();
+        if(prefs.getString("theme","Light").equals("Light")) {
+            setTheme(R.style.AppTheme);
+        } else {
+            setTheme(R.style.DarkTheme);
+        }
         //------------------------------------LAYOUT INITIALIZATION----------------------------------------
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
@@ -134,6 +141,31 @@ public class SettingsActivity extends AppCompatActivity {
                 dialogFrag.show(getFragmentManager().beginTransaction(), DeleteConfirmationDialogFragment.LOG_OUT);
             }
         });
+        //....................................................................................................
+        Switch theme_switch = findViewById(R.id.theme_switch);
+        if(prefs.getString("theme","Light").equals("Light")) {
+            theme_switch.setChecked(false);
+        } else {
+            theme_switch.setChecked(true);
+        }
+        theme_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    editor.putString("theme", "Dark");
+                } else {
+                    editor.putString("theme", "Light");
+                }
+                setResult(RESULT_OK, null);
+                restartActivity();
+                editor.apply();
+            }
+        });
+    }
+
+    private void restartActivity() {
+        startActivity(new SettingsActivity().createIntent(getApplicationContext()));
+        finish();
     }
 
     @Override

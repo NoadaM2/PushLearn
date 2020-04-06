@@ -93,6 +93,7 @@ public class MyPacksFragment extends Fragment{
             s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
             textViewNoPacks.setText(s);
             textViewNoPacks.setVisibility(View.VISIBLE);
+            packListRecyclerView.setVisibility(View.GONE);
         }
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         packListRecyclerView.setLayoutManager(layoutManager);

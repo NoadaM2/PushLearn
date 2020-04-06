@@ -159,4 +159,6 @@
     <string name="pay_once_three_months_12">Pay once three months\n11.99$/3 months\n(3.99$/month)</string>
     <string name="change_nickname">Change nickname</string>
     <string name="pushlearn_settings">PushLearn Settings</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="user_published_no_packs">This user has not published any packs</string>
 </resources>

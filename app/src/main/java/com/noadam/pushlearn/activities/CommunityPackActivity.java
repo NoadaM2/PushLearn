@@ -61,14 +61,19 @@ public class CommunityPackActivity extends AppCompatActivity  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.DarkTheme);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if(prefs.getString("theme","Light").equals("Light")) {
+            setTheme(R.style.AppTheme);
+        } else {
+            setTheme(R.style.DarkTheme);
+        }
         //------------------------------------LAYOUT INITIALIZATION----------------------------------------
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_community_pack);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         context = getApplicationContext();
         dbHelper = new PushLearnDBHelper(context);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String hash = prefs.getString("account_hash","");
         //-----------------------------------INTENT UNPACKING----------------------------------------------------
         Intent intent = getIntent();
