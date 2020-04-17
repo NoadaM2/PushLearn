@@ -262,7 +262,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             editor.putInt("minutesBetweenNotifies", 1);
             editor.putBoolean("firstTime", true);
             editor.putInt("ShownCards", 0);
-            editor.putInt("number_of_notifies_in_bar", 5);
+            editor.putInt("number_of_notifies_in_bar", 3);
             editor.putString("login", "");
             editor.putString("nickname", "");
             editor.putString("account_hash", "");
@@ -273,6 +273,9 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             editor.putString("vk_user_id", "");
             editor.putInt("account_language", 0);
             editor.putInt("LearntCards", 0);
+            editor.putInt("ShownCardsTotal", 0);
+            editor.putInt("Notify_i_know", 0);
+            editor.putInt("Notify_i_dont_know", 0);
             editor.apply();
         }
     }
@@ -327,7 +330,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                 editor.putString("vk_access_token", String.valueOf(res.accessToken));
                 editor.putString("vk_user_id", String.valueOf(res.userId));
                 editor.apply();
-                logInUsingVK(String.valueOf(res.accessToken), res.userId,language_id, "com_packs");
+                logInUsingVK(String.valueOf(res.accessToken), res.userId,language_id, "my_profile");
 // Пользователь успешно авторизовался
             }
             @Override

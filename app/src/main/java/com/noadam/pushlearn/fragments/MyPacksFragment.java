@@ -341,6 +341,7 @@ public class MyPacksFragment extends Fragment{
                         if (packName.trim().length() > 0) {
                             int id = dbHelper.getPackIdByName(packLongClicked.getPackName());
                             dbHelper.setPackNameById(id, packLongClicked.getPackName(), packName);
+                            packList = dbHelper.getPackList();
                             fillRecyclerView();
                         }
                         else {

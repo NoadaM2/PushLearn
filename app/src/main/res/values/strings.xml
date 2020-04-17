@@ -127,10 +127,10 @@
     <string name="pushlearn_premium">PushLearn Premium</string>
     <string name="discover_new_opportunities_with">Discover new opportunities with\n</string>
     <string name="pay_monthly">Pay monthly\n</string>
-    <string name="price_for_1_month">4.99$</string>
-    <string name="price_for_3_months">11.99$\n</string>
+    <string name="price_for_1_month">2.99$</string>
+    <string name="price_for_3_months">5.99$\n</string>
     <string name="pay_once_three_months">Pay once three months\n</string>
-    <string name="price_for_1_month_3_months_subscribe">(3.99$/month)</string>
+    <string name="price_for_1_month_3_months_subscribe">(1.99$/month)</string>
     <string name="first_feature_for_premium">Access to the premium packs</string>
     <string name="second_feature_for_premium">Add more then 3 packs from community</string>
     <string name="third_feature_for_premium">Create more then 5 packs</string>
@@ -161,4 +161,11 @@
     <string name="pushlearn_settings">PushLearn Settings</string>
     <string name="dark_mode">Dark mode</string>
     <string name="user_published_no_packs">This user has not published any packs</string>
+    <string name="days_of_pushlearn_premium">days of PushLearn Premium  <b>?</b></string>
+    <string name="you_are_happy_premium_user">You are happy Premium user!</string>
+    <string name="statistics">Statistics</string>
+    <string name="n_notifications_were_shown">%s cards were shown</string>
+    <string name="you_knew_the_answer_to_n_of_them">You knew the answer to %s of them</string>
+    <string name="you_clicked_i_don_t_know_n_times">You clicked \'I don\'t know\' %s times</string>
+    <string name="totally_you_learnt_n_cards">Totally you learnt %s cards</string>
 </resources>

@@ -54,8 +54,7 @@
             android:layout_marginBottom="24dp"
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf ="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@mipmap/ic_launcher" />
 
@@ -81,15 +80,15 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/my_rating_label_textView"
-            android:textColor="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/rating_double_dot"
-            app:layout_constraintStart_toEndOf="@id/my_avatar_imageView"
-            app:layout_constraintTop_toBottomOf="@id/my_nickname_textView" />
+                android:id="@+id/my_rating_label_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/rating_double_dot"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toEndOf="@id/my_avatar_imageView"
+                app:layout_constraintTop_toBottomOf="@id/my_nickname_textView" />
 
         <TextView
             android:id="@+id/my_rating_number_textView"
@@ -113,6 +112,27 @@
             app:srcCompat="@drawable/ic_star_outlined" />
 
         <TextView
+                android:id="@+id/days_of_premium_number_textView"
+                android:layout_width="wrap_content"
+                android:textColor="@color/colorAccent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toEndOf="@+id/my_avatar_imageView"
+                app:layout_constraintTop_toBottomOf="@+id/my_rating_label_textView" />
+
+        <TextView
+                android:id="@+id/days_of_premium_label_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/days_of_pushlearn_premium"
+                android:textColor="@color/constant_white"
+                app:layout_constraintStart_toEndOf="@+id/days_of_premium_number_textView"
+                app:layout_constraintTop_toBottomOf="@+id/my_rating_label_textView" />
+
+        <TextView
             android:id="@+id/my_number_of_packs_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -121,19 +141,19 @@
             android:text=""
             android:textColor="@color/white"
             app:layout_constraintStart_toEndOf="@id/my_avatar_imageView"
-            app:layout_constraintTop_toBottomOf="@id/my_rating_label_textView" />
+            app:layout_constraintTop_toBottomOf="@id/days_of_premium_number_textView" />
 
         <TextView
-            android:id="@+id/my_packs_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/packs"
-            android:textColor="@color/white"
-            app:layout_constraintStart_toEndOf="@+id/my_number_of_packs_textView"
-            app:layout_constraintTop_toBottomOf="@+id/my_rating_number_textView" />
+                android:id="@+id/my_packs_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="8dp"
+                android:paddingBottom="16dp"
+                android:text="@string/packs"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toEndOf="@+id/my_number_of_packs_textView"
+                app:layout_constraintTop_toBottomOf="@+id/days_of_premium_number_textView" />
 
         <ImageButton
                 android:id="@+id/edit_avatar_imageButton"
@@ -143,6 +163,8 @@
                 app:layout_constraintBottom_toBottomOf="@+id/my_avatar_imageView"
                 app:layout_constraintEnd_toEndOf="@+id/my_avatar_imageView"
                 app:srcCompat="@drawable/ic_edit_white_24dp" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView

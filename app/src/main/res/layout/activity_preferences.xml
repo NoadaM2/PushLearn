@@ -45,8 +45,79 @@
                 android:layout_height="wrap_content"
                 android:background="?attr/backgroundcolor"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/settings_title_constraintLayout">
+
+
+            <TextView
+                    android:id="@+id/statistics_title_textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/statistics"
+                    android:textAppearance="@style/CounterTextLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                    android:id="@+id/number_of_shown_notifies_title_textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/n_notifications_were_shown"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="?attr/blackcolor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/statistics_title_textView" />
+
+
+            <TextView
+                    android:id="@+id/number_of_known_notifies_title_textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/you_knew_the_answer_to_n_of_them"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="?attr/blackcolor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/number_of_shown_notifies_title_textView" />
+
+            <TextView
+                    android:id="@+id/number_of_unknown_notifies_title_textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/you_clicked_i_don_t_know_n_times"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="?attr/blackcolor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/number_of_known_notifies_title_textView" />
+
+            <TextView
+                    android:id="@+id/number_of_learnt_cards_title_textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/totally_you_learnt_n_cards"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="?attr/blackcolor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/number_of_unknown_notifies_title_textView" />
+
 
             <TextView
                     android:id="@+id/app_settings_category_title_textView"
@@ -57,33 +128,21 @@
                     android:text="@string/app_settings"
                     android:textAppearance="@style/CounterTextLabel"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            <View
-                    android:id="@+id/first_line_in_settings"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@color/gray"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/app_settings_category_title_textView" />
+                    app:layout_constraintTop_toBottomOf="@id/number_of_learnt_cards_title_textView" />
 
             <TextView
                     android:id="@+id/number_of_notifies_in_bar_title_textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
                     android:text="@string/how_many_notifies_u_want_to_see"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="?attr/blackcolor"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/first_line_in_settings" />
+                    app:layout_constraintTop_toBottomOf="@+id/app_settings_category_title_textView" />
 
             <TextView
                     android:id="@+id/number_of_notifies_in_bar_summary_textView"
@@ -91,41 +150,28 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="4dp"
-                    android:textColor="@color/gray"
                     android:layout_marginEnd="8dp"
                     android:text="summary"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/gray"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/number_of_notifies_in_bar_title_textView" />
 
-
-
-            <View
-                    android:id="@+id/second_line_in_settings"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@color/gray"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/number_of_notifies_in_bar_summary_textView" />
 
             <TextView
                     android:id="@+id/time_period_between_notifies_title_textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
                     android:text="@string/pref_time_period_between_notifies"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="?attr/blackcolor"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/second_line_in_settings" />
+                    app:layout_constraintTop_toBottomOf="@+id/number_of_notifies_in_bar_summary_textView" />
 
             <TextView
                     android:id="@+id/time_period_between_notifies_summary_textView"
@@ -133,81 +179,44 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="4dp"
-                    android:textColor="@color/gray"
                     android:layout_marginEnd="8dp"
                     android:text="summary"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/gray"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/time_period_between_notifies_title_textView" />
 
-
-            <View
-                    android:id="@+id/third_line_in_settings"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@color/gray"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/time_period_between_notifies_summary_textView" />
 
             <Switch
                     android:id="@+id/theme_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
                     android:text="@string/dark_mode"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="?attr/blackcolor"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/third_line_in_settings" />
+                    app:layout_constraintTop_toBottomOf="@+id/time_period_between_notifies_summary_textView" />
 
-            <View
-                    android:id="@+id/eighth_line_in_settings"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@color/gray"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/theme_switch" />
 
             <TextView
                     android:id="@+id/disable_advertisement_textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
                     android:text="@string/disable_advertisement"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="?attr/blackcolor"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/eighth_line_in_settings" />
-
-
-
-            <View
-                    android:id="@+id/fourth_line_in_settings"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@color/gray"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/disable_advertisement_textView" />
-
+                    app:layout_constraintTop_toBottomOf="@+id/theme_switch" />
 
             <TextView
                     android:id="@+id/account_category_title_textView"
@@ -218,7 +227,7 @@
                     android:text="@string/account_settings"
                     android:textAppearance="@style/CounterTextLabel"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/fourth_line_in_settings" />
+                    app:layout_constraintTop_toBottomOf="@+id/disable_advertisement_textView" />
 
             <!--    <View
                        android:id="@+id/fifth_line_in_settings"
@@ -260,31 +269,19 @@
                        app:layout_constraintStart_toStartOf="parent"
                        app:layout_constraintTop_toBottomOf="@id/change_nickname_title_textView" />-->
 
-            <View
-                    android:id="@+id/sixth_line_in_settings"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@color/gray"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/account_category_title_textView" />
-
             <TextView
                     android:id="@+id/log_out_title_textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
                     android:text="@string/log_out"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="?attr/blackcolor"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/sixth_line_in_settings" />
+                    app:layout_constraintTop_toBottomOf="@+id/account_category_title_textView" />
 
             <TextView
                     android:id="@+id/log_out_summary_textView"
@@ -292,10 +289,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="4dp"
-                    android:textColor="@color/gray"
                     android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="24dp"
                     android:text="@string/exit_the_account"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@color/gray"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/log_out_title_textView" />

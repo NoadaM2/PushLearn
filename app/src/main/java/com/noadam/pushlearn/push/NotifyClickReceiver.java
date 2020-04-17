@@ -42,6 +42,8 @@ public class NotifyClickReceiver extends BroadcastReceiver {
            Card card = dbHelper.getCardByID(cardID);
            NotificationCompat.Builder builder;
            NotificationManagerCompat notificationManager;
+           SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+           SharedPreferences.Editor editor = prefs.edit();
            switch (action) {
                case "show":
                    Intent iKnowAnswerIntent = new Intent(context, NotifyClickReceiver.class);
@@ -87,8 +89,6 @@ public class NotifyClickReceiver extends BroadcastReceiver {
                                .setOnlyAlertOnce(true);
                        notificationManager = NotificationManagerCompat.from(context);
                        notificationManager.notify(cardID, builder.build());
-                       SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                       SharedPreferences.Editor editor = prefs.edit();
                        editor.putInt("LearntCards",  prefs.getInt("LearntCards",0) + 1);
                        editor.apply();
                    } else {
@@ -100,6 +100,8 @@ public class NotifyClickReceiver extends BroadcastReceiver {
                                .setOnlyAlertOnce(true);
                        notificationManager = NotificationManagerCompat.from(context);
                        notificationManager.notify(cardID, builder.build());
+                       editor.putInt("Notify_i_know", prefs.getInt("Notify_i_know",0) + 1);
+                       editor.apply();
                    }
                    new Thread(new Runnable() {
                        @Override
@@ -129,7 +131,8 @@ public class NotifyClickReceiver extends BroadcastReceiver {
                            .setOnlyAlertOnce(true);
                    notificationManager = NotificationManagerCompat.from(context);
                    notificationManager.notify(cardID, builder.build());
-
+                   editor.putInt("Notify_i_dont_know", prefs.getInt("Notify_i_dont_know",0) + 1);
+                   editor.apply();
                    new Thread(new Runnable() {
                        @Override
                        public void run() {

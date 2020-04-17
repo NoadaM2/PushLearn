@@ -1,5 +1,6 @@
 package com.noadam.pushlearn.data;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.noadam.pushlearn.entities.ComCard;
@@ -56,6 +57,39 @@ public class ParserFromJSON {
         return comPacks;
     }
 
+    public ComPack parseJsonComPack(String jsonResponse) {
+        try {
+                JSONObject jsonObject = new JSONObject(jsonResponse);
+                int packID = jsonObject.getInt("pack_id");
+                int userID = jsonObject.getInt("user_id");
+                String packName = jsonObject.getString("name");
+                String packDescription = jsonObject.getString("description");
+                String packAccess = jsonObject.getString("access");
+                int packRating = jsonObject.getInt("rating");
+                int packDirectoryId = jsonObject.getInt("directory_id");
+                int packSubdirectoryID = jsonObject.getInt("subdirectory_id");
+                return new ComPack(packID,userID,packName,packRating,packDescription,packAccess,packDirectoryId,packSubdirectoryID);
+
+        } catch (JSONException err){
+            Log.d("JSON Error", err.toString());
+        }
+        return new ComPack("");
+    }
+
+    public ArrayList<Integer> parseJsonComPacksIDsArray(String jsonResponse) {
+        ArrayList<Integer> comPacksIDs = new ArrayList<Integer>();
+        try {
+            JSONArray jsonarray = new JSONArray(jsonResponse);
+            for (int i = 0; i < jsonarray.length(); i++) {
+                JSONObject jsonObject = jsonarray.getJSONObject(i);
+                comPacksIDs.add(jsonObject.getInt("pack_id"));
+            }
+        } catch (JSONException err){
+            Log.d("JSON Error", err.toString());
+        }
+        return comPacksIDs;
+    }
+
     public ArrayList<Directory> parseJsonDirectoriesArray(String jsonResponse) {
         ArrayList<Directory> directories = new ArrayList<Directory>();
         try {
@@ -101,7 +135,6 @@ public class ParserFromJSON {
             }
         } catch (JSONException err){
             Log.d("JSON Error", err.toString());
-            return null;
         }
         return new Directory(dirID,dirName);
     }

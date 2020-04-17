@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,11 +28,19 @@ import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.settings.SetMaxNumberOfNotifiesInBarDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.settings.SetTimePeriodDialogFragment;
+import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
 public class SettingsActivity extends AppCompatActivity {
 
     private TextView number_of_notifies_in_bar_summary_textView;
+    private TextView number_of_notifies_in_bar_title_textView;
+    private TextView  disable_advertisement_textView;
     private TextView time_period_between_notifies_summary_textView;
+    private TextView number_of_shown_notifies_title_textView;
+    private TextView number_of_known_notifies_title_textView;
+    private TextView number_of_unknown_notifies_title_textView;
+    private TextView number_of_learnt_cards_title_textView;
     private SharedPreferences prefs;
     public static final int LIMIT_NOTIFIES_IN_BAR_DIALOG_RESULT = 1;
     public static final int TIME_BETWEEN_NOTIFIES_DIALOG_RESULT = 2;
@@ -75,12 +84,11 @@ public class SettingsActivity extends AppCompatActivity {
         titleTextView.setText(builder);
         //....................................................................................................
         int count_notifies_in_bar = prefs.getInt("number_of_notifies_in_bar",3);
-        TextView number_of_notifies_in_bar_title_textView = findViewById(R.id.number_of_notifies_in_bar_title_textView);
+        number_of_notifies_in_bar_title_textView = findViewById(R.id.number_of_notifies_in_bar_title_textView);
         number_of_notifies_in_bar_title_textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SetMaxNumberOfNotifiesInBarDialogFragment dialogFrag = SetMaxNumberOfNotifiesInBarDialogFragment.newInstance(count_notifies_in_bar);
-                dialogFrag.show(getFragmentManager(),"");
+                startActivity(new SubscribeActivity().createIntent(getApplicationContext(), 7));
             }
         });
         //....................................................................................................
@@ -89,10 +97,10 @@ public class SettingsActivity extends AppCompatActivity {
         number_of_notifies_in_bar_summary_textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SetMaxNumberOfNotifiesInBarDialogFragment dialogFrag = SetMaxNumberOfNotifiesInBarDialogFragment.newInstance(count_notifies_in_bar);
-                dialogFrag.show(getFragmentManager(),"");
+                startActivity(new SubscribeActivity().createIntent(getApplicationContext(), 7));
             }
         });
+        getPremiumHashResponse(prefs.getString("account_hash",""));
         //....................................................................................................
         int minutesFull = prefs.getInt("minutesBetweenNotifies",1);
         TextView time_period_between_notifies_title_textView = findViewById(R.id.time_period_between_notifies_title_textView);
@@ -116,7 +124,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
         //....................................................................................................
-        TextView disable_advertisement_textView = findViewById(R.id.disable_advertisement_textView);
+        disable_advertisement_textView = findViewById(R.id.disable_advertisement_textView);
         disable_advertisement_textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,6 +169,42 @@ public class SettingsActivity extends AppCompatActivity {
                 editor.apply();
             }
         });
+        //....................................................................................................
+        number_of_shown_notifies_title_textView = findViewById(R.id.number_of_shown_notifies_title_textView);
+        number_of_shown_notifies_title_textView.setText(String.format(getString(R.string.n_notifications_were_shown), "?"));
+        number_of_shown_notifies_title_textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new SubscribeActivity().createIntent(getApplicationContext(), 5));
+            }
+        });
+        //....................................................................................................
+        number_of_known_notifies_title_textView = findViewById(R.id.number_of_known_notifies_title_textView);
+        number_of_known_notifies_title_textView.setText(String.format(getString(R.string.you_knew_the_answer_to_n_of_them), "?"));
+        number_of_known_notifies_title_textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new SubscribeActivity().createIntent(getApplicationContext(), 5));
+            }
+        });
+        //....................................................................................................
+        number_of_unknown_notifies_title_textView = findViewById(R.id.number_of_unknown_notifies_title_textView);
+        number_of_unknown_notifies_title_textView.setText(String.format(getString(R.string.you_clicked_i_don_t_know_n_times), "?"));
+        number_of_unknown_notifies_title_textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new SubscribeActivity().createIntent(getApplicationContext(), 5));
+            }
+        });
+        //....................................................................................................
+        number_of_learnt_cards_title_textView = findViewById(R.id.number_of_learnt_cards_title_textView);
+        number_of_learnt_cards_title_textView.setText(String.format(getString(R.string.totally_you_learnt_n_cards), "?"));
+        number_of_learnt_cards_title_textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new SubscribeActivity().createIntent(getApplicationContext(), 5));
+            }
+        });
     }
 
     private void restartActivity() {
@@ -188,5 +232,45 @@ public class SettingsActivity extends AppCompatActivity {
     public Intent createIntent(Context context) {
         return new Intent(context, SettingsActivity.class);
 
+    }
+
+    private void getPremiumHashResponse(String hash) {
+        PushLearnServerResponse response = new PushLearnServerResponse(this);
+        response.sendGetPremiumByHashResponse(hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String premium) {
+                if(Integer.parseInt(premium) > 0) {
+                    disable_advertisement_textView.setText(getString(R.string.you_are_happy_premium_user));
+                    disable_advertisement_textView.setClickable(false);
+                    int count_notifies_in_bar = prefs.getInt("number_of_notifies_in_bar",3);
+                    number_of_notifies_in_bar_title_textView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            SetMaxNumberOfNotifiesInBarDialogFragment dialogFrag = SetMaxNumberOfNotifiesInBarDialogFragment.newInstance(count_notifies_in_bar);
+                            dialogFrag.show(getFragmentManager(),"");
+                        }
+                    });
+                    number_of_notifies_in_bar_summary_textView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            SetMaxNumberOfNotifiesInBarDialogFragment dialogFrag = SetMaxNumberOfNotifiesInBarDialogFragment.newInstance(count_notifies_in_bar);
+                            dialogFrag.show(getFragmentManager(),"");
+                        }
+                    });
+                    number_of_shown_notifies_title_textView.setText(String.format(getString(R.string.n_notifications_were_shown), String.valueOf(prefs.getInt("ShownCardsTotal",0))));
+                    number_of_known_notifies_title_textView.setText(String.format(getString(R.string.you_knew_the_answer_to_n_of_them), String.valueOf(prefs.getInt("Notify_i_know",0))));
+                    number_of_unknown_notifies_title_textView.setText(String.format(getString(R.string.you_clicked_i_don_t_know_n_times),String.valueOf(prefs.getInt("Notify_i_dont_know",0))));
+                    number_of_learnt_cards_title_textView.setText(String.format(getString(R.string.totally_you_learnt_n_cards), String.valueOf(prefs.getInt("LearntCards",0))));
+                    number_of_shown_notifies_title_textView.setClickable(false);
+                    number_of_known_notifies_title_textView.setClickable(false);
+                    number_of_unknown_notifies_title_textView.setClickable(false);
+                    number_of_learnt_cards_title_textView.setClickable(false);
+                }
+            }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
     }
 }

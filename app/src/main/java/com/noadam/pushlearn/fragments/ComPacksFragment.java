@@ -93,6 +93,14 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
         subdirectorySpinner = view.findViewById(R.id.subdirectory_compacks_spinner);
         getDirectoriesListResponse(getLanguageId(getSystemLanguage()));
         searchInDescriptionCheckBox = view.findViewById(R.id.search_in_pack_description_checkBox);
+        searchInDescriptionCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                currentPage = 0;
+                comPacksAdapter.clearItems();
+                add25Packs();
+            }
+        });
         noComPacksFoundTextView = view.findViewById(R.id.no_packs_by_search_textView);
 
 
@@ -152,18 +160,22 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
     }
 
     private void add25Packs() {
-        if(enableDirectorySearch.isChecked()) {
-            Directory directory = (Directory) directorySpinner.getSelectedItem();
-            int directoryID = directory.getId();
-            if(enableSubDirectorySearch.isChecked()) {
-                SubDirectory subDirectory = (SubDirectory) subdirectorySpinner.getSelectedItem();
-                int subdirectory_id = subDirectory.getId();
-                getPacksByDirectoryIdAndSubDirectoryIdAndPackName(directoryID, subdirectory_id, String.valueOf(enterPackNameEditText.getText()));
+        if(!searchInDescriptionCheckBox.isChecked()) {
+            if (enableDirectorySearch.isChecked()) {
+                Directory directory = (Directory) directorySpinner.getSelectedItem();
+                int directoryID = directory.getId();
+                if (enableSubDirectorySearch.isChecked()) {
+                    SubDirectory subDirectory = (SubDirectory) subdirectorySpinner.getSelectedItem();
+                    int subdirectory_id = subDirectory.getId();
+                    getPacksByDirectoryIdAndSubDirectoryIdAndPackName(directoryID, subdirectory_id, String.valueOf(enterPackNameEditText.getText()));
+                } else {
+                    getPacksByDirectoryIdAndPackName(directoryID, String.valueOf(enterPackNameEditText.getText()));
+                }
             } else {
-                getPacksByDirectoryIdAndPackName(directoryID, String.valueOf(enterPackNameEditText.getText()));
+                getPacksByPackName(String.valueOf(enterPackNameEditText.getText()));
             }
         } else {
-            getPacksByPackName(String.valueOf(enterPackNameEditText.getText()));
+
         }
     }
 
@@ -291,7 +303,7 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
         }
     }
 
-    private void getPacksByDirectoryIdAndSubDirectoryIdAndPackName(int directory_id, int subdirectory_id, String packName) { // TODO Test here
+    private void getPacksByDirectoryIdAndSubDirectoryIdAndPackName(int directory_id, int subdirectory_id, String packName) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
         response.sendGetPacksByDirectoryIdAndSubDirectoryIdAndPackNameResponse(packName, directory_id, subdirectory_id , currentPage, new PushLearnServerCallBack() {
             @Override

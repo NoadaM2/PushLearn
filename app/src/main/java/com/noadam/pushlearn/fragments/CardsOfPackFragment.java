@@ -264,7 +264,7 @@ public class CardsOfPackFragment extends Fragment {
                     String question =  data.getStringExtra("question");
                     String answer =  data.getStringExtra("answer");
                    if (!dbHelper.doesCardExistByQuestionAndAnswer(question,answer)) {
-                       if (question.trim().length() > 0) {                                                                                 // проверка на корректность
+                       if (question.trim().length() > 0) {                                                                               // проверка на корректность
                            if (answer.trim().length() > 0) {
                                 Card card = new Card(packName, question, answer, data.getIntExtra("iteratingTimes", 5));
                                 dbHelper.addNewCard(card);
@@ -295,6 +295,7 @@ public class CardsOfPackFragment extends Fragment {
                     if (question.trim().length() > 0) {                                                                                 // проверка на корректность
                         if (answer.trim().length() > 0) {                                                                               //  question и answer
                             dbHelper.editCardById(id, question, answer, iteratingTimes);
+                            cardList = dbHelper.getCardListByPackName(packName,-1);
                             fillRecyclerView();
                         } else {
                             Toast.makeText(context, R.string.enter_correct_answer, Toast.LENGTH_SHORT).show();

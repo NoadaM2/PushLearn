@@ -164,13 +164,17 @@ public class CommunityPackActivity extends AppCompatActivity  {
         response.sendStarPackByHashResponse(packID, hash, new PushLearnServerCallBack() {
             @Override
             public void onResponse(String value) {
-                dbHelper.addNewPack(new Pack(comPack.getComPackName(),"downloaded", comPack.getComPackID()));
-                for(ComCard card : cardsOfComPackList) {
-                    dbHelper.addNewCard(new Card(comPack.getComPackName(), card.getQuestion(), card.getAnswer()));
+                if(!value.contains("subscription")) {
+                    dbHelper.addNewPack(new Pack(comPack.getComPackName(), "downloaded", comPack.getComPackID()));
+                    for (ComCard card : cardsOfComPackList) {
+                        dbHelper.addNewCard(new Card(comPack.getComPackName(), card.getQuestion(), card.getAnswer()));
+                    }
+                    ratingOfComPackTextView.setText(String.valueOf(Integer.valueOf(String.valueOf(ratingOfComPackTextView.getText())) + 1));
+                    downloadComPack.setImageResource(R.drawable.ic_star_filled_72dp);
+                    comPackStarred = true;
+                } else {
+                    startActivity(new SubscribeActivity().createIntent(context, 2));
                 }
-                ratingOfComPackTextView.setText(String.valueOf(Integer.valueOf(String.valueOf(ratingOfComPackTextView.getText())) + 1));
-                downloadComPack.setImageResource(R.drawable.ic_star_filled_72dp);
-                comPackStarred = true;
             }
             @Override
             public void onError( Throwable t) {
@@ -278,7 +282,7 @@ public class CommunityPackActivity extends AppCompatActivity  {
             @Override
             public void onResponse(String answer) {
                 if(answer.equals("ok")) {
-                    dbHelper.deletePackByPackName(comPack.getComPackName());
+                    dbHelper.deletePackByPackName(dbHelper.getPackByComPackID(comPack.getComPackID()).getPackName());
                     ratingOfComPackTextView.setText(String.valueOf(Integer.valueOf(String.valueOf(ratingOfComPackTextView.getText())) - 1));
                     downloadComPack.setImageResource(R.drawable.ic_star_only_outline_yellow_72dp);
                     comPackStarred = false;

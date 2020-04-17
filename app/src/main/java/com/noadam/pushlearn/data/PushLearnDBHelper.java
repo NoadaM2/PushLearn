@@ -152,15 +152,7 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public int getPackComIDByName(String packName) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT "+ PACK_COLUMN_COM_PACK_ID +" FROM "+ PACK_TABLE_NAME +" WHERE "+PACK_COLUMN_PACK_NAME+" = ?",  new String[]{packName});
-        cursor.moveToFirst();
-        int id = cursor.getInt(0);
-        cursor.close();
-        db.close();
-        return id;
-    }
+
 
     public String getPackTypeByName(String packName) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -207,6 +199,36 @@ public class  PushLearnDBHelper extends SQLiteOpenHelper {
         db.delete(PACK_TABLE_NAME, PACK_COLUMN_PACK_NAME + " = ?", new String[]{packName});
         db.delete(CARD_TABLE_NAME, CARD_COLUMN_PACK_NAME + " = ?", new String[]{packName});
         db.close();
+    }
+
+    public Pack getPackByComPackID(int comPackID) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM "+ PACK_TABLE_NAME +" WHERE "+PACK_COLUMN_COM_PACK_ID+" = ?", new String[]{Integer.toString(comPackID)});
+        Pack pack = null;
+        if (cursor.moveToFirst()) {
+            do {
+               String packName = cursor.getString(cursor.getColumnIndex(PACK_COLUMN_PACK_NAME));
+               String type = cursor.getString(cursor.getColumnIndex(PACK_COLUMN_TYPE));
+                pack = new Pack(packName, type, comPackID);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return pack;
+    }
+
+    public ArrayList<Integer> getPacksComIDsByType(String type) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT "+PACK_COLUMN_COM_PACK_ID+" FROM "+ PACK_TABLE_NAME +" WHERE "+PACK_COLUMN_TYPE+" = ?", new String[]{type});
+        ArrayList<Integer> packComIDs = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                packComIDs.add(cursor.getInt(cursor.getColumnIndex(PACK_COLUMN_COM_PACK_ID)));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return packComIDs;
     }
 
     public List<Pack> getPackList() {

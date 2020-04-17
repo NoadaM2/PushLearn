@@ -40,6 +40,7 @@ import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.activities.CommunityPackActivity;
 import com.noadam.pushlearn.activities.MenuActivity;
 import com.noadam.pushlearn.activities.SettingsActivity;
+import com.noadam.pushlearn.activities.SubscribeActivity;
 import com.noadam.pushlearn.adapters.MyComPacksAdapter;
 import com.noadam.pushlearn.data.ParserFromJSON;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
@@ -69,6 +70,7 @@ public class MyProfileFragment extends Fragment {
     private TextView noMyComPacksTextView;
     private TextView ratingTextView;
     private TextView numberOfPacksTextView;
+    private TextView daysOfPremiumNumberTextView;
     private ImageView avatarImageView;
     private ImageView flagImageView;
     private RecyclerView myComPacksRecyclerView;
@@ -137,6 +139,31 @@ public class MyProfileFragment extends Fragment {
             public void onClick(View v) {
                 if(checkPermission()) {
                     SelectImageFromGallery();
+                }
+            }
+        });
+//--------------------------------------------------------------------------------------------------------------------------------------------------------
+        daysOfPremiumNumberTextView = view.findViewById(R.id.days_of_premium_number_textView);
+        daysOfPremiumNumberTextView.setClickable(false);
+        daysOfPremiumNumberTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Integer.parseInt(daysOfPremiumNumberTextView.getText().toString()) > 0) {
+                    Toast.makeText(context, R.string.you_are_happy_premium_user, Toast.LENGTH_LONG).show();
+                } else {
+                    startActivity(new SubscribeActivity().createIntent(context, 0));
+                }
+            }
+        });
+//--------------------------------------------------------------------------------------------------------------------------------------------------------
+        TextView daysOfPremiumLabelTextView = view.findViewById(R.id.days_of_premium_label_textView);
+        daysOfPremiumLabelTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Integer.parseInt(daysOfPremiumNumberTextView.getText().toString()) > 0) {
+                    Toast.makeText(context, R.string.you_are_happy_premium_user, Toast.LENGTH_LONG).show();
+                } else {
+                    startActivity(new SubscribeActivity().createIntent(context, 0));
                 }
             }
         });
@@ -289,7 +316,79 @@ public class MyProfileFragment extends Fragment {
                 flagImageView.setImageResource(R.drawable.ic_flag_russia);
                 break;
         }
+        getStarredPacksByHashResponse(hash);
         getNickNameByHashResponse(hash);
+        getPremiumHashResponse(hash);
+    }
+
+    private void compareStarredPacks(ArrayList<Integer>my, ArrayList<Integer>server) {
+        Collections.sort(my); Collections.sort(server);
+        for(Integer i : server) {
+            if(my.contains(i)) { my.remove(i); }
+            else {
+                sendSavePackByIDresponse(i);
+            }
+        }
+        for (Integer i : my) {
+           dbHelper.deletePackByPackName(dbHelper.getPackByComPackID(i).getPackName());
+        }
+    }
+
+    private void sendSavePackByIDresponse(int packID) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String hash = prefs.getString("account_hash","");
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendGetComPackByIDResponse(packID, hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String jsonResponse) {
+                ParserFromJSON parser = new ParserFromJSON();
+                ComPack comPack = parser.parseJsonComPack(jsonResponse);
+                if (!dbHelper.doesPackExistByPackName(comPack.getComPackName())) {
+                     dbHelper.addNewPack(new Pack(comPack.getComPackName(), "downloaded", comPack.getComPackID()));
+                } else {
+                    dbHelper.deletePackByPackName(comPack.getComPackName());
+                    dbHelper.addNewPack(new Pack(comPack.getComPackName(), "downloaded", comPack.getComPackID()));
+                }
+                getCardsOfComPackResponse(packID, hash, comPack);
+            }
+            @Override
+            public void onError( Throwable t) {
+
+            }
+        });
+    }
+
+    private void getCardsOfComPackResponse(int packID, String hash, ComPack comPack) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendGetCardsOfComPackByPackIDResponse(packID, hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String value) {
+                ParserFromJSON parser = new ParserFromJSON();
+               ArrayList<ComCard>cardsOfComPackList = parser.parseJsonComCardsArray(value);
+                for (ComCard card : cardsOfComPackList) {
+                    dbHelper.addNewCard(new Card(comPack.getComPackName(), card.getQuestion(), card.getAnswer()));
+                }
+            }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
+    }
+
+    private void getStarredPacksByHashResponse(String hash) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendGetStarredPacksByHashResponse(hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String jsonResponse) {
+                ParserFromJSON parser = new ParserFromJSON();
+                compareStarredPacks(dbHelper.getPacksComIDsByType("downloaded"), parser.parseJsonComPacksIDsArray(jsonResponse));
+            }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -425,6 +524,21 @@ public class MyProfileFragment extends Fragment {
         });
     }
 
+    private void getPremiumHashResponse(String hash) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendGetPremiumByHashResponse(hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String premium) {
+                daysOfPremiumNumberTextView.setText(premium);
+                daysOfPremiumNumberTextView.setClickable(true);
+            }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
+    }
+
     private void setNickNameByHashResponse(String nickName,String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
         response.sendSetNickNameByHashResponse(nickName, hash, new PushLearnServerCallBack() {
@@ -434,8 +548,7 @@ public class MyProfileFragment extends Fragment {
                     Toast.makeText(context, getString(R.string.successful_nickname_change), Toast.LENGTH_LONG).show();
                     setValuesForViews();
                 } else {
-                    // TODO InApp purchase subscribe
-                    Toast.makeText(context, "Покупай подписку", Toast.LENGTH_LONG).show();
+                    startActivity(new SubscribeActivity().createIntent(context, 6));
                 }
             }
             @Override
@@ -525,8 +638,7 @@ public class MyProfileFragment extends Fragment {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         // проверка по запрашиваемому коду
         if (requestCode == REQUEST_Permission) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {

@@ -32,6 +32,8 @@ import android.widget.Toast;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
+import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,10 +52,13 @@ public class LearnPackActivity extends AppCompatActivity {
     private int cardsLearnt;
     private int currentLoop;
     private List<Card> cardList;
+    private Button disableAdvertisementButton;
+    private  AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
         if(prefs.getString("theme","Light").equals("Light")) {
             setTheme(R.style.AppTheme);
         } else {
@@ -146,7 +151,7 @@ public class LearnPackActivity extends AppCompatActivity {
             public void onInitializationComplete(InitializationStatus initializationStatus) {
             }
         });
-       AdView mAdView = findViewById(R.id.adView);
+        mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
       //  mAdView.setVisibility(View.GONE);
         mAdView.loadAd(adRequest);
@@ -157,15 +162,14 @@ public class LearnPackActivity extends AppCompatActivity {
                 Card card;
                 card = cardList.get(0);
                 if (card.getIteratingTimes() == 1) {
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    SharedPreferences.Editor editor = prefs.edit();
                     editor.putInt("LearntCards",  prefs.getInt("LearntCards",0) + 1);
                     editor.apply();
                     Toast.makeText(getApplicationContext(), R.string.congrats_you_learnt_card, Toast.LENGTH_SHORT).show();
                 }
                 dbHelper.editCardById(card.get_id(), card.getQuestion(), card.getAnswer(), card.getIteratingTimes() - 1, true);
                 cardList.remove(0);
-
+                editor.putInt("Notify_i_know",  prefs.getInt("Notify_i_know",0) + 1);
+                editor.apply();
                 Card nextCard;
                 if (cardList.size() < 1) {
                     refreshCardList();
@@ -179,7 +183,6 @@ public class LearnPackActivity extends AppCompatActivity {
                     i_do_not_know_button.setVisibility(View.INVISIBLE);
                 } else {
                     // NO CARD IN PACK TO LEARN
-
                     Intent intent = new Intent(LearnPackActivity.this, MenuActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     switch (mode) {
@@ -203,7 +206,8 @@ public class LearnPackActivity extends AppCompatActivity {
                 Card card = cardList.get(0);
                 dbHelper.editCardById(card.get_id(), card.getQuestion(), card.getAnswer(), card.getIteratingTimes() + 1, true);
                 cardList.remove(0);
-
+                editor.putInt("Notify_i_dont_know",  prefs.getInt("Notify_i_dont_know",0) + 1);
+                editor.apply();
                 Card nextCard;
                 if (cardList.size() < 1) {
                     refreshCardList();
@@ -240,19 +244,20 @@ public class LearnPackActivity extends AppCompatActivity {
             }
         });
 
-        Button disableAdvertisementButton = findViewById(R.id.disable_advertisement_button);
-        if(false) { // TODO Subscribe check here
-            disableAdvertisementButton.setVisibility(View.GONE);
-        } else {
-            disableAdvertisementButton.setOnClickListener(new View.OnClickListener() {
+        disableAdvertisementButton = findViewById(R.id.disable_advertisement_button);
+        String hash = prefs.getString("account_hash","");
+        getPremiumHashResponse(hash);
+        disableAdvertisementButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new SubscribeActivity().createIntent(getApplicationContext(), 8);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     getApplicationContext().startActivity(intent);
+                    editor.putInt("ShownCardsTotal",  prefs.getInt("ShownCardsTotal",0) + 1);
+                    editor.apply();
                 }
             });
-        }
+
     }
 
     private void refreshCardList() {
@@ -285,6 +290,23 @@ public class LearnPackActivity extends AppCompatActivity {
         outState.putString(PACK_NAME, packName);
         outState.putString("mode", mode);
         super.onSaveInstanceState(outState);
+    }
+
+    private void getPremiumHashResponse(String hash) {
+        PushLearnServerResponse response = new PushLearnServerResponse(this);
+        response.sendGetPremiumByHashResponse(hash, new PushLearnServerCallBack() {
+            @Override
+            public void onResponse(String premium) {
+                if(Integer.parseInt(premium) > 0) {
+                    disableAdvertisementButton.setVisibility(View.GONE);
+                    mAdView.setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
     }
 
 }

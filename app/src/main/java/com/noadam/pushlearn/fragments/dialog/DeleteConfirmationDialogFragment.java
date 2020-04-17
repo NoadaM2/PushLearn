@@ -79,6 +79,7 @@ public class DeleteConfirmationDialogFragment extends DialogFragment {
                                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                                         SharedPreferences.Editor editor = prefs.edit();
                                         editor.putString("login", "");
+                                        editor.putString("hash", "");
                                         editor.putString("password", "");
                                         editor.putString("vk_access_token", "");
                                         editor.putString("vk_user_id", "");

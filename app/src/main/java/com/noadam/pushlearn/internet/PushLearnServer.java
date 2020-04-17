@@ -157,4 +157,12 @@ public interface PushLearnServer {
     @Headers("Content-Type: application/json")
     @POST("check_code")
     Call<String> checkEmailVerificationCode(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("get_premium_by_hash")
+    Call<String> checkPremium(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("get_starred_packs_by_hash")
+    Call<String> getStarredPacksByHash(@Body String body);
 }
