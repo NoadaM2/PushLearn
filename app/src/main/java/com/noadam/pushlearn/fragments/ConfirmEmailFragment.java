@@ -17,7 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.app.Fragment;
 
 import com.noadam.pushlearn.R;
-import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
 public class ConfirmEmailFragment extends Fragment {
@@ -61,7 +61,7 @@ public class ConfirmEmailFragment extends Fragment {
 
     private void TryToSignUp(String email, String password, String nickname, int language_id) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendSignUpResponse(email, password,nickname, language_id, new PushLearnServerCallBack() {
+        response.sendSignUpResponse(email, password,nickname, language_id, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 if (value.contains("email_busy")) {
@@ -101,7 +101,7 @@ public class ConfirmEmailFragment extends Fragment {
 
     private void checkEmailVerificationCodeResponse(String email, String code) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.checkEmailVerificationCodeResponse(email,code, new PushLearnServerCallBack() {
+        response.checkEmailVerificationCodeResponse(email,code, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 if(value.equals("ok")) { TryToSignUp(email,password,nickname,language_id);

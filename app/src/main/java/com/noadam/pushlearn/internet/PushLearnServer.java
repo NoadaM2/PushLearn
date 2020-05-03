@@ -165,4 +165,12 @@ public interface PushLearnServer {
     @Headers("Content-Type: application/json")
     @POST("get_starred_packs_by_hash")
     Call<String> getStarredPacksByHash(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("add_directory")
+    Call<String> addDirectoryByHash(@Body String body);
+
+    @Headers("Content-Type: application/json")
+    @POST("add_subdirectory")
+    Call<String> addSubDirectoryByHash(@Body String body);
 }

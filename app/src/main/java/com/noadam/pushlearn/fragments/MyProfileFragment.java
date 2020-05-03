@@ -50,7 +50,7 @@ import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
-import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -265,7 +265,7 @@ public class MyProfileFragment extends Fragment {
 
     private void getCardsOfComPackResponse(int packID, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetCardsOfComPackByPackIDResponse(packID, hash, new PushLearnServerCallBack() {
+        response.sendGetCardsOfComPackByPackIDResponse(packID, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 ParserFromJSON parser = new ParserFromJSON();
@@ -283,7 +283,7 @@ public class MyProfileFragment extends Fragment {
 
     private void deletePackResponse(int id, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendDeletePackByHashAndPackIDResponse(id, hash, new PushLearnServerCallBack() {
+        response.sendDeletePackByHashAndPackIDResponse(id, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String answer) {
                 if(answer.equals("ok")) {
@@ -338,7 +338,7 @@ public class MyProfileFragment extends Fragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String hash = prefs.getString("account_hash","");
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetComPackByIDResponse(packID, hash, new PushLearnServerCallBack() {
+        response.sendGetComPackByIDResponse(packID, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
                 ParserFromJSON parser = new ParserFromJSON();
@@ -360,7 +360,7 @@ public class MyProfileFragment extends Fragment {
 
     private void getCardsOfComPackResponse(int packID, String hash, ComPack comPack) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetCardsOfComPackByPackIDResponse(packID, hash, new PushLearnServerCallBack() {
+        response.sendGetCardsOfComPackByPackIDResponse(packID, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 ParserFromJSON parser = new ParserFromJSON();
@@ -378,7 +378,7 @@ public class MyProfileFragment extends Fragment {
 
     private void getStarredPacksByHashResponse(String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetStarredPacksByHashResponse(hash, new PushLearnServerCallBack() {
+        response.sendGetStarredPacksByHashResponse(hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
                 ParserFromJSON parser = new ParserFromJSON();
@@ -419,7 +419,7 @@ public class MyProfileFragment extends Fragment {
 
     private void setNumberOfComPacksByNickName(String nickname) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetNumberOfComPacksByNickNameResponse(nickname, new PushLearnServerCallBack() {
+        response.sendGetNumberOfComPacksByNickNameResponse(nickname, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -437,7 +437,7 @@ public class MyProfileFragment extends Fragment {
 
     private void setRatingByNickName(String nickname) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetRatingByNickNameResponse(nickname, new PushLearnServerCallBack() {
+        response.sendGetRatingByNickNameResponse(nickname, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -455,7 +455,7 @@ public class MyProfileFragment extends Fragment {
 
     private void setAvatarByNickName(String nickname) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetIdByNickNameResponse(nickname, new PushLearnServerCallBack() {
+        response.sendGetIdByNickNameResponse(nickname, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 ImageLoader imageLoader = ImageLoader.getInstance();
@@ -472,7 +472,7 @@ public class MyProfileFragment extends Fragment {
 
     private void setFlagByNickName(String nickname) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetLanguageIDByNickNameResponse(nickname, new PushLearnServerCallBack() {
+        response.sendGetLanguageIDByNickNameResponse(nickname, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -503,7 +503,7 @@ public class MyProfileFragment extends Fragment {
 
     private void getNickNameByHashResponse(String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetNickNameByHashResponse(hash, new PushLearnServerCallBack() {
+        response.sendGetNickNameByHashResponse(hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String nickName) {
                 nickNameTextView.setText(nickName);
@@ -526,7 +526,7 @@ public class MyProfileFragment extends Fragment {
 
     private void getPremiumHashResponse(String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetPremiumByHashResponse(hash, new PushLearnServerCallBack() {
+        response.sendGetPremiumByHashResponse(hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String premium) {
                 daysOfPremiumNumberTextView.setText(premium);
@@ -541,7 +541,7 @@ public class MyProfileFragment extends Fragment {
 
     private void setNickNameByHashResponse(String nickName,String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendSetNickNameByHashResponse(nickName, hash, new PushLearnServerCallBack() {
+        response.sendSetNickNameByHashResponse(nickName, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String response) {
                 if(response.equals("ok")) {
@@ -560,7 +560,7 @@ public class MyProfileFragment extends Fragment {
 
     private void saveMyComPacksByNickNameResponse(String nickname, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetPacksByNickNameResponse(nickname, hash, new PushLearnServerCallBack() {
+        response.sendGetPacksByNickNameResponse(nickname, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
                 ParserFromJSON parser = new ParserFromJSON();
@@ -686,7 +686,7 @@ public class MyProfileFragment extends Fragment {
 
     private void createPackResponse(String packName, String description, int directory_id, int subdirectory_id, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendCreatePackResponse(packName, description, directory_id, subdirectory_id, hash, new PushLearnServerCallBack() {
+        response.sendCreatePackResponse(packName, description, directory_id, subdirectory_id, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
                 int pack_id = Integer.valueOf(jsonResponse);
@@ -707,7 +707,7 @@ public class MyProfileFragment extends Fragment {
 
     private void createCardResponse(int id_pack, String question, String answer, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendCreateCardResponse(id_pack, question, answer, hash, new PushLearnServerCallBack() {
+        response.sendCreateCardResponse(id_pack, question, answer, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
             }
@@ -720,7 +720,7 @@ public class MyProfileFragment extends Fragment {
 
     private void uploadAvatarResponse(String hash, File file, String filepath) {
         PushLearnServerResponse response = new PushLearnServerResponse(context,"avatar");
-        response.sendUpdateAvatarResponse(hash, file,filepath, new PushLearnServerCallBack() {
+        response.sendUpdateAvatarResponse(hash, file,filepath, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
 

@@ -7,26 +7,19 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.CardsOfComPackAdapter;
 import com.noadam.pushlearn.data.ParserFromJSON;
@@ -35,7 +28,7 @@ import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.ComCard;
 import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Pack;
-import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
 import java.util.ArrayList;
@@ -161,7 +154,7 @@ public class CommunityPackActivity extends AppCompatActivity  {
 
     private void starPack(int packID, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendStarPackByHashResponse(packID, hash, new PushLearnServerCallBack() {
+        response.sendStarPackByHashResponse(packID, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 if(!value.contains("subscription")) {
@@ -185,7 +178,7 @@ public class CommunityPackActivity extends AppCompatActivity  {
 
     private void fillCardsOfComPackListAndRecyclerView(int packID, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetCardsOfComPackByPackIDResponse(packID, hash, new PushLearnServerCallBack() {
+        response.sendGetCardsOfComPackByPackIDResponse(packID, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 ParserFromJSON parser = new ParserFromJSON();
@@ -213,7 +206,7 @@ public class CommunityPackActivity extends AppCompatActivity  {
 
     private void setNickNameByIDResponse(int id) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetNickNameByIDResponse(id, new PushLearnServerCallBack() {
+        response.sendGetNickNameByIDResponse(id, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String nickName) {
                 creatorTextView.setText(nickName);
@@ -228,7 +221,7 @@ public class CommunityPackActivity extends AppCompatActivity  {
 
     private void setDirectoryTextViewResponse(int id) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetDirectoryByIDResponse(id, new PushLearnServerCallBack() {
+        response.sendGetDirectoryByIDResponse(id, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String response) {
                 ParserFromJSON parser = new ParserFromJSON();
@@ -243,7 +236,7 @@ public class CommunityPackActivity extends AppCompatActivity  {
 
     private void setSubDirectoryTextViewResponse(int id) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetSubDirectoryByIDResponse(id, new PushLearnServerCallBack() {
+        response.sendGetSubDirectoryByIDResponse(id, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String response) {
                 ParserFromJSON parser = new ParserFromJSON();
@@ -257,7 +250,7 @@ public class CommunityPackActivity extends AppCompatActivity  {
 
     private void compareUserIdAndHashResponse(String nickname) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetIdByNickNameResponse(nickname, new PushLearnServerCallBack() {
+        response.sendGetIdByNickNameResponse(nickname, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 if(Integer.valueOf(value) == comPack.getComPackOwnerID()) {
@@ -278,7 +271,7 @@ public class CommunityPackActivity extends AppCompatActivity  {
 
     private void unStarPackResponse(int id, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendUnStarPackByHashAndPackIDResponse(id, hash, new PushLearnServerCallBack() {
+        response.sendUnStarPackByHashAndPackIDResponse(id, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String answer) {
                 if(answer.equals("ok")) {
@@ -296,7 +289,7 @@ public class CommunityPackActivity extends AppCompatActivity  {
 
     private void setStarButtonResponse(int packID, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendIfUserStaredPackByHashAndPackIDResponse(packID, hash, new PushLearnServerCallBack() {
+        response.sendIfUserStaredPackByHashAndPackIDResponse(packID, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String answer) {
                 if(answer.equals("no")) {
@@ -315,7 +308,7 @@ public class CommunityPackActivity extends AppCompatActivity  {
 
     private void setLanguageIDByNickName(String nickname) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetLanguageIDByNickNameResponse(nickname, new PushLearnServerCallBack() {
+        response.sendGetLanguageIDByNickNameResponse(nickname, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 switch (value) {

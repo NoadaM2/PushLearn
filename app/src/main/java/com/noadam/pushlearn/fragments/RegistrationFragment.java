@@ -3,15 +3,12 @@ package com.noadam.pushlearn.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import androidx.annotation.Nullable;
 import android.app.Fragment;
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.textfield.TextInputLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -33,10 +30,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.noadam.pushlearn.R;
-import com.noadam.pushlearn.activities.LearnPackActivity;
 import com.noadam.pushlearn.activities.MenuActivity;
 import com.noadam.pushlearn.activities.SettingsActivity;
-import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 import com.vk.sdk.VKSdk;
 
@@ -227,7 +223,7 @@ public class RegistrationFragment extends Fragment {
 
     private void googleSignIn(String token, String nickname, String email, int lang_id, String photoUrl) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendLogInUsingGoogleResponse(token, nickname, email, lang_id, photoUrl, new PushLearnServerCallBack() {
+        response.sendLogInUsingGoogleResponse(token, nickname, email, lang_id, photoUrl, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -262,7 +258,7 @@ public class RegistrationFragment extends Fragment {
 
     private void ifBusyEmail(String email) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendBusyEmailResponse(email, new PushLearnServerCallBack() {
+        response.sendBusyEmailResponse(email, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 if(value.equals("ok")) { ifBusyNickName(NickNameTextInputLayout.getEditText().getText().toString(),email);
@@ -279,7 +275,7 @@ public class RegistrationFragment extends Fragment {
 
     private void getNickNameByHashResponse(String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetNickNameByHashResponse(hash, new PushLearnServerCallBack() {
+        response.sendGetNickNameByHashResponse(hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -296,7 +292,7 @@ public class RegistrationFragment extends Fragment {
 
     private void ifBusyNickName(String nickname, String email) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendBusyNickNameResponse(nickname, new PushLearnServerCallBack() {
+        response.sendBusyNickNameResponse(nickname, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 int language_id = getLanguageId(getSystemLanguage());
@@ -326,7 +322,7 @@ public class RegistrationFragment extends Fragment {
 
     private void sendEmailVerificationCode(String email) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendEmailVerificationCodeResponse(email, new PushLearnServerCallBack() {
+        response.sendEmailVerificationCodeResponse(email, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
             }

@@ -37,6 +37,7 @@
         <activity android:name=".activities.UserProfileActivity" />
         <activity android:name=".activities.SubscribeActivity" />
         <activity android:name=".activities.TopOfUsersActivity" />
+        <activity android:name=".activities.AddCatalogActivity" />
         <receiver android:name=".push.MyReceiver" />
         <receiver android:name=".push.DeviceBootReceiver">
             <intent-filter>

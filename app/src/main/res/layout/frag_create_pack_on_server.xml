@@ -122,17 +122,33 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/description_label_textView" />
 
+    <CheckBox
+            android:id="@+id/accept_PL_rules_in_create_checkBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:buttonTint="?attr/actionColorDark"
+            android:text="@string/i_know_that_my_account_will_be_banned_if_this_title_breaks_the_rules_of_pushlearn_community"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="?attr/blackcolor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/enter_description_editText" />
+
     <ImageButton
             android:id="@+id/create_pack_next_imageButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
             android:layout_marginTop="32dp"
+            android:clickable="false"
             android:layout_marginBottom="32dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/enter_description_editText"
+            app:layout_constraintTop_toBottomOf="@id/accept_PL_rules_in_create_checkBox"
             app:srcCompat="@drawable/ic_right" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

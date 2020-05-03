@@ -18,7 +18,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.widget.Toast;
 
 import com.noadam.pushlearn.R;
-import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
 public class LogInFragment extends Fragment {
@@ -69,7 +69,7 @@ public class LogInFragment extends Fragment {
 
     private void TryToSignIn(String email, String password) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendSignInResponse(email, password, new PushLearnServerCallBack() {
+        response.sendSignInResponse(email, password, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String hash) {
                 if (hash.contains("sign_in")) {

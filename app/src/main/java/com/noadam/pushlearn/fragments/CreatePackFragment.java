@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -28,7 +30,8 @@ import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Directory;
 import com.noadam.pushlearn.entities.SubDirectory;
-import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerDirectoriesListCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
 import java.util.ArrayList;
@@ -86,14 +89,30 @@ public class CreatePackFragment extends Fragment {
         getDirectoriesListResponse(getLanguageId(getSystemLanguage()));
 
 
+
         ImageButton createPackNextImageButton = view.findViewById(R.id.create_pack_next_imageButton);
-        createPackNextImageButton.setOnClickListener(new View.OnClickListener() {
+        createPackNextImageButton.setClickable(false);
+
+        CheckBox acceptPLRulesCheckBox = view.findViewById(R.id.accept_PL_rules_in_create_checkBox);
+        acceptPLRulesCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-              onClickPublishButton();
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    createPackNextImageButton.setClickable(true);
+                } else {
+                    createPackNextImageButton.setClickable(false);
+                }
             }
         });
 
+        createPackNextImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(acceptPLRulesCheckBox.isChecked()) {
+                    onClickPublishButton();
+                }
+            }
+        });
         return view;
     }
 
@@ -113,13 +132,11 @@ public class CreatePackFragment extends Fragment {
 
     private void getDirectoriesListResponse(int language_id) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetDirectoriesResponse(language_id,new PushLearnServerCallBack() {
+        response.sendGetDirectoriesResponse(language_id,new PushLearnServerDirectoriesListCallBack() {
             @Override
-            public void onResponse(String jsonResponse) {
-                ParserFromJSON parser = new ParserFromJSON();
-                directories = parser.parseJsonDirectoriesArray(jsonResponse);
+            public void onResponse(ArrayList<Directory> directories) {
                 ArrayAdapter<Directory> adapter = new ArrayAdapter<Directory>(context,
-                        R.layout.large_text_appereance_textview, directories);
+                R.layout.large_text_appereance_textview, directories);
                 adapter.setDropDownViewResource(R.layout.simple_spinner_my_item);
                 directorySpinner.setAdapter(adapter);
                 if(comPack != null) {
@@ -173,7 +190,7 @@ public class CreatePackFragment extends Fragment {
 
     private void createCardResponse(int id_pack, String question, String answer, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendCreateCardResponse(id_pack, question, answer, hash, new PushLearnServerCallBack() {
+        response.sendCreateCardResponse(id_pack, question, answer, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
             }
@@ -186,7 +203,7 @@ public class CreatePackFragment extends Fragment {
 
     private void getSubDirectoriesListByDirectoryIDResponse(int directory_id) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetSubDirectoriesByDirectoryIDResponse(directory_id, new PushLearnServerCallBack() {
+        response.sendGetSubDirectoriesByDirectoryIDResponse(directory_id, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
                 ParserFromJSON parser = new ParserFromJSON();
@@ -211,7 +228,7 @@ public class CreatePackFragment extends Fragment {
 
     private void createPackResponse(String packName, String description, int directory_id, int subdirectory_id, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendCreatePackResponse(packName, description, directory_id, subdirectory_id, hash, new PushLearnServerCallBack() {
+        response.sendCreatePackResponse(packName, description, directory_id, subdirectory_id, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
                 int pack_id = Integer.valueOf(jsonResponse);
@@ -230,7 +247,7 @@ public class CreatePackFragment extends Fragment {
 
     private void updatePackResponse(int pack_id,String packName, String description, int directory_id, int subdirectory_id, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendUpdatePackResponse(pack_id, packName, description, directory_id, subdirectory_id, hash, new PushLearnServerCallBack() {
+        response.sendUpdatePackResponse(pack_id, packName, description, directory_id, subdirectory_id, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String response) {
                if(response.equals("ok")) {

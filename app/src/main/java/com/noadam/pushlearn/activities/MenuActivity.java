@@ -1,7 +1,6 @@
 package com.noadam.pushlearn.activities;
 
 import android.app.AlarmManager;
-import android.app.FragmentTransaction;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -20,7 +19,6 @@ import com.google.android.gms.ads.initialization.OnInitializationCompleteListene
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 
 import android.util.Log;
 import android.view.MenuItem;
@@ -39,7 +37,7 @@ import com.noadam.pushlearn.fragments.MyPacksFragment;
 import com.noadam.pushlearn.fragments.MyProfileFragment;
 import com.noadam.pushlearn.fragments.NowLearningFragment;
 import com.noadam.pushlearn.fragments.RegistrationFragment;
-import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 import com.noadam.pushlearn.push.MyReceiver;
 import com.vk.sdk.VKAccessToken;
@@ -282,7 +280,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
 
     private void TryToSignIn(String login, String password, String fragment) {
         PushLearnServerResponse response = new PushLearnServerResponse(getApplicationContext());
-        response.sendSignInResponse(login, password, new PushLearnServerCallBack() {
+        response.sendSignInResponse(login, password, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String hash) {
                 if (hash.equals("dont sign_in")) {
@@ -380,7 +378,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
 
     private void logInUsingVK(String token, String user_id, int lang_id, String fragment) {
         PushLearnServerResponse response = new PushLearnServerResponse(getApplicationContext());
-        response.sendLogInUsingVKResponse(token, user_id, lang_id, new PushLearnServerCallBack() {
+        response.sendLogInUsingVKResponse(token, user_id, lang_id, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String hash) {
                 if (hash.equals("not")) {

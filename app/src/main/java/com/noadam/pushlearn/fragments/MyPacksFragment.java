@@ -5,12 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import androidx.annotation.Nullable;
 import android.app.Fragment;
-import androidx.core.content.ContextCompat;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,7 +36,7 @@ import com.noadam.pushlearn.entities.Pack;
 import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.SetIterationTimesDialogFragment;
-import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
 import java.io.IOException;
@@ -398,7 +397,7 @@ public class MyPacksFragment extends Fragment{
 
     private void unStarPackResponse(int id, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendUnStarPackByHashAndPackIDResponse(id, hash, new PushLearnServerCallBack() {
+        response.sendUnStarPackByHashAndPackIDResponse(id, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String answer) {
                 if(answer.equals("ok")) {
@@ -415,7 +414,7 @@ public class MyPacksFragment extends Fragment{
 
     private void TryToSignInToUnStar(String email, String password) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendSignInResponse(email, password, new PushLearnServerCallBack() {
+        response.sendSignInResponse(email, password, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String hash) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -445,7 +444,7 @@ public class MyPacksFragment extends Fragment{
 
     private void logInUsingVKToUnStar(String token, String user_id, int lang_id) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendLogInUsingVKResponse(token, user_id, lang_id, new PushLearnServerCallBack() {
+        response.sendLogInUsingVKResponse(token, user_id, lang_id, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String hash) {
                 if (hash.equals("not")) {
@@ -475,7 +474,7 @@ public class MyPacksFragment extends Fragment{
 
     private void TryToSignInToSharePack(String email, String password, String packName) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendSignInResponse(email, password, new PushLearnServerCallBack() {
+        response.sendSignInResponse(email, password, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String hash) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -506,7 +505,7 @@ public class MyPacksFragment extends Fragment{
 
     private void logInUsingVKToSharePack(String token, String user_id, int lang_id, String packName) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendLogInUsingVKResponse(token, user_id, lang_id, new PushLearnServerCallBack() {
+        response.sendLogInUsingVKResponse(token, user_id, lang_id, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String hash) {
                 if (hash.equals("not")) {

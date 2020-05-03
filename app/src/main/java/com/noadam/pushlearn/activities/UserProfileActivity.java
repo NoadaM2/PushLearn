@@ -6,16 +6,11 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,7 +21,7 @@ import com.noadam.pushlearn.adapters.MyComPacksAdapter;
 import com.noadam.pushlearn.data.ParserFromJSON;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.ComPack;
-import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -151,7 +146,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private void setNumberOfComPacksByNickName(String nickname) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetNumberOfComPacksByNickNameResponse(nickname, new PushLearnServerCallBack() {
+        response.sendGetNumberOfComPacksByNickNameResponse(nickname, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 numberOfPacksTextView.setText(value);
@@ -165,7 +160,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private void setRatingByNickName(String nickname) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetRatingByNickNameResponse(nickname, new PushLearnServerCallBack() {
+        response.sendGetRatingByNickNameResponse(nickname, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 ratingTextView.setText(value);
@@ -179,7 +174,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private void setLanguageIDByNickName(String nickname) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetLanguageIDByNickNameResponse(nickname, new PushLearnServerCallBack() {
+        response.sendGetLanguageIDByNickNameResponse(nickname, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String value) {
                 switch (value) {
@@ -206,7 +201,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private void setNickNameByIDResponse(int id) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetNickNameByIDResponse(id, new PushLearnServerCallBack() {
+        response.sendGetNickNameByIDResponse(id, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String nickName) {
                 nickNameTextView.setText(nickName);
@@ -231,7 +226,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private void fillUserComPacksByNickNameResponse(String nickname, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetPacksByNickNameResponse(nickname, hash, new PushLearnServerCallBack() {
+        response.sendGetPacksByNickNameResponse(nickname, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
                 ParserFromJSON parser = new ParserFromJSON();

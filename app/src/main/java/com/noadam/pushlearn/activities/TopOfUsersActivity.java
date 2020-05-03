@@ -16,12 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.noadam.pushlearn.R;
-import com.noadam.pushlearn.adapters.MyComPacksAdapter;
 import com.noadam.pushlearn.adapters.TopOfUsersAdapter;
 import com.noadam.pushlearn.data.ParserFromJSON;
-import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.User;
-import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
 import java.util.ArrayList;
@@ -88,7 +86,7 @@ public class TopOfUsersActivity extends AppCompatActivity {
 
     private void getTopUsersResponse() {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetTopUsersResponse(new PushLearnServerCallBack() {
+        response.sendGetTopUsersResponse(new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
                 ParserFromJSON parser = new ParserFromJSON();
@@ -103,7 +101,7 @@ public class TopOfUsersActivity extends AppCompatActivity {
 
     private void getPreviousPlacesResponse() {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetPreviousTopUsersResponse(new PushLearnServerCallBack() {
+        response.sendGetPreviousTopUsersResponse(new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
                 ParserFromJSON parser = new ParserFromJSON();

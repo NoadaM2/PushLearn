@@ -59,22 +59,22 @@
             android:layout_marginTop="24dp"
             android:backgroundTint="@color/constant_white"
             android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/add_category_imageButton"
             app:layout_constraintStart_toEndOf="@id/directory_label_compacks_CheckBox"
             app:layout_constraintTop_toBottomOf="@id/search_in_pack_description_checkBox" />
 
-    <Spinner
-            android:id="@+id/subdirectory_compacks_spinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/constant_white"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@id/subdirectory_label_compacks_CheckBox"
-            app:layout_constraintTop_toBottomOf="@id/directory_label_compacks_CheckBox" />
+        <Spinner
+                android:id="@+id/subdirectory_compacks_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/constant_white"
+                app:layout_constraintEnd_toStartOf="@+id/add_subcategory_imageButton"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@id/subdirectory_label_compacks_CheckBox"
+                app:layout_constraintTop_toBottomOf="@id/directory_label_compacks_CheckBox" />
 
         <EditText
                 android:id="@+id/pack_name_EditText"
@@ -114,7 +114,30 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/pack_name_EditText" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageButton
+                android:id="@+id/add_category_imageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:background="@null"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/directory_compacks_spinner"
+                app:layout_constraintTop_toBottomOf="@+id/search_in_pack_description_checkBox"
+                app:srcCompat="@drawable/ic_add_white_24dp" />
+
+        <ImageButton
+                android:id="@+id/add_subcategory_imageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@null"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/directory_compacks_spinner"
+                app:layout_constraintTop_toBottomOf="@+id/directory_label_compacks_CheckBox"
+                app:srcCompat="@drawable/ic_add_white_24dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.noadam.pushlearn.entities.EndLessRecyclerView
             android:id="@+id/com_packs_RecyclerView"

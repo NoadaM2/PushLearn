@@ -1,24 +1,19 @@
 package com.noadam.pushlearn.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,7 +23,7 @@ import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.settings.SetMaxNumberOfNotifiesInBarDialogFragment;
 import com.noadam.pushlearn.fragments.dialog.settings.SetTimePeriodDialogFragment;
-import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -236,7 +231,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void getPremiumHashResponse(String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(this);
-        response.sendGetPremiumByHashResponse(hash, new PushLearnServerCallBack() {
+        response.sendGetPremiumByHashResponse(hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String premium) {
                 if(Integer.parseInt(premium) > 0) {

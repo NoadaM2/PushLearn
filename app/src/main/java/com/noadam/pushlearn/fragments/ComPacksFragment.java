@@ -6,7 +6,6 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import android.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,8 +25,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.noadam.pushlearn.R;
+import com.noadam.pushlearn.activities.AddCatalogActivity;
 import com.noadam.pushlearn.activities.CommunityPackActivity;
-import com.noadam.pushlearn.activities.LearnPackActivity;
 import com.noadam.pushlearn.activities.TopOfUsersActivity;
 import com.noadam.pushlearn.adapters.ComPacksAdapter;
 import com.noadam.pushlearn.data.ParserFromJSON;
@@ -35,9 +34,8 @@ import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Directory;
 import com.noadam.pushlearn.entities.EndLessRecyclerView;
 import com.noadam.pushlearn.entities.SubDirectory;
-import com.noadam.pushlearn.fragments.dialog.CreatePackDialogFragment;
-import com.noadam.pushlearn.fragments.dialog.DeleteConfirmationDialogFragment;
-import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerDirectoriesListCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
 import java.util.ArrayList;
@@ -102,8 +100,6 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
             }
         });
         noComPacksFoundTextView = view.findViewById(R.id.no_packs_by_search_textView);
-
-
         enableSubDirectorySearch = view.findViewById(R.id.subdirectory_label_compacks_CheckBox);
         enableSubDirectorySearch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -135,6 +131,23 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
             @Override
             public void onClick(View v) {
 
+            }
+        });
+        //--------------------------------------------------------------------------------------------------------------------------------------------------------
+        ImageButton add_category_imageButton = view.findViewById(R.id.add_category_imageButton);
+        add_category_imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new AddCatalogActivity().createIntent(context, AddCatalogActivity.CATEGORY,0));
+            }
+        });
+//--------------------------------------------------------------------------------------------------------------------------------------------------------
+        ImageButton add_subcategory_imageButton = view.findViewById(R.id.add_subcategory_imageButton);
+        add_subcategory_imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Directory directory = (Directory) directorySpinner.getSelectedItem();
+                startActivity(new AddCatalogActivity().createIntent(context, "subcategory",directory.getId()));
             }
         });
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -175,7 +188,19 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
                 getPacksByPackName(String.valueOf(enterPackNameEditText.getText()));
             }
         } else {
-
+            if (enableDirectorySearch.isChecked()) {
+                Directory directory = (Directory) directorySpinner.getSelectedItem();
+                int directoryID = directory.getId();
+                if (enableSubDirectorySearch.isChecked()) {
+                    SubDirectory subDirectory = (SubDirectory) subdirectorySpinner.getSelectedItem();
+                    int subdirectory_id = subDirectory.getId();
+                    getPacksByDirectoryIdAndSubDirectoryIdAndPackNameAndDescription(directoryID, subdirectory_id, String.valueOf(enterPackNameEditText.getText()));
+                } else {
+                    getPacksByDirectoryIdAndPackNameAndDescription(directoryID, String.valueOf(enterPackNameEditText.getText()));
+                }
+            } else {
+                getPacksByPackNameAndDescription(String.valueOf(enterPackNameEditText.getText()));
+            }
         }
     }
 
@@ -194,13 +219,11 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
 
     private void getDirectoriesListResponse(int language_id) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetDirectoriesResponse(language_id, new PushLearnServerCallBack() {
+        response.sendGetDirectoriesResponse(language_id, new PushLearnServerDirectoriesListCallBack() {
             @Override
-            public void onResponse(String jsonResponse) {
-                ParserFromJSON parser = new ParserFromJSON();
-               ArrayList<Directory> directories = parser.parseJsonDirectoriesArray(jsonResponse);
+            public void onResponse(ArrayList<Directory> directories) {
                 ArrayAdapter<Directory> adapter = new ArrayAdapter<Directory>(context,
-                        R.layout.large_white_text_appereance_textview, directories);
+                R.layout.large_white_text_appereance_textview, directories);
                 adapter.setDropDownViewResource(R.layout.simple_spinner_my_item);
                 directorySpinner.setAdapter(adapter);
                 directorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -226,7 +249,7 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
 
     private void getSubDirectoriesListByDirectoryIDResponse(int directory_id) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetSubDirectoriesByDirectoryIDResponse(directory_id, new PushLearnServerCallBack() {
+        response.sendGetSubDirectoriesByDirectoryIDResponse(directory_id, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
                 ParserFromJSON parser = new ParserFromJSON();
@@ -239,6 +262,7 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         SubDirectory subDirectory = (SubDirectory) parent.getSelectedItem();
+                        currentPage = 0;
                         comPacksAdapter.clearItems();
                         add25Packs();
                     }
@@ -258,7 +282,7 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
 
     private void getPacksByPackName(String packName) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetPacksByPackNameResponse(packName, currentPage,new PushLearnServerCallBack() {
+        response.sendGetPacksByPackNameResponse(packName, currentPage,new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
                 ParserFromJSON parser = new ParserFromJSON();
@@ -274,7 +298,71 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
 
     private void getPacksByDirectoryIdAndPackName(int directory_id, String packName) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetPacksByDirectoryIdAndPackNameResponse(packName, directory_id, currentPage, new PushLearnServerCallBack() {
+        response.sendGetPacksByDirectoryIdAndPackNameResponse(packName, directory_id, currentPage, new PushLearnServerStringCallBack() {
+            @Override
+            public void onResponse(String jsonResponse) {
+                ParserFromJSON parser = new ParserFromJSON();
+                comPacksAdapter.addItem(parser.parseJsonComPacksArray(jsonResponse));
+                comPacksAdapter.notifyDataSetChanged();
+            }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
+    }
+
+    private void getPacksByDirectoryIdAndSubDirectoryIdAndPackName(int directory_id, int subdirectory_id, String packName) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendGetPacksByDirectoryIdAndSubDirectoryIdAndPackNameResponse(packName, directory_id, subdirectory_id , currentPage, new PushLearnServerStringCallBack() {
+            @Override
+            public void onResponse(String jsonResponse) {
+                ParserFromJSON parser = new ParserFromJSON();
+                comPacksAdapter.addItem(parser.parseJsonComPacksArray(jsonResponse));
+                comPacksAdapter.notifyDataSetChanged();
+            }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
+    }
+
+    private void getPacksByPackNameAndDescription(String packName) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendGetPacksByPackNameAndDescriptionResponse(packName, packName, currentPage,new PushLearnServerStringCallBack() {
+            @Override
+            public void onResponse(String jsonResponse) {
+                ParserFromJSON parser = new ParserFromJSON();
+                comPacksAdapter.addItem(parser.parseJsonComPacksArray(jsonResponse));
+                comPacksAdapter.notifyDataSetChanged();
+            }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
+    }
+
+    private void getPacksByDirectoryIdAndPackNameAndDescription(int directory_id, String packName) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendGetPacksByDirectoryIdAndPackNameAndDescriptionResponse(packName, packName, directory_id, currentPage, new PushLearnServerStringCallBack() {
+            @Override
+            public void onResponse(String jsonResponse) {
+                ParserFromJSON parser = new ParserFromJSON();
+                comPacksAdapter.addItem(parser.parseJsonComPacksArray(jsonResponse));
+                comPacksAdapter.notifyDataSetChanged();
+            }
+            @Override
+            public void onError(Throwable t) {
+
+            }
+        });
+    }
+
+    private void getPacksByDirectoryIdAndSubDirectoryIdAndPackNameAndDescription(int directory_id, int subdirectory_id, String packName) {
+        PushLearnServerResponse response = new PushLearnServerResponse(context);
+        response.sendGetPacksByDirectoryIdAndSubDirectoryIdAndPackNameResponse(packName, packName, directory_id, subdirectory_id , currentPage, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
                 ParserFromJSON parser = new ParserFromJSON();
@@ -301,22 +389,6 @@ public class ComPacksFragment extends Fragment implements EndLessRecyclerView.On
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void getPacksByDirectoryIdAndSubDirectoryIdAndPackName(int directory_id, int subdirectory_id, String packName) {
-        PushLearnServerResponse response = new PushLearnServerResponse(context);
-        response.sendGetPacksByDirectoryIdAndSubDirectoryIdAndPackNameResponse(packName, directory_id, subdirectory_id , currentPage, new PushLearnServerCallBack() {
-            @Override
-            public void onResponse(String jsonResponse) {
-                ParserFromJSON parser = new ParserFromJSON();
-                comPacksAdapter.addItem(parser.parseJsonComPacksArray(jsonResponse));
-                comPacksAdapter.notifyDataSetChanged();
-            }
-            @Override
-            public void onError(Throwable t) {
-
-            }
-        });
     }
 
     @Override

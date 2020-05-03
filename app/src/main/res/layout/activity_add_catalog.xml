@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:background="?attr/backgroundcolor"
+        android:layout_width="fill_parent" android:layout_height="fill_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:background="?attr/backgroundcolor"
+            android:layout_height="match_parent">
+
+        <include
+                android:id="@+id/add_cat_toolbar"
+                layout="@layout/add_options_toolbar" />
+
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/title_input_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="16dp"
+                android:background="?attr/backgroundcolor"
+                android:textColor="?attr/blackcolor"
+                android:textColorHint="@color/gray"
+                app:counterEnabled="true"
+                app:counterMaxLength="15"
+                app:counterTextAppearance="@style/CounterTextLabel"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/add_cat_toolbar">
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/title_editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="15"
+                    android:hint="@string/enter_the_title_here"
+                    android:inputType="text"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:textColor="?attr/blackcolor"
+                    app:counterTextAppearance="@color/colorAccent" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <CheckBox
+                android:id="@+id/accept_PL_rules_checkBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:buttonTint="?attr/actionColorDark"
+                android:text="@string/i_know_that_my_account_will_be_banned_if_this_title_breaks_the_rules_of_pushlearn_community"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="?attr/blackcolor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title_input_layout" />
+
+        <TextView
+                android:id="@+id/only_premium_can_add_label_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/the_title_will_appear_in_community_after_the_verification"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="?attr/blackcolor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/accept_PL_rules_checkBox" />
+
+        <Button
+                android:id="@+id/add_cat_button"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:background="?attr/colorPrimary"
+                android:text="@string/verify_the_title"
+                android:textColor="@color/white"
+                android:clickable="false"
+                app:layout_constraintTop_toBottomOf="@id/only_premium_can_add_label_textView" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

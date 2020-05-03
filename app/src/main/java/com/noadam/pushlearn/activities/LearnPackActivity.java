@@ -6,7 +6,6 @@ import android.content.Intent;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
@@ -18,11 +17,9 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -32,7 +29,7 @@ import android.widget.Toast;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
-import com.noadam.pushlearn.internet.PushLearnServerCallBack;
+import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
 
 import java.util.Collections;
@@ -281,11 +278,6 @@ public class LearnPackActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString(PACK_NAME, packName);
         outState.putString("mode", mode);
@@ -294,7 +286,7 @@ public class LearnPackActivity extends AppCompatActivity {
 
     private void getPremiumHashResponse(String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(this);
-        response.sendGetPremiumByHashResponse(hash, new PushLearnServerCallBack() {
+        response.sendGetPremiumByHashResponse(hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String premium) {
                 if(Integer.parseInt(premium) > 0) {

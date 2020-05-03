@@ -1,17 +1,17 @@
 package com.noadam.pushlearn.internet;
 
 import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.google.gson.Gson;
+import com.noadam.pushlearn.R;
+import com.noadam.pushlearn.data.ParserFromJSON;
 
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.LinkedHashMap;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -25,7 +25,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
-import retrofit2.http.Multipart;
+
 
 
 public class PushLearnServerResponse {
@@ -78,7 +78,7 @@ public class PushLearnServerResponse {
 
     }
 
-    public void sendBusyEmailResponse(String email, PushLearnServerCallBack callback) { // checked stable
+    public void sendBusyEmailResponse(String email, PushLearnServerStringCallBack callback) { // checked stable
         try {
             JSONObject childData = new JSONObject();
             childData.put("email",email);
@@ -108,7 +108,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetNickNameByHashResponse(String hash, PushLearnServerCallBack callback) {
+    public void sendGetNickNameByHashResponse(String hash, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("hash",hash);
@@ -138,7 +138,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetPremiumByHashResponse(String hash, PushLearnServerCallBack callback) {
+    public void sendGetPremiumByHashResponse(String hash, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("hash",hash);
@@ -167,7 +167,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetStarredPacksByHashResponse(String hash, PushLearnServerCallBack callback) {
+    public void sendGetStarredPacksByHashResponse(String hash, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("hash",hash);
@@ -175,7 +175,7 @@ public class PushLearnServerResponse {
             finalObject.put("type", "get_starred_packs_by_hash");
             finalObject.put("object", childData);
 
-            Call<String> userCall = apiInterface.checkPremium(finalObject.toString());
+            Call<String> userCall = apiInterface.getStarredPacksByHash(finalObject.toString());
             userCall.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
@@ -196,7 +196,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendStarPackByHashResponse(int packID, String hash, PushLearnServerCallBack callback) {
+    public void sendStarPackByHashResponse(int packID, String hash, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("hash",hash);
@@ -226,7 +226,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetComPackByIDResponse(int packID, String hash, PushLearnServerCallBack callback) {
+    public void sendGetComPackByIDResponse(int packID, String hash, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("hash",hash);
@@ -256,7 +256,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendIfUserStaredPackByHashAndPackIDResponse(int packID, String hash, PushLearnServerCallBack callback) {
+    public void sendIfUserStaredPackByHashAndPackIDResponse(int packID, String hash, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("hash", hash);
@@ -286,7 +286,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendUnStarPackByHashAndPackIDResponse(int packID, String hash, PushLearnServerCallBack callback) {
+    public void sendUnStarPackByHashAndPackIDResponse(int packID, String hash, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("hash", hash);
@@ -317,7 +317,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendDeletePackByHashAndPackIDResponse(int packID, String hash, PushLearnServerCallBack callback) {
+    public void sendDeletePackByHashAndPackIDResponse(int packID, String hash, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("hash", hash);
@@ -348,7 +348,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetNickNameByIDResponse(int id, PushLearnServerCallBack callback) {
+    public void sendGetNickNameByIDResponse(int id, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("id",id);
@@ -378,7 +378,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetSubDirectoriesByDirectoryIDResponse(int directory_id, PushLearnServerCallBack callback) {
+    public void sendGetSubDirectoriesByDirectoryIDResponse(int directory_id, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("id_directory", directory_id);
@@ -407,7 +407,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetSubDirectoryByIDResponse(int subdirectory_id, PushLearnServerCallBack callback) {
+    public void sendGetSubDirectoryByIDResponse(int subdirectory_id, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("id_subdirectory", subdirectory_id);
@@ -436,7 +436,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetDirectoryByIDResponse(int directory_id, PushLearnServerCallBack callback) {
+    public void sendGetDirectoryByIDResponse(int directory_id, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("id_directory", directory_id);
@@ -465,7 +465,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendSetNickNameByHashResponse(String nickname, String hash, PushLearnServerCallBack callback) {
+    public void sendSetNickNameByHashResponse(String nickname, String hash, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("nickname", nickname);
@@ -495,7 +495,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetIdByNickNameResponse(String nickname, PushLearnServerCallBack callback) {
+    public void sendGetIdByNickNameResponse(String nickname, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("nickname", nickname);
@@ -524,7 +524,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendCreatePackResponse(String packName,String description, int directory_id, int subdirectory_id,String hash, PushLearnServerCallBack callback) {
+    public void sendCreatePackResponse(String packName, String description, int directory_id, int subdirectory_id,String hash, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("name", packName);
@@ -558,7 +558,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendUpdatePackResponse(int packID, String packName,String description, int directory_id, int subdirectory_id,String hash, PushLearnServerCallBack callback) {
+    public void sendUpdatePackResponse(int packID, String packName,String description, int directory_id, int subdirectory_id,String hash, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("id_pack", packID);
@@ -593,7 +593,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendCreateCardResponse(int id_pack,String question,String answer, String hash, PushLearnServerCallBack callback) {
+    public void sendCreateCardResponse(int id_pack,String question,String answer, String hash, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("id_pack", id_pack);
@@ -625,7 +625,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetDirectoriesResponse(int language_id, PushLearnServerCallBack callback) {
+    public void sendGetDirectoriesResponse(int language_id, PushLearnServerDirectoriesListCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("language_id", language_id);
@@ -639,7 +639,8 @@ public class PushLearnServerResponse {
                 public void onResponse(Call<String> call, Response<String> response) {
                     if (response != null) {
                         String a = response.body();
-                        callback.onResponse(a);
+                        ParserFromJSON parser = new ParserFromJSON();
+                        callback.onResponse(parser.parseJsonDirectoriesArray(a));
                     }
                 }
                 @Override
@@ -654,7 +655,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetTopUsersResponse(PushLearnServerCallBack callback) {
+    public void sendGetTopUsersResponse(PushLearnServerStringCallBack callback) {
         try {
             JSONObject finalObject = new JSONObject();
             finalObject.put("type", "get_top_users");
@@ -680,7 +681,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetPreviousTopUsersResponse(PushLearnServerCallBack callback) {
+    public void sendGetPreviousTopUsersResponse(PushLearnServerStringCallBack callback) {
         try {
             JSONObject finalObject = new JSONObject();
             finalObject.put("type", "get_previous_top");
@@ -706,7 +707,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendEmailVerificationCodeResponse(String email,PushLearnServerCallBack callback) {
+    public void sendEmailVerificationCodeResponse(String email, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("email",email);
@@ -735,7 +736,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void checkEmailVerificationCodeResponse(String email,String code,PushLearnServerCallBack callback) {
+    public void checkEmailVerificationCodeResponse(String email, String code, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("email",email);
@@ -765,7 +766,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetCardsOfComPackByPackIDResponse(int packID, String hash, PushLearnServerCallBack callback) {
+    public void sendGetCardsOfComPackByPackIDResponse(int packID, String hash, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("hash", hash);
@@ -795,7 +796,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetPacksByNickNameResponse(String nickname, String hash, PushLearnServerCallBack callback) {
+    public void sendGetPacksByNickNameResponse(String nickname, String hash, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("hash", hash);
@@ -825,7 +826,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetPacksByPackNameResponse(String packname, int page, PushLearnServerCallBack callback) {
+    public void sendGetPacksByPackNameResponse(String packname, int page, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("string", packname);
@@ -855,7 +856,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetPacksByDirectoryIdAndPackNameResponse(String packname,int directory_id, int page, PushLearnServerCallBack callback) {
+    public void sendGetPacksByDirectoryIdAndPackNameResponse(String packname,int directory_id, int page, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("string", packname);
@@ -885,7 +886,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetPacksByDirectoryIdAndSubDirectoryIdAndPackNameResponse(String packname, int directory_id,  int subdirectory_id, int page, PushLearnServerCallBack callback) {
+    public void sendGetPacksByDirectoryIdAndSubDirectoryIdAndPackNameResponse(String packname, int directory_id,  int subdirectory_id, int page, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("string", packname);
@@ -917,7 +918,102 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendBusyNickNameResponse(String nickname, PushLearnServerCallBack callback) {
+    public void sendGetPacksByPackNameAndDescriptionResponse(String packname, String description, int page, PushLearnServerStringCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("packname", packname);
+            childData.put("description", description);
+            childData.put("offset", page);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "get_packs_by_description_and_packname");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.getPacksByPackName(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendGetPacksByDirectoryIdAndPackNameAndDescriptionResponse(String packname, String description, int directory_id, int page, PushLearnServerStringCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("string", packname);
+            childData.put("description", description);
+            childData.put("id_directory", directory_id);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "get_packs_by_directory_id_and_packname_and_description");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.getPacksByDirectoryIdAndPackName(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendGetPacksByDirectoryIdAndSubDirectoryIdAndPackNameResponse(String packname, String description, int directory_id,  int subdirectory_id, int page, PushLearnServerStringCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("string", packname);
+            childData.put("description", description);
+            childData.put("id_directory", directory_id);
+            childData.put("offset", page);
+            childData.put("id_subdirectory", subdirectory_id);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "get_packs_by_directory_id_and_subdirectory_id_and_packname_and_description");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.getPacksByDirectoryIdAndSubDirectoryIdAndPackName(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                Log.v("SERVER  ERROR", t+"");
+            }
+        });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendBusyNickNameResponse(String nickname, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("nickname", nickname);
@@ -947,7 +1043,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetNumberOfComPacksByNickNameResponse(String nickname, PushLearnServerCallBack callback) {
+    public void sendGetNumberOfComPacksByNickNameResponse(String nickname, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("nickname", nickname);
@@ -977,7 +1073,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetRatingByNickNameResponse(String nickname, PushLearnServerCallBack callback) {
+    public void sendGetRatingByNickNameResponse(String nickname, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("nickname", nickname);
@@ -1006,7 +1102,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendGetLanguageIDByNickNameResponse(String nickname, PushLearnServerCallBack callback) {
+    public void sendGetLanguageIDByNickNameResponse(String nickname, PushLearnServerStringCallBack callback) {
         try {
             JSONObject childData = new JSONObject();
             childData.put("nickname", nickname);
@@ -1035,7 +1131,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendSignInResponse(String login, String password, PushLearnServerCallBack callback) { // checked stable
+    public void sendSignInResponse(String login, String password, PushLearnServerStringCallBack callback) { // checked stable
         try {
             JSONObject childData = new JSONObject();
             childData.put("email",login);
@@ -1065,7 +1161,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendSignUpResponse(String email, String password, String nickname, int language_id, PushLearnServerCallBack callback) { // checked stable
+    public void sendSignUpResponse(String email, String password, String nickname, int language_id, PushLearnServerStringCallBack callback) { // checked stable
         try {
             JSONObject childData = new JSONObject();
             childData.put("email",email);
@@ -1097,7 +1193,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendLogInUsingVKResponse(String token, String vk_id, int lang_id, PushLearnServerCallBack callback) { // checked stable
+    public void sendLogInUsingVKResponse(String token, String vk_id, int lang_id, PushLearnServerStringCallBack callback) { // checked stable
         try {
             JSONObject childData = new JSONObject();
             childData.put("token",token);
@@ -1128,7 +1224,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendLogInUsingGoogleResponse(String token, String nickname, String email, int lang_id, String photoUrl, PushLearnServerCallBack callback) { // checked stable
+    public void sendLogInUsingGoogleResponse(String token, String nickname, String email, int lang_id, String photoUrl, PushLearnServerStringCallBack callback) { // checked stable
         try {
             JSONObject childData = new JSONObject();
             childData.put("id_token",token);
@@ -1161,7 +1257,7 @@ public class PushLearnServerResponse {
         }
     }
 
-    public void sendUpdateAvatarResponse(String hash, File avatar,String filename, PushLearnServerCallBack callback) {
+    public void sendUpdateAvatarResponse(String hash, File avatar,String filename, PushLearnServerStringCallBack callback) {
         RequestBody rb =  RequestBody.create(MediaType.parse("multipart/form-data"), avatar);
         RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("uploadfile",filename, rb)
@@ -1183,4 +1279,74 @@ public class PushLearnServerResponse {
                 }
             });
     }
+
+    public void sendCreateDirectoryByHashResponse(String directory, String hash, PushLearnServerStringCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("directory", directory);
+            childData.put("hash", hash);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "add_directory");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.addDirectoryByHash(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                    Log.v("SERVER  ERROR", t+"");
+                }
+            });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendCreateSubDirectoryByHashResponse(String subdirectory,int directory_id, String hash, PushLearnServerStringCallBack callback) {
+        try {
+            JSONObject childData = new JSONObject();
+            childData.put("directory_id", directory_id);
+            childData.put("subdirectory", subdirectory);
+            childData.put("hash", hash);
+            JSONObject finalObject = new JSONObject();
+            finalObject.put("type", "add_subdirectory");
+            finalObject.put("object", childData);
+
+            Call<String> userCall = apiInterface.addSubDirectoryByHash(finalObject.toString());
+            userCall.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response != null) {
+                        String a = response.body();
+                        callback.onResponse(a);
+                    }
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    callback.onError(t);
+                    Log.v("SERVER  ERROR", t+"");
+                }
+            });
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+   /* private void onFailureInternet(Throwable t){
+        if (t instanceof IOException) {
+            Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_LONG).show();
+            // logging probably not necessary
+        }
+        else {
+            //  Toast.makeText(getApplicationContext(), "conversion issue! big problems :(", Toast.LENGTH_SHORT).show();
+        }
+    }*/
 }
