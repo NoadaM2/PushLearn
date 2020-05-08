@@ -29,7 +29,7 @@ import com.noadam.pushlearn.activities.AddCatalogActivity;
 import com.noadam.pushlearn.activities.CommunityPackActivity;
 import com.noadam.pushlearn.activities.TopOfUsersActivity;
 import com.noadam.pushlearn.adapters.ComPacksAdapter;
-import com.noadam.pushlearn.data.ParserFromJSON;
+import com.noadam.pushlearn.logic.ParserFromJSON;
 import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Directory;
 import com.noadam.pushlearn.entities.EndLessRecyclerView;

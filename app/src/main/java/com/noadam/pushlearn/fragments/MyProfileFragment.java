@@ -39,10 +39,11 @@ import android.widget.Toast;
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.activities.CommunityPackActivity;
 import com.noadam.pushlearn.activities.MenuActivity;
+import com.noadam.pushlearn.activities.PublishPackActivity;
 import com.noadam.pushlearn.activities.SettingsActivity;
 import com.noadam.pushlearn.activities.SubscribeActivity;
 import com.noadam.pushlearn.adapters.MyComPacksAdapter;
-import com.noadam.pushlearn.data.ParserFromJSON;
+import com.noadam.pushlearn.logic.ParserFromJSON;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.ComCard;
@@ -129,7 +130,7 @@ public class MyProfileFragment extends Fragment {
         editNickName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startChangeNickNameDialogFragment();
+                startChangeNickNameDialogFragment(Integer.parseInt(daysOfPremiumNumberTextView.getText().toString()));
             }
         });
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -176,11 +177,15 @@ public class MyProfileFragment extends Fragment {
         return view;
     }
 
-    private void startChangeNickNameDialogFragment(){
+    private void startChangeNickNameDialogFragment(int premium){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String nickname = prefs.getString("nickname","");
         CreatePackDialogFragment dialogFrag = CreatePackDialogFragment.newInstance(nickname);
-        dialogFrag.setTargetFragment(this, 3);
+        if(premium > 0) {
+            dialogFrag.setTargetFragment(this, 4);
+        } else {
+            dialogFrag.setTargetFragment(this, 3);
+        }
         dialogFrag.show(getFragmentManager().beginTransaction(), "");
     }
 
@@ -255,9 +260,7 @@ public class MyProfileFragment extends Fragment {
                 }
                 break;
             case MENU_EDIT:
-                CreatePackFragment frag = new CreatePackFragment();
-                frag.setBaseComPack(longClickedComPack);
-                loadFragment(frag);
+                startActivity(new PublishPackActivity().createIntent(context, longClickedComPack));
                 break;
         }
         return true;

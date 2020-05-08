@@ -1,4 +1,4 @@
-package com.noadam.pushlearn.data;
+package com.noadam.pushlearn.logic;
 
 import android.content.Context;
 import android.util.Log;

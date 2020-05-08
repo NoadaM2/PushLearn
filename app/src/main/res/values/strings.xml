@@ -112,7 +112,8 @@
     <string name="pushlearn_community">PushLearn Community</string>
     <string name="enter_your_password">Enter your password</string>
     <string name="welcome_back_to_PL_communtity">Welcome back to PushLearn communtity!</string>
-    <string name="edit_nickname">Premium users can change their nickname more then one time</string>
+    <string name="edit_nickname">You can change the nickname only once without premium</string>
+    <string name="edit_nickname_for_premium">Premium users can change their nickname more then one time</string>
     <integer name="com_vk_sdk_AppId">7369006</integer>
     <string name="successful_nickname_change">You have changed your nickname successfully!</string>
     <string name="nickname_should_be_less_than_15">The length of nickname should be less than 15 symbols</string>
@@ -169,7 +170,7 @@
     <string name="you_clicked_i_don_t_know_n_times">You clicked \'I don\'t know\' %s times</string>
     <string name="totally_you_learnt_n_cards">Totally you learnt %s cards</string>
     <string name="enter_the_title_here">Enter the title here</string>
-    <string name="i_know_that_my_account_will_be_banned_if_this_title_breaks_the_rules_of_pushlearn_community">I know that my <b> account will be banned </b> if this title breaks the <b> Rules of PushLearn Community </b></string>
+    <string name="i_know_that_my_account_will_be_banned_if_this_title_breaks_the_rules_of_pushlearn_community">I know that my <b>account will be banned</b> if this title breaks the <b>Rules of PushLearn Community</b></string>
     <string name="only_premiun_users_can_add_categories">Only Premium Users can add categories and subcategories without verification</string>
     <string name="the_title_will_appear_in_community_after_the_verification">The title will appear in community after the verification by our moderator \n\nOnly Premium Users can add categories and subcategories without verification</string>
     <string name="add_category">Add category</string>

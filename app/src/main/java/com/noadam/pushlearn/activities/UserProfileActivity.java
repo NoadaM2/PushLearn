@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.MyComPacksAdapter;
-import com.noadam.pushlearn.data.ParserFromJSON;
+import com.noadam.pushlearn.logic.ParserFromJSON;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;

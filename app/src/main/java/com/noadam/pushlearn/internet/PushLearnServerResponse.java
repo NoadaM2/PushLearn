@@ -2,16 +2,13 @@ package com.noadam.pushlearn.internet;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.noadam.pushlearn.R;
-import com.noadam.pushlearn.data.ParserFromJSON;
+import com.noadam.pushlearn.logic.ParserFromJSON;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;

@@ -124,6 +124,33 @@ public class CreatePackDialogFragment extends DialogFragment {
                             }
                         });
                 break;
+            case 4:  // Edit nick name for premium
+                tV = new TypedValue();
+                theme = getActivity().getTheme();
+                theme.resolveAttribute(R.attr.blackcolor, tV, true);
+                s = new SpannableString(getString(R.string.edit_nickname_for_premium));
+                s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+                builder.setView(view)
+                        .setTitle(s)
+                        .setPositiveButton(R.string.ok,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        if(String.valueOf(packNameEditText.getText()).length() <= 15) {
+                                            Intent intent = getActivity().getIntent();
+                                            intent.putExtra("nickName", String.valueOf(packNameEditText.getText()));
+                                            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                                        } else {
+                                            Toast.makeText(getActivity(), getString(R.string.nickname_should_be_less_than_15), Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                }
+                        )
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
+                            }
+                        });
+                break;
         }
         AlertDialog alert = builder.create();
         TypedValue tV = new TypedValue();

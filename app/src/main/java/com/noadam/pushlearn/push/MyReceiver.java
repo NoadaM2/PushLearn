@@ -49,7 +49,7 @@ public class MyReceiver extends BroadcastReceiver {
             dbHelper.editCardById(pushCard.get_id(), pushCard.getQuestion(), pushCard.getAnswer(), pushCard.getIteratingTimes(), pushCard.getShown());
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt("ShownCards", shownCards + 1);
-            editor.putInt("ShownCardsTotal", prefs.getInt("ShownCards",0) + 1);
+            editor.putInt("ShownCardsTotal", prefs.getInt("ShownCardsTotal",0) + 1);
             editor.apply();
         }
     }

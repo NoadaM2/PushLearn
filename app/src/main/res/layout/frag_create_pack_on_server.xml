@@ -6,149 +6,160 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="fill_parent" android:layout_height="fill_parent">
 
-<androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:background="?attr/backgroundcolor"
-        android:layout_height="wrap_content">
-
-    <include
-            android:id="@+id/create_pack_toolbar"
-            layout="@layout/add_options_toolbar" />
-
-    <TextView
-            android:id="@+id/packName_double_dot_textView"
-            android:layout_width="wrap_content"
-            android:textColor="?attr/blackcolor"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="32dp"
-            android:text="@string/title_double_dot"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/create_pack_toolbar" />
-
-    <EditText
-            android:id="@+id/enter_title_editText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textColor="?attr/blackcolor"
-            android:textColorHint="@color/gray"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="8dp"
-            android:hint="@string/enter_title"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/packName_double_dot_textView"
-            app:layout_constraintTop_toBottomOf="@+id/create_pack_toolbar" />
-
-    <TextView
-            android:id="@+id/subdirectory_label_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="?attr/blackcolor"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
-            android:text="@string/subcategory_double_dot"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/directory_label_textView" />
-
-    <TextView
-            android:id="@+id/description_label_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
-            android:textColor="?attr/blackcolor"
-            android:text="@string/description_double_dot"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/subdirectory_label_textView" />
-
-    <Spinner
-            android:id="@+id/subdirectory_spinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:textColor="?attr/blackcolor"
-            android:layout_marginTop="24dp"
-            android:backgroundTint="?attr/blackcolor"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@id/subdirectory_label_textView"
-            app:layout_constraintTop_toBottomOf="@+id/directory_label_textView" />
-
-    <TextView
-            android:id="@+id/directory_label_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="?attr/blackcolor"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
-            android:text="@string/category_double_dot"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/enter_title_editText" />
-
-
-    <Spinner
-            android:id="@+id/directory_spinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="?attr/blackcolor"
-            android:layout_marginStart="16dp"
-            android:backgroundTint="?attr/blackcolor"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/directory_label_textView"
-            app:layout_constraintTop_toBottomOf="@+id/enter_title_editText" />
-
-    <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/enter_description_editText"
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:textColor="?attr/blackcolor"
-            android:textColorHint="@color/gray"
-            app:counterEnabled="true"
-            app:counterMaxLength="255"
-            android:layout_marginTop="16dp"
-            android:hint="@string/enter_pack_description"
-            android:layout_marginEnd="8dp"
-            android:inputType="textMultiLine"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/description_label_textView" />
+            android:background="?attr/backgroundcolor"
+            android:layout_height="wrap_content">
 
-    <CheckBox
-            android:id="@+id/accept_PL_rules_in_create_checkBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:buttonTint="?attr/actionColorDark"
-            android:text="@string/i_know_that_my_account_will_be_banned_if_this_title_breaks_the_rules_of_pushlearn_community"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="?attr/blackcolor"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/enter_description_editText" />
+        <include
+                android:id="@+id/create_pack_toolbar"
+                layout="@layout/add_options_toolbar" />
 
-    <ImageButton
-            android:id="@+id/create_pack_next_imageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:layout_marginTop="32dp"
-            android:clickable="false"
-            android:layout_marginBottom="32dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/accept_PL_rules_in_create_checkBox"
-            app:srcCompat="@drawable/ic_right" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+                android:id="@+id/packName_double_dot_textView"
+                android:layout_width="wrap_content"
+                android:textColor="?attr/blackcolor"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="32dp"
+                android:paddingBottom="12dp"
+                android:text="@string/title_double_dot"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/create_pack_toolbar" />
+
+        <EditText
+                android:id="@+id/enter_title_editText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textColor="?attr/blackcolor"
+                android:paddingBottom="12dp"
+                android:textColorHint="@color/gray"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:hint="@string/enter_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/packName_double_dot_textView"
+                app:layout_constraintTop_toBottomOf="@+id/create_pack_toolbar" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cat_subcat_choice_layout"
+                android:layout_width="match_parent"
+                android:background="?attr/colorPrimary"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/enter_title_editText">
+        <TextView
+                android:id="@+id/subdirectory_label_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/constant_white"
+                android:layout_marginStart="24dp"
+                android:paddingBottom="12dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/subcategory_double_dot"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/directory_label_textView" />
+
+        <Spinner
+                android:id="@+id/subdirectory_spinner"
+                android:layout_width="0dp"
+                android:paddingBottom="12dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:textColor="@color/constant_white"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/constant_white"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@id/subdirectory_label_textView"
+                app:layout_constraintTop_toBottomOf="@+id/directory_label_textView" />
+
+        <TextView
+                android:id="@+id/directory_label_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/constant_white"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="12dp"
+                android:text="@string/category_double_dot"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        <Spinner
+                android:id="@+id/directory_spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/constant_white"
+                android:layout_marginStart="16dp"
+                android:backgroundTint="@color/constant_white"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/directory_label_textView"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+                android:id="@+id/description_label_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="12dp"
+                android:textColor="?attr/blackcolor"
+                android:text="@string/description_double_dot"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cat_subcat_choice_layout" />
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/enter_description_editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:textColor="?attr/blackcolor"
+                android:textColorHint="@color/gray"
+                app:counterEnabled="true"
+                app:counterMaxLength="255"
+                android:layout_marginTop="16dp"
+                android:hint="@string/enter_pack_description"
+                android:layout_marginEnd="8dp"
+                android:inputType="textMultiLine"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/description_label_textView" />
+
+        <CheckBox
+                android:id="@+id/accept_PL_rules_in_create_checkBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:buttonTint="?attr/actionColorDark"
+                android:text="@string/i_know_that_my_account_will_be_banned_if_this_title_breaks_the_rules_of_pushlearn_community"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="?attr/blackcolor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/enter_description_editText" />
+
+        <ImageButton
+                android:id="@+id/create_pack_next_imageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:layout_marginTop="32dp"
+                android:clickable="false"
+                android:layout_marginBottom="32dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/accept_PL_rules_in_create_checkBox"
+                app:srcCompat="@drawable/ic_right" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

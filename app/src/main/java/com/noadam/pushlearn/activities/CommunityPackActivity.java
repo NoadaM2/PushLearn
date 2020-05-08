@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.CardsOfComPackAdapter;
-import com.noadam.pushlearn.data.ParserFromJSON;
+import com.noadam.pushlearn.logic.ParserFromJSON;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.ComCard;
@@ -66,12 +66,10 @@ public class CommunityPackActivity extends AppCompatActivity  {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         context = getApplicationContext();
         dbHelper = new PushLearnDBHelper(context);
-        prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String hash = prefs.getString("account_hash","");
         //-----------------------------------INTENT UNPACKING----------------------------------------------------
         Intent intent = getIntent();
         comPack = ComPack.fromJson(intent.getStringExtra(PACK_NAME));
-        dbHelper = new PushLearnDBHelper(this);
         //------------------------------------ACTION BAR----------------------------------------------------
         Toolbar mActionBarToolbar = (Toolbar) findViewById(R.id.com_pack_toolbar);
         setSupportActionBar(mActionBarToolbar);

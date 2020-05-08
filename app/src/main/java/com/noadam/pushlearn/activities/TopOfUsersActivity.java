@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.noadam.pushlearn.R;
 import com.noadam.pushlearn.adapters.TopOfUsersAdapter;
-import com.noadam.pushlearn.data.ParserFromJSON;
+import com.noadam.pushlearn.logic.ParserFromJSON;
 import com.noadam.pushlearn.entities.User;
 import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;

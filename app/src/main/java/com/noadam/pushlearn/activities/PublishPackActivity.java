@@ -1,19 +1,12 @@
-package com.noadam.pushlearn.fragments;
+package com.noadam.pushlearn.activities;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -23,20 +16,24 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.noadam.pushlearn.R;
-import com.noadam.pushlearn.logic.ParserFromJSON;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Card;
 import com.noadam.pushlearn.entities.ComPack;
 import com.noadam.pushlearn.entities.Directory;
 import com.noadam.pushlearn.entities.SubDirectory;
 import com.noadam.pushlearn.internet.PushLearnServerDirectoriesListCallBack;
-import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;
 import com.noadam.pushlearn.internet.PushLearnServerResponse;
+import com.noadam.pushlearn.internet.PushLearnServerStringCallBack;
+import com.noadam.pushlearn.logic.ParserFromJSON;
+import com.noadam.pushlearn.logic.SystemLanguageGetter;
 
 import java.util.ArrayList;
 
-public class CreatePackFragment extends Fragment {
+public class PublishPackActivity extends AppCompatActivity {
     private EditText enterTitleEditText;
     private EditText enterDescriptionEditText;
     private Spinner subdirectorySpinner;
@@ -47,53 +44,75 @@ public class CreatePackFragment extends Fragment {
     PushLearnDBHelper dbHelper;
     private ArrayList<Directory> directories = new ArrayList<>();
     private ArrayList<SubDirectory> subDirectories = new ArrayList<>();
+    private SharedPreferences prefs;
+    public static final String PACK_NAME = "packName";
+    public static final String COM_PACK = "comPack";
 
-    public void setBasePack(String packName) {
-        this.packName = packName;
+    private void ThemeSwitch() {
+        if(prefs.getString("theme","Light").equals("Light")) {
+            setTheme(R.style.AppTheme);
+        } else {
+            setTheme(R.style.DarkTheme);
+        }
     }
 
-    public void setBaseComPack(ComPack comPack) {
-        this.comPack = comPack;
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
-        context = getActivity();
+    private void ParamsInitialization() {
+        context = getApplicationContext();
+        prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         dbHelper = new PushLearnDBHelper(context);
-        View view = inflater.inflate(R.layout.frag_create_pack_on_server, null);
-        Toolbar toolbar = view.findViewById(R.id.create_pack_toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-        toolbar.setTitle(R.string.pack_publish);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+    }
+
+    private void toolbarSetUp(int toolbarLayout) {
+        Toolbar mActionBarToolbar = (Toolbar) findViewById(toolbarLayout);
+        setSupportActionBar(mActionBarToolbar);
+        getSupportActionBar().setTitle(R.string.pack_publish);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        mActionBarToolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
+        mActionBarToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadFragment(new MyPacksFragment());
+                finish();
             }
         });
-        enterTitleEditText = view.findViewById(R.id.enter_title_editText);
+    }
+
+    private void unpackIntent() {
+        Intent intent = getIntent();
+        comPack = ComPack.fromJson(intent.getStringExtra(COM_PACK));
+        packName = intent.getStringExtra(PACK_NAME);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        ParamsInitialization();
+        ThemeSwitch();
+        //------------------------------------LAYOUT INITIALIZATION----------------------------------------
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.frag_create_pack_on_server);
+        toolbarSetUp(R.id.create_pack_toolbar);
+        unpackIntent();
+        enterTitleEditText = findViewById(R.id.enter_title_editText);
         if(packName != null) {
             enterTitleEditText.setText(packName);
         }
         if(comPack != null) {
             enterTitleEditText.setText(comPack.getComPackName());
         }
-        enterDescriptionEditText = view.findViewById(R.id.enter_description_editText);
+        enterDescriptionEditText = findViewById(R.id.enter_description_editText);
         if(comPack != null) {
             enterDescriptionEditText.setText(comPack.getComPackDescription());
         }
-        subdirectorySpinner = view.findViewById(R.id.subdirectory_spinner);
-        directorySpinner = view.findViewById(R.id.directory_spinner);
-        getDirectoriesListResponse(getLanguageId(getSystemLanguage()));
+        subdirectorySpinner = findViewById(R.id.subdirectory_spinner);
+        directorySpinner = findViewById(R.id.directory_spinner);
+        SystemLanguageGetter languageGetter = new SystemLanguageGetter(context);
+        getDirectoriesListResponse(languageGetter.get());
 
-
-
-        ImageButton createPackNextImageButton = view.findViewById(R.id.create_pack_next_imageButton);
+        ImageButton createPackNextImageButton = findViewById(R.id.create_pack_next_imageButton);
         createPackNextImageButton.setClickable(false);
 
-        CheckBox acceptPLRulesCheckBox = view.findViewById(R.id.accept_PL_rules_in_create_checkBox);
+        CheckBox acceptPLRulesCheckBox = findViewById(R.id.accept_PL_rules_in_create_checkBox);
         acceptPLRulesCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -113,22 +132,7 @@ public class CreatePackFragment extends Fragment {
                 }
             }
         });
-        return view;
     }
-
-    private String getSystemLanguage() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return String.valueOf(context.getResources().getConfiguration().getLocales().get(0)); }
-        else { return String.valueOf(context.getResources().getConfiguration().locale); }
-    }
-
-    private int getLanguageId(String language) {
-        if(language.contains("en_EN")) { return 1; }
-        if(language.contains("en_US")) { return 11; }
-        if(language.contains("ru_")) { return 2; }
-        return 1;
-    }
-
 
     private void getDirectoriesListResponse(int language_id) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
@@ -136,7 +140,7 @@ public class CreatePackFragment extends Fragment {
             @Override
             public void onResponse(ArrayList<Directory> directories) {
                 ArrayAdapter<Directory> adapter = new ArrayAdapter<Directory>(context,
-                R.layout.large_text_appereance_textview, directories);
+                        R.layout.large_white_text_appereance_textview, directories);
                 adapter.setDropDownViewResource(R.layout.simple_spinner_my_item);
                 directorySpinner.setAdapter(adapter);
                 if(comPack != null) {
@@ -146,7 +150,7 @@ public class CreatePackFragment extends Fragment {
                         }
                     }
                 }
-                directorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+               directorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         Directory directory = (Directory) parent.getSelectedItem();
@@ -166,7 +170,7 @@ public class CreatePackFragment extends Fragment {
         });
     }
 
-   private void onClickPublishButton() {
+    private void onClickPublishButton() {
         String title = String.valueOf(enterTitleEditText.getText());
         String description = String.valueOf(enterDescriptionEditText.getText());
         Directory directory = (Directory) directorySpinner.getSelectedItem();
@@ -182,11 +186,8 @@ public class CreatePackFragment extends Fragment {
         if(comPack != null) {
             updatePackResponse(comPack.getComPackID(),title, description, directory_id, subdirectory_id, hash);
         }
-        Intent intent =  getActivity().getIntent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("fragment","my_profile");
-        startActivity(intent);
-   }
+       finish();
+    }
 
     private void createCardResponse(int id_pack, String question, String answer, String hash) {
         PushLearnServerResponse response = new PushLearnServerResponse(context);
@@ -208,7 +209,8 @@ public class CreatePackFragment extends Fragment {
             public void onResponse(String jsonResponse) {
                 ParserFromJSON parser = new ParserFromJSON();
                 subDirectories = parser.parseJsonSubDirectoriesArray(jsonResponse);
-                ArrayAdapter<SubDirectory> adapter = new ArrayAdapter<SubDirectory>(context, R.layout.large_text_appereance_textview, subDirectories);
+                ArrayAdapter<SubDirectory> adapter = new ArrayAdapter<SubDirectory>(context,
+                        R.layout.large_white_text_appereance_textview, subDirectories);
                 adapter.setDropDownViewResource(R.layout.simple_spinner_my_item);
                 subdirectorySpinner.setAdapter(adapter);
                 if(comPack != null) {
@@ -231,7 +233,7 @@ public class CreatePackFragment extends Fragment {
         response.sendCreatePackResponse(packName, description, directory_id, subdirectory_id, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String jsonResponse) {
-                int pack_id = Integer.valueOf(jsonResponse);
+                int pack_id = Integer.parseInt(jsonResponse);
                 ArrayList<Card> cards = dbHelper.getCardListByPackName(packName,-1);
                 for(Card card : cards) {
                     createCardResponse(pack_id, card.getQuestion(), card.getAnswer(), hash);
@@ -250,10 +252,10 @@ public class CreatePackFragment extends Fragment {
         response.sendUpdatePackResponse(pack_id, packName, description, directory_id, subdirectory_id, hash, new PushLearnServerStringCallBack() {
             @Override
             public void onResponse(String response) {
-               if(response.equals("ok")) {
-                   Toast.makeText(context, getString(R.string.successful_pack_update), Toast.LENGTH_LONG).show();
-               }
-               }
+                if(response.equals("ok")) {
+                    Toast.makeText(context, getString(R.string.successful_pack_update), Toast.LENGTH_LONG).show();
+                }
+            }
             @Override
             public void onError(Throwable t) {
 
@@ -261,16 +263,13 @@ public class CreatePackFragment extends Fragment {
         });
     }
 
-    private boolean loadFragment(Fragment fragment) {
-        //switching fragment
-        if (fragment != null) {
-            getFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .commit();
-            return true;
-        }
-        return false;
+    public Intent createIntent(Context context, ComPack comPack) {
+        return new Intent(context, PublishPackActivity.class)
+                .putExtra(COM_PACK, comPack.toJson());
     }
 
+    public Intent createIntent(Context context, String packName) {
+        return new Intent(context, PublishPackActivity.class)
+                .putExtra(PACK_NAME, packName);
+    }
 }

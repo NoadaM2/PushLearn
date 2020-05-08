@@ -2,7 +2,6 @@
 <TextView
         android:id="@+id/textViewSpinnerItem"
         android:layout_width="wrap_content"
-        android:textColor="?attr/blackcolor"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         xmlns:android="http://schemas.android.com/apk/res/android" />

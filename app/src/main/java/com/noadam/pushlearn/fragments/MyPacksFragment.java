@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.noadam.pushlearn.R;
+import com.noadam.pushlearn.activities.PublishPackActivity;
 import com.noadam.pushlearn.adapters.PackListAdapter;
 import com.noadam.pushlearn.data.PushLearnDBHelper;
 import com.noadam.pushlearn.entities.Pack;
@@ -484,9 +485,7 @@ public class MyPacksFragment extends Fragment{
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("account_hash", hash);
                     editor.apply();
-                    CreatePackFragment fragment = new CreatePackFragment();
-                    fragment.setBasePack(packName);
-                    loadFragment(fragment);
+                    startActivity(new PublishPackActivity().createIntent(context, packName));
                 }
             }
 
@@ -515,9 +514,7 @@ public class MyPacksFragment extends Fragment{
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("account_hash", hash);
                     editor.apply();
-                    CreatePackFragment fragment = new CreatePackFragment();
-                    fragment.setBasePack(packName);
-                    loadFragment(fragment);
+                    startActivity(new PublishPackActivity().createIntent(context, packName));
                 }
             }
 
