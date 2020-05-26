@@ -90,6 +90,7 @@ public class NotifyClickReceiver extends BroadcastReceiver {
                        notificationManager = NotificationManagerCompat.from(context);
                        notificationManager.notify(cardID, builder.build());
                        editor.putInt("LearntCards",  prefs.getInt("LearntCards",0) + 1);
+                       editor.putInt("Notify_i_know", prefs.getInt("Notify_i_know",0) + 1);
                        editor.apply();
                    } else {
                        builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -117,7 +118,6 @@ public class NotifyClickReceiver extends BroadcastReceiver {
                            } catch (InterruptedException e) {
                                e.printStackTrace();
                            }
-
                        }
                    }).start();
                    break;
@@ -155,5 +155,4 @@ public class NotifyClickReceiver extends BroadcastReceiver {
            }
        }
     }
-
 }

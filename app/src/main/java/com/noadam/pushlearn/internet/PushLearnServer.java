@@ -31,7 +31,7 @@ public interface PushLearnServer {
     Call<String> busyEmail(@Body String body);
 
     @Headers("Content-Type: application/json")
-    @POST("busy_email")
+    @POST("busy_nickname")
     Call<String> busyNickName(@Body String body);
 
     @Headers("Content-Type: application/json")

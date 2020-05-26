@@ -28,6 +28,7 @@ import com.noadam.pushlearn.activities.SettingsActivity;
 public class DeleteConfirmationDialogFragment extends DialogFragment {
 
     public static final String LOG_OUT = "log_out";
+    public static final String RESET_STATS = "reset_stats";
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -69,6 +70,11 @@ public class DeleteConfirmationDialogFragment extends DialogFragment {
             s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
             title = s;
         }
+        if (getTag() == RESET_STATS) {
+            s = new SpannableString(getString(R.string.are_u_sure_to_reset_stats));
+            s.setSpan(new ForegroundColorSpan(tV.data), 0, s.length(), 0);
+            title = s;
+        }
             builder
                     .setTitle(title)
                     .setPositiveButton(R.string.ok,
@@ -88,6 +94,21 @@ public class DeleteConfirmationDialogFragment extends DialogFragment {
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                         intent.putExtra("fragment","my_profile");
                                         startActivity(intent);
+                                        return;
+                                    } if (getTag() == RESET_STATS) {
+                                        Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                                        SharedPreferences.Editor editor = prefs.edit();
+                                        editor.putInt("LearntCards", 0);
+                                        editor.putInt("ShownCardsTotal", 0);
+                                        editor.putInt("Notify_i_know", 0);
+                                        editor.putInt("Notify_i_dont_know", 0);
+                                        editor.apply();
+                                        getActivity().finish();
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        intent.putExtra("fragment","my_profile");
+                                        startActivity(intent);
+                                        return;
                                     } else {
                                             getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
                                     }
@@ -96,7 +117,7 @@ public class DeleteConfirmationDialogFragment extends DialogFragment {
                     )
                     .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            if (!(getTag() == LOG_OUT)) {
+                            if ((getTag() != LOG_OUT) && (getTag() != RESET_STATS)) {
                                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, getActivity().getIntent());
                             }
                         }

@@ -87,6 +87,7 @@
     <string name="exit_the_account">Exit the account</string>
     <string name="log_out">Log Out</string>
     <string name="are_u_sure_to_log_out">Do you really want to exit your account?</string>
+    <string name="are_u_sure_to_reset_stats">Do you really want to reset the statistics?</string>
     <string name="you_published_no_packs">You haven\'t published any pack \n Your community packs will be here</string>
     <string name="options">Options</string>
     <string name="creator_double_dot">Creator:</string>
@@ -181,4 +182,5 @@
     <string name="directory_was_added">Category \'%s\' was successfully added</string>
     <string name="subdirectory_sent_to_verification">Subcategory \'%s\' was sent to verification</string>
     <string name="subdirectory_was_added">Subcategory \'%s\' was successfully added</string>
+    <string name="reset_statistics">Reset statistics</string>
 </resources>

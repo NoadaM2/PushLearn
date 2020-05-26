@@ -313,7 +313,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                   //  Toast.makeText(getApplicationContext(), "conversion issue! big problems :(", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+    });
     }
 
     @Override

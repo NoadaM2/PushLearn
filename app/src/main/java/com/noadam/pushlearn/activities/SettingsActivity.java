@@ -11,6 +11,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -36,6 +37,7 @@ public class SettingsActivity extends AppCompatActivity {
     private TextView number_of_known_notifies_title_textView;
     private TextView number_of_unknown_notifies_title_textView;
     private TextView number_of_learnt_cards_title_textView;
+    private Button reset_stats_button;
     private SharedPreferences prefs;
     public static final int LIMIT_NOTIFIES_IN_BAR_DIALOG_RESULT = 1;
     public static final int TIME_BETWEEN_NOTIFIES_DIALOG_RESULT = 2;
@@ -200,6 +202,15 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(new SubscribeActivity().createIntent(getApplicationContext(), 5));
             }
         });
+        reset_stats_button = findViewById(R.id.reset_stats_button);
+        reset_stats_button.setClickable(false);
+        reset_stats_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DeleteConfirmationDialogFragment dialogFrag = new DeleteConfirmationDialogFragment();
+                dialogFrag.show(getFragmentManager().beginTransaction(), DeleteConfirmationDialogFragment.RESET_STATS);
+            }
+        });
     }
 
     private void restartActivity() {
@@ -220,6 +231,7 @@ public class SettingsActivity extends AppCompatActivity {
                         int minutes = minutesFull % 60;
                         time_period_between_notifies_summary_textView.setText(String.valueOf(hours)+":"+String.format("%02d", minutes));
                     break;
+
             }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -260,6 +272,7 @@ public class SettingsActivity extends AppCompatActivity {
                     number_of_known_notifies_title_textView.setClickable(false);
                     number_of_unknown_notifies_title_textView.setClickable(false);
                     number_of_learnt_cards_title_textView.setClickable(false);
+                    reset_stats_button.setClickable(true);
                 }
             }
             @Override
